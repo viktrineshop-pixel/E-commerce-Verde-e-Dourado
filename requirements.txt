@@ -1,0 +1,4 @@
+
+reflex[db]==0.9.12
+reflex-enterprise>=0.9.6
+psycopg[binary]>=3.1.8

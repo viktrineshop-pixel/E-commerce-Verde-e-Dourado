@@ -1,0 +1,227 @@
+{
+  "version": 4,
+  "app_title": "Plano da Loja Online",
+  "nav": {
+    "placement": "none",
+    "items": []
+  },
+  "pages": [
+    {
+      "id": "page-afa9956d",
+      "name": "Vitrine e catálogo",
+      "route": "/",
+      "item_ref": {
+        "index": 1,
+        "text": "Criar a vitrine responsiva com banner, busca, menus de categorias expansíveis, filtros e cards de produtos com imagens e informações reais de catálogo."
+      },
+      "blocks": [
+        {
+          "id": "store-header",
+          "type": "nav",
+          "label": "Barra de benefícios e cabeçalho",
+          "hint": "Marca, busca, login, favoritos e carrinho",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 2,
+          "item_ref": {
+            "index": 1,
+            "text": "Criar a vitrine responsiva com banner, busca, menus de categorias expansíveis, filtros e cards de produtos com imagens e informações reais de catálogo."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "category-nav",
+          "type": "nav",
+          "label": "Navegação por categorias",
+          "hint": "Categorias expansíveis, lançamentos, mais vendidos e ofertas",
+          "x": 0,
+          "y": 2,
+          "w": 12,
+          "h": 1,
+          "item_ref": {
+            "index": 1,
+            "text": "Criar a vitrine responsiva com banner, busca, menus de categorias expansíveis, filtros e cards de produtos com imagens e informações reais de catálogo."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "hero",
+          "type": "hero",
+          "label": "Coleção em destaque",
+          "hint": "Mensagem de boas-vindas e botão para explorar o catálogo",
+          "x": 0,
+          "y": 3,
+          "w": 12,
+          "h": 3,
+          "item_ref": {
+            "index": 1,
+            "text": "Criar a vitrine responsiva com banner, busca, menus de categorias expansíveis, filtros e cards de produtos com imagens e informações reais de catálogo."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "catalog-filters",
+          "type": "form",
+          "label": "Busca e filtros de produtos",
+          "hint": "Categoria, ordenação e total de resultados",
+          "x": 0,
+          "y": 6,
+          "w": 12,
+          "h": 1,
+          "item_ref": {
+            "index": 1,
+            "text": "Criar a vitrine responsiva com banner, busca, menus de categorias expansíveis, filtros e cards de produtos com imagens e informações reais de catálogo."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "catalog-grid",
+          "type": "card_grid",
+          "label": "Produtos",
+          "hint": "Cards com imagens, preços e botão de adicionar ao carrinho",
+          "x": 0,
+          "y": 7,
+          "w": 12,
+          "h": 4,
+          "item_ref": {
+            "index": 1,
+            "text": "Criar a vitrine responsiva com banner, busca, menus de categorias expansíveis, filtros e cards de produtos com imagens e informações reais de catálogo."
+          },
+          "type_source": "palette"
+        }
+      ],
+      "deleted_ids": []
+    },
+    {
+      "id": "page-37d0582b",
+      "name": "Carrinho e finalização",
+      "route": "/carrinho",
+      "item_ref": {
+        "index": 2,
+        "text": "Criar o carrinho interativo com quantidades, totais e fluxo de finalização de pedido, incluindo estados vazios e confirmação."
+      },
+      "blocks": [
+        {
+          "id": "cart-header",
+          "type": "nav",
+          "label": "Cabeçalho e categorias",
+          "hint": "Navegação compartilhada",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 2,
+          "item_ref": {
+            "index": 2,
+            "text": "Criar o carrinho interativo com quantidades, totais e fluxo de finalização de pedido, incluindo estados vazios e confirmação."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "cart-items",
+          "type": "list",
+          "label": "Itens do carrinho",
+          "hint": "Imagem, preço, quantidade e remover",
+          "x": 0,
+          "y": 2,
+          "w": 8,
+          "h": 4,
+          "item_ref": {
+            "index": 2,
+            "text": "Criar o carrinho interativo com quantidades, totais e fluxo de finalização de pedido, incluindo estados vazios e confirmação."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "cart-summary",
+          "type": "card",
+          "label": "Resumo do pedido",
+          "hint": "Subtotal, frete e botão de finalizar",
+          "x": 8,
+          "y": 2,
+          "w": 4,
+          "h": 4,
+          "item_ref": {
+            "index": 2,
+            "text": "Criar o carrinho interativo com quantidades, totais e fluxo de finalização de pedido, incluindo estados vazios e confirmação."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "checkout-form",
+          "type": "form",
+          "label": "Entrega e confirmação",
+          "hint": "Dados de entrega e criação do pedido",
+          "x": 0,
+          "y": 6,
+          "w": 12,
+          "h": 3,
+          "item_ref": {
+            "index": 2,
+            "text": "Criar o carrinho interativo com quantidades, totais e fluxo de finalização de pedido, incluindo estados vazios e confirmação."
+          },
+          "type_source": "palette"
+        }
+      ],
+      "deleted_ids": []
+    },
+    {
+      "id": "page-51204b4b",
+      "name": "Login e pedidos",
+      "route": "/minha-conta",
+      "item_ref": {
+        "index": 3,
+        "text": "Adicionar login integrado e área do cliente para consultar seus pedidos, mantendo a vitrine acessível sem login."
+      },
+      "blocks": [
+        {
+          "id": "account-header",
+          "type": "nav",
+          "label": "Cabeçalho e categorias",
+          "hint": "Navegação compartilhada",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 2,
+          "item_ref": {
+            "index": 3,
+            "text": "Adicionar login integrado e área do cliente para consultar seus pedidos, mantendo a vitrine acessível sem login."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "account-access",
+          "type": "card",
+          "label": "Acesso do cliente",
+          "hint": "Entrada integrada e dados da sessão",
+          "x": 0,
+          "y": 2,
+          "w": 4,
+          "h": 3,
+          "item_ref": {
+            "index": 3,
+            "text": "Adicionar login integrado e área do cliente para consultar seus pedidos, mantendo a vitrine acessível sem login."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "order-history",
+          "type": "list",
+          "label": "Meus pedidos",
+          "hint": "Histórico e detalhes dos pedidos",
+          "x": 4,
+          "y": 2,
+          "w": 8,
+          "h": 4,
+          "item_ref": {
+            "index": 3,
+            "text": "Adicionar login integrado e área do cliente para consultar seus pedidos, mantendo a vitrine acessível sem login."
+          },
+          "type_source": "palette"
+        }
+      ],
+      "deleted_ids": []
+    }
+  ],
+  "attached_to_plan": false
+}
