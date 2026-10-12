@@ -1,4 +1,5 @@
 import reflex as rx
+import reflex_enterprise as rxe
 from app.components.header import header
 from app.components.hero import hero, footer
 from app.components.catalog import catalog
@@ -10,7 +11,7 @@ from app.states.account_state import AccountState
 from app.pages import marketplaces
 
 
-@rx.page(
+@rxe.page(
     route="/",
     auth=False,
     title="VIKTRINE SHOP | Estilo em cada detalhe",

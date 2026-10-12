@@ -9,7 +9,7 @@ def hero_cta() -> rx.Component:
         rx.icon("arrow-up-right", class_name="h-4 w-4"),
         href="/#catalogo",
         on_click=StorefrontState.clear_filters,
-        class_name="mt-7 flex min-h-11 w-fit items-center gap-7 border border-[#d4af37] bg-[#d4af37] px-6 py-3.5 text-xs font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37]",
+        class_name="mt-4 flex min-h-10 w-fit items-center gap-3 border border-[#d4af37] bg-[#d4af37] px-4 py-2 text-[11px] font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37]",
     )
 
 
@@ -18,31 +18,74 @@ def brand_slide() -> rx.Component:
         rx.el.div(
             rx.el.p(
                 "VK VIKTRINE SHOP -",
-                class_name="mb-6 text-xs font-semibold tracking-[0.2em] text-[#073238] sm:text-sm",
+                class_name="mb-2 text-[10px] font-semibold tracking-[0.2em] text-[#073238] sm:text-xs",
             ),
             rx.el.h1(
                 "MAIS QUE PRODUTOS,",
                 rx.el.br(),
                 "É A SUA VITRENE.",
-                class_name="max-w-[760px] font-['Cormorant_Garamond'] text-[42px] font-medium leading-[1.02] text-[#073238] sm:text-6xl lg:text-[76px] xl:text-[88px]",
+                class_name="max-w-[760px] font-['Cormorant_Garamond'] text-[30px] font-medium leading-[1.02] text-[#073238] sm:text-4xl lg:text-5xl",
             ),
             rx.el.p(
                 "Tudo em um.",
-                class_name="mt-5 font-['Cormorant_Garamond'] text-4xl italic text-[#0B4146] sm:text-5xl",
+                class_name="mt-1 font-['Cormorant_Garamond'] text-2xl italic text-[#0B4146] sm:text-3xl",
             ),
             hero_cta(),
-            class_name="mx-auto flex min-h-[530px] w-full max-w-[1440px] flex-col justify-center px-6 py-12 sm:min-h-[570px] sm:px-12 lg:min-h-[610px] lg:px-20",
+            class_name="mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-center overflow-y-auto px-5 py-4 sm:px-8 sm:py-4 lg:px-12",
         ),
         id="vk-slide-0",
         role="group",
         aria_roledescription="slide",
-        aria_label="1 de 2: VIKTRINE SHOP",
+        aria_label="1 de 3: VIKTRINE SHOP",
         aria_hidden=HeroState.active_slide != 0,
         inert=HeroState.active_slide != 0,
         class_name=rx.cond(
             HeroState.active_slide == 0,
-            "vk-champagne-banner col-start-1 row-start-1 w-full opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
-            "vk-champagne-banner invisible col-start-1 row-start-1 w-full opacity-0 transition-opacity duration-300 motion-reduce:transition-none",
+            "vk-champagne-banner col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
+            "vk-champagne-banner invisible col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-0 transition-opacity duration-300 motion-reduce:transition-none",
+        ),
+    )
+
+
+def whatsapp_slide() -> rx.Component:
+    return rx.el.article(
+        rx.el.div(
+            rx.el.div(
+                rx.icon("messages-square", class_name="h-5 w-5 text-[#d4af37]"),
+                rx.el.span(
+                    "NOVIDADES EM PRIMEIRA MÃO",
+                    class_name="text-[9px] tracking-[0.14em] text-[#e7d49a] sm:text-[10px]",
+                ),
+                class_name="mb-2 flex items-center gap-2",
+            ),
+            rx.el.h2(
+                "Acessar o grupo WhatsApp para inscritos",
+                class_name="max-w-[720px] font-['Cormorant_Garamond'] text-[28px] font-medium leading-[1.02] text-[#f5e9c9] sm:text-4xl lg:text-5xl",
+            ),
+            rx.el.p(
+                "Um espaço para receber novidades, oportunidades e comunicados especiais da VIKTRINE SHOP.",
+                class_name="mt-3 max-w-[620px] text-xs leading-5 text-[#faf9f4] sm:text-sm",
+            ),
+            rx.el.div(
+                rx.icon("clock-3", class_name="h-4 w-4"),
+                rx.el.span(
+                    "Link oficial pendente — em breve",
+                    class_name="text-xs font-semibold sm:text-sm",
+                ),
+                class_name="mt-4 flex w-fit items-center gap-2 border border-[#d4af37]/70 bg-[#073238]/80 px-3 py-2 text-[#f5e9c9]",
+            ),
+            class_name="mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-center overflow-y-auto px-5 py-4 sm:px-8 sm:py-4 lg:px-12",
+        ),
+        id="vk-slide-1",
+        role="group",
+        aria_roledescription="slide",
+        aria_label="2 de 3: Grupo WhatsApp para inscritos, link oficial em breve",
+        aria_hidden=HeroState.active_slide != 1,
+        inert=HeroState.active_slide != 1,
+        class_name=rx.cond(
+            HeroState.active_slide == 1,
+            "vk-whatsapp-banner col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
+            "vk-whatsapp-banner invisible col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-0 transition-opacity duration-300 motion-reduce:transition-none",
         ),
     )
 
@@ -54,35 +97,39 @@ def promotion_slide() -> rx.Component:
                 rx.icon("gift", class_name="h-5 w-5 text-[#d4af37]"),
                 rx.el.span(
                     "UM CARINHO A MAIS PARA VOCÊ",
-                    class_name="text-[10px] tracking-[0.18em] text-[#e7d49a]",
+                    class_name="text-[9px] tracking-[0.14em] text-[#e7d49a] sm:text-[10px]",
                 ),
-                class_name="mb-6 flex items-center gap-3",
+                class_name="mb-2 flex items-center gap-2",
             ),
             rx.el.h2(
                 "SORTEIO MENSAL NO PIX!",
-                class_name="max-w-[800px] font-['Cormorant_Garamond'] text-[44px] font-medium leading-[1.02] text-[#f5e9c9] sm:text-6xl lg:text-[76px]",
+                class_name="max-w-[800px] font-['Cormorant_Garamond'] text-[28px] font-medium leading-[1.02] text-[#f5e9c9] sm:text-4xl lg:text-5xl",
             ),
             rx.el.p(
                 "Mensalmente ocorre um sorteio onde é escolhida a compra de uma pessoa que terá 20% do valor da compra devolvido no PIX!",
-                class_name="mt-6 max-w-[650px] text-sm leading-7 text-[#faf9f4] sm:text-base",
+                class_name="mt-2 max-w-[650px] text-xs leading-[1.15rem] text-[#faf9f4] sm:text-sm sm:leading-5",
             ),
             rx.el.p(
                 "Regra essencial: O cliente precisa seguir a VIKTRINE em todas as redes sociais há mais de um mês para validar o prêmio.",
-                class_name="mt-5 max-w-[650px] border-l-2 border-[#d4af37] bg-[#073238]/85 py-3 pl-4 pr-4 text-xs leading-6 text-[#f5e9c9] sm:text-sm",
+                class_name="mt-2 max-w-[650px] border-l-2 border-[#d4af37] bg-[#073238]/85 py-2 pl-3 pr-3 text-[10px] leading-[1.05rem] text-[#f5e9c9] sm:text-xs sm:leading-5",
+            ),
+            rx.el.p(
+                "A lista mensal será publicada aqui quando estiver disponível. Aguardem a divulgação oficial.",
+                class_name="mt-2 w-fit border border-[#d4af37]/70 bg-[#073238]/85 px-3 py-2 text-[10px] font-semibold leading-4 text-[#f5e9c9] sm:text-xs",
             ),
             hero_cta(),
-            class_name="mx-auto flex min-h-[530px] w-full max-w-[1440px] flex-col justify-center px-6 py-12 sm:min-h-[570px] sm:px-12 lg:min-h-[610px] lg:px-20",
+            class_name="mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-start overflow-y-auto px-5 pt-3 pb-5 sm:px-8 sm:pt-3 sm:pb-5 lg:px-12",
         ),
-        id="vk-slide-1",
+        id="vk-slide-2",
         role="group",
         aria_roledescription="slide",
-        aria_label="2 de 2: Sorteio mensal no PIX",
-        aria_hidden=HeroState.active_slide != 1,
-        inert=HeroState.active_slide != 1,
+        aria_label="3 de 3: Sorteio mensal no PIX; lista pendente de publicação",
+        aria_hidden=HeroState.active_slide != 2,
+        inert=HeroState.active_slide != 2,
         class_name=rx.cond(
-            HeroState.active_slide == 1,
-            "vk-promotion-banner col-start-1 row-start-1 w-full opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
-            "vk-promotion-banner invisible col-start-1 row-start-1 w-full opacity-0 transition-opacity duration-300 motion-reduce:transition-none",
+            HeroState.active_slide == 2,
+            "vk-promotion-banner col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
+            "vk-promotion-banner invisible col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-0 transition-opacity duration-300 motion-reduce:transition-none",
         ),
     )
 
@@ -98,10 +145,15 @@ def slide_dot(index: int) -> rx.Component:
         ),
         id=f"vk-slide-dot-{index}",
         type="button",
-        aria_label=f"Mostrar banner {index + 1} de 2",
+        aria_label=f"Mostrar banner {index + 1} de 3",
         aria_controls=f"vk-slide-{index}",
         aria_pressed=HeroState.active_slide == index,
-        on_click=HeroState.select_slide(index),
+        on_click=[
+            rx.call_script(
+                "window.__vkScheduleCarousel && window.__vkScheduleCarousel(15000);"
+            ),
+            HeroState.select_slide(index),
+        ],
         class_name="flex h-11 min-w-11 items-center justify-center bg-transparent text-[#faf9f4] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
     )
 
@@ -180,9 +232,10 @@ def hero() -> rx.Component:
         rx.el.section(
             rx.el.div(
                 brand_slide(),
+                whatsapp_slide(),
                 promotion_slide(),
                 custom_attrs={"data-carousel-surface": "true"},
-                class_name="grid w-full touch-pan-y select-none cursor-grab active:cursor-grabbing",
+                class_name="grid h-[315px] max-h-[315px] w-full touch-pan-y select-none cursor-grab active:cursor-grabbing",
             ),
             rx.el.div(
                 rx.el.button(
@@ -190,12 +243,17 @@ def hero() -> rx.Component:
                     id="vk-slide-previous",
                     type="button",
                     aria_label="Banner anterior",
-                    aria_controls="vk-slide-0 vk-slide-1",
-                    on_click=HeroState.previous_slide,
+                    aria_controls="vk-slide-0 vk-slide-1 vk-slide-2",
+                    on_click=[
+                        rx.call_script(
+                            "window.__vkScheduleCarousel && window.__vkScheduleCarousel(15000);"
+                        ),
+                        HeroState.previous_slide,
+                    ],
                     class_name="flex h-11 w-11 items-center justify-center rounded-full border border-[#d4af37]/50 bg-transparent text-[#faf9f4] hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
                 rx.el.div(
-                    rx.foreach([0, 1], slide_dot),
+                    rx.foreach([0, 1, 2], slide_dot),
                     class_name="flex items-center gap-1",
                 ),
                 rx.el.button(
@@ -203,8 +261,13 @@ def hero() -> rx.Component:
                     id="vk-slide-next",
                     type="button",
                     aria_label="Próximo banner",
-                    aria_controls="vk-slide-0 vk-slide-1",
-                    on_click=HeroState.next_slide,
+                    aria_controls="vk-slide-0 vk-slide-1 vk-slide-2",
+                    on_click=[
+                        rx.call_script(
+                            "window.__vkScheduleCarousel && window.__vkScheduleCarousel(15000);"
+                        ),
+                        HeroState.next_slide,
+                    ],
                     class_name="flex h-11 w-11 items-center justify-center rounded-full border border-[#d4af37]/50 bg-transparent text-[#faf9f4] hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
                 rx.el.span(
@@ -216,8 +279,12 @@ def hero() -> rx.Component:
             rx.el.p(
                 rx.cond(
                     HeroState.active_slide == 0,
-                    "Banner 1 de 2: VIKTRINE SHOP",
-                    "Banner 2 de 2: Sorteio mensal no PIX",
+                    "Banner 1 de 3: VIKTRINE SHOP",
+                    rx.cond(
+                        HeroState.active_slide == 1,
+                        "Banner 2 de 3: Grupo WhatsApp para inscritos, link em breve",
+                        "Banner 3 de 3: Sorteio mensal no PIX, lista pendente de publicação",
+                    ),
                 ),
                 aria_live="polite",
                 aria_atomic=True,
@@ -229,6 +296,7 @@ def hero() -> rx.Component:
             aria_label="Novidades VIKTRINE SHOP. Use as setas esquerda e direita, Home ou End para navegar.",
             tab_index=0,
             on_mount=HeroState.initialize_carousel,
+            on_unmount=HeroState.stop_carousel,
             class_name="w-full bg-[#073238] text-[#faf9f4] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#d4af37]",
         ),
         category_strip(),

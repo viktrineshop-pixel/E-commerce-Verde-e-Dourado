@@ -4,6 +4,28 @@ import reflex_enterprise as rxe
 
 CAROUSEL_LISTENERS = """
 (() => {
+  const scheduler = window.__vkCarouselScheduler || {timer: null, generation: 0};
+  window.__vkCarouselScheduler = scheduler;
+  window.__vkScheduleCarousel = (delay) => {
+    const root = document.getElementById('vk-home-carousel');
+    scheduler.generation += 1;
+    const generation = scheduler.generation;
+    window.clearTimeout(scheduler.timer);
+    scheduler.timer = null;
+    if (!root) return;
+    scheduler.timer = window.setTimeout(() => {
+      if (scheduler.generation !== generation) return;
+      scheduler.timer = null;
+      const currentRoot = document.getElementById('vk-home-carousel');
+      const next = currentRoot && currentRoot.querySelector('#vk-slide-next');
+      if (currentRoot && currentRoot.isConnected && next) next.click();
+    }, delay);
+  };
+  window.__vkStopCarousel = () => {
+    scheduler.generation += 1;
+    window.clearTimeout(scheduler.timer);
+    scheduler.timer = null;
+  };
   const root = document.getElementById('vk-home-carousel');
   if (!root || root.dataset.gesturesReady) return;
   root.dataset.gesturesReady = 'true';
@@ -54,7 +76,7 @@ CAROUSEL_LISTENERS = """
     if (event.target.closest('input, textarea, select, [contenteditable]')) return;
     const controls = {
       ArrowLeft: '#vk-slide-previous', ArrowRight: '#vk-slide-next',
-      Home: '#vk-slide-dot-0', End: '#vk-slide-dot-1'
+      Home: '#vk-slide-dot-0', End: '#vk-slide-dot-2'
     };
     if (controls[event.key]) {
       event.preventDefault();
@@ -67,20 +89,43 @@ CAROUSEL_LISTENERS = """
 
 class HeroState(rx.State):
     active_slide: int = rxe.field(0, auth=False)
+    autoplay_started: bool = rxe.field(False, auth=False)
 
     @rxe.event(auth=False)
     def initialize_carousel(self):
-        return rx.call_script(CAROUSEL_LISTENERS)
+        if self.autoplay_started:
+            delay = 15000
+        else:
+            delay = 23000
+            self.autoplay_started = True
+        return rx.call_script(
+            f"{CAROUSEL_LISTENERS}\nwindow.__vkScheduleCarousel({delay});"
+        )
+
+    @rxe.event(auth=False)
+    def stop_carousel(self):
+        return rx.call_script(
+            "window.__vkStopCarousel && window.__vkStopCarousel();"
+        )
 
     @rxe.event(auth=False)
     def previous_slide(self):
-        self.active_slide = (self.active_slide - 1) % 2
+        self.active_slide = (self.active_slide - 1) % 3
+        return rx.call_script(
+            "window.__vkScheduleCarousel && window.__vkScheduleCarousel(15000);"
+        )
 
     @rxe.event(auth=False)
     def next_slide(self):
-        self.active_slide = (self.active_slide + 1) % 2
+        self.active_slide = (self.active_slide + 1) % 3
+        return rx.call_script(
+            "window.__vkScheduleCarousel && window.__vkScheduleCarousel(15000);"
+        )
 
     @rxe.event(auth=False)
     def select_slide(self, index: int):
-        if index in (0, 1):
+        if index in (0, 1, 2):
             self.active_slide = index
+        return rx.call_script(
+            "window.__vkScheduleCarousel && window.__vkScheduleCarousel(15000);"
+        )
