@@ -138,15 +138,18 @@ def header() -> rx.Component:
                     ),
                     href="/",
                     aria_label="VIKTRINE SHOP — página inicial",
-                    class_name="shrink-0 font-['Cormorant_Garamond'] text-xl font-semibold tracking-[0.1em] text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:text-2xl md:text-3xl",
+                    class_name="shrink-0 font-['Cormorant_Garamond'] text-xl font-medium tracking-[0.1em] text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:text-2xl md:text-3xl",
                 ),
                 rx.el.a(
-                    rx.icon("house", class_name="h-4 w-4 text-[#d4af37]"),
+                    rx.icon(
+                        "house",
+                        class_name="h-[18.4px] w-[18.4px] text-[#d4af37]",
+                    ),
                     href="/",
                     aria_label="Página inicial",
                     class_name="flex min-h-9 min-w-7 items-center justify-center text-[#d4af37] hover:text-[#e1c25c] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
-                class_name="col-start-2 row-start-1 flex shrink-0 items-center justify-center gap-1 justify-self-center",
+                class_name="col-start-2 row-start-1 flex shrink-0 items-center justify-center gap-1 justify-self-center md:col-start-1 md:justify-self-start",
             ),
             rx.el.div(
                 rx.icon(
@@ -160,7 +163,7 @@ def header() -> rx.Component:
                     on_change=StorefrontState.set_search.debounce(500),
                     class_name="min-w-0 w-full max-w-full rounded-sm border border-white/20 bg-white/5 py-2 pr-4 pl-11 text-sm text-[#f5f1e8] placeholder:text-[#c9c9bb] focus:border-[#d4af37] focus:outline-hidden",
                 ),
-                class_name="relative col-span-3 row-start-2 min-w-0 w-full max-w-full md:col-span-1 md:col-start-1 md:row-start-1",
+                class_name="relative col-span-3 row-start-2 min-w-0 w-full max-w-full md:col-span-1 md:col-start-2 md:row-start-1 md:justify-self-center",
             ),
             rx.el.div(
                 rx.el.a(
@@ -187,9 +190,9 @@ def header() -> rx.Component:
                     type="button",
                     class_name="p-1.5 text-[#f5f1e8] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] md:hidden",
                 ),
-                class_name="col-start-3 row-start-1 ml-auto flex items-center gap-1.5 justify-self-end sm:gap-3 md:gap-2 lg:gap-4",
+                class_name="col-start-3 row-start-1 ml-auto flex items-center gap-1.5 justify-self-end sm:gap-3 md:col-start-3 md:gap-2 lg:gap-4",
             ),
-            class_name="mx-auto grid w-full max-w-[1440px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 gap-y-2 px-4 py-2 sm:px-6 md:gap-x-5 md:gap-y-0 md:px-6 md:py-2 lg:px-12",
+            class_name="mx-auto grid w-full max-w-[1440px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 gap-y-2 px-4 py-2 sm:px-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_minmax(0,1fr)] md:gap-x-5 md:gap-y-0 md:px-6 md:py-2 lg:px-12",
         ),
         rx.el.nav(
             stores_menu(),
