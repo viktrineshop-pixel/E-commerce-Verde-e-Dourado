@@ -3,9 +3,9 @@ from app.states.storefront_state import StorefrontState
 from app.states.hero_state import HeroState
 
 
-def hero_cta() -> rx.Component:
+def hero_cta(label: str = "Explorar a coleção") -> rx.Component:
     return rx.el.a(
-        "Explorar a coleção",
+        label,
         rx.icon("arrow-up-right", class_name="h-4 w-4"),
         href="/#catalogo",
         on_click=StorefrontState.clear_filters,
@@ -30,7 +30,10 @@ def brand_slide() -> rx.Component:
                 "Tudo em um.",
                 class_name="mt-1 font-['Cormorant_Garamond'] text-2xl italic text-[#0B4146] sm:text-3xl",
             ),
-            hero_cta(),
+            rx.el.div(
+                hero_cta("Explorar achadinhos"),
+                class_name="flex w-full justify-center",
+            ),
             class_name="mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-center overflow-y-auto px-5 py-4 sm:px-8 sm:py-4 lg:px-12",
         ),
         id="vk-slide-0",
