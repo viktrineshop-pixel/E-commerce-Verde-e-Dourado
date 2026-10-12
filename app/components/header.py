@@ -17,13 +17,13 @@ def pending_social(label: str, icon: str) -> rx.Component:
         rx.icon(
             icon,
             aria_hidden=True,
-            class_name="h-[7px] w-[7px] shrink-0 text-[#d4af37]",
+            class_name="h-[9.1px] w-[9.1px] shrink-0 text-[#d4af37]",
         ),
         label,
         aria_disabled=True,
-        aria_label=f"{label}: em breve, aguardando link oficial",
-        title="Em breve · aguardando link oficial",
-        class_name="inline-flex cursor-default items-center gap-1 whitespace-nowrap text-[#f5f1e8]",
+        aria_label=f"{label}: aguardando link oficial",
+        title="Aguardando link oficial",
+        class_name="inline-flex cursor-default items-center gap-[5.2px] whitespace-nowrap text-[#f5f1e8]",
     )
 
 
@@ -34,18 +34,15 @@ def utility_bar() -> rx.Component:
                 pending_social("Facebook", "share"),
                 pending_social("Instagram", "camera"),
                 pending_social("YouTube", "play"),
-                rx.el.span(
-                    "Em breve", class_name="text-[4.5px] text-[#d6cda9]"
-                ),
-                aria_label="Redes sociais · links oficiais em breve",
-                class_name="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5",
+                aria_label="Redes sociais · aguardando link oficial",
+                class_name="flex flex-wrap items-center justify-center gap-x-[15.6px] gap-y-[2.6px]",
             ),
             rx.el.div(
                 rx.el.span(
                     rx.icon(
                         "info",
                         aria_hidden=True,
-                        class_name="h-[7px] w-[7px] shrink-0 text-[#d4af37]",
+                        class_name="h-[9.1px] w-[9.1px] shrink-0 text-[#d4af37]",
                     ),
                     rx.el.span(
                         rx.el.strong(
@@ -54,31 +51,32 @@ def utility_bar() -> rx.Component:
                         ),
                         " · demonstração, sem pagamentos",
                     ),
-                    class_name="flex items-center gap-1 text-[#d6cda9]",
+                    class_name="flex items-center gap-[5.2px] text-[#d6cda9]",
                 ),
                 rx.el.span(
                     rx.icon(
                         "truck",
                         aria_hidden=True,
-                        class_name="h-[7px] w-[7px] shrink-0 text-[#d4af37]",
+                        class_name="h-[9.1px] w-[9.1px] shrink-0 text-[#d4af37]",
                     ),
                     "Entrega · não realizada nesta demonstração",
-                    class_name="flex items-center gap-1 text-[#d6cda9]",
+                    class_name="flex items-center gap-[5.2px] text-[#d6cda9]",
                 ),
                 rx.el.span(
                     rx.icon(
                         "message-circle",
                         aria_hidden=True,
-                        class_name="h-[7px] w-[7px] shrink-0 text-[#d4af37]",
+                        class_name="h-[9.1px] w-[9.1px] shrink-0 text-[#d4af37]",
                     ),
-                    "Grupo do WhatsApp · em breve",
+                    "Grupo do WhatsApp",
                     aria_disabled=True,
+                    aria_label="Grupo do WhatsApp: aguardando link oficial",
                     title="Aguardando link oficial do grupo",
-                    class_name="flex cursor-default items-center gap-1 text-[#f5f1e8]",
+                    class_name="flex cursor-default items-center gap-[5.2px] text-[#f5f1e8]",
                 ),
-                class_name="flex flex-wrap items-center justify-center gap-x-4 gap-y-0.5",
+                class_name="flex flex-wrap items-center justify-center gap-x-[20.8px] gap-y-[2.6px]",
             ),
-            class_name="mx-auto flex w-full max-w-[1440px] flex-col items-center justify-between gap-1 px-3 py-1 text-center text-[5px] leading-tight tracking-wide lg:px-12 xl:flex-row xl:text-left",
+            class_name="mx-auto flex w-full max-w-[1440px] flex-col items-center justify-between gap-[5.2px] px-3 py-[5.2px] text-center text-[6.5px] leading-tight tracking-wide lg:px-12 xl:flex-row xl:text-left",
         ),
         class_name="w-full border-b border-[#d4af37]/20 bg-[var(--brand-petroleum-deep)] text-[#f5f1e8]",
     )
@@ -160,9 +158,9 @@ def header() -> rx.Component:
                     aria_label="Buscar produtos",
                     default_value=StorefrontState.search,
                     on_change=StorefrontState.set_search.debounce(500),
-                    class_name="w-full rounded-sm border border-white/20 bg-white/5 py-2 pr-4 pl-11 text-sm text-[#f5f1e8] placeholder:text-[#c9c9bb] focus:border-[#d4af37] focus:outline-hidden",
+                    class_name="min-w-0 w-full max-w-full rounded-sm border border-white/20 bg-white/5 py-2 pr-4 pl-11 text-sm text-[#f5f1e8] placeholder:text-[#c9c9bb] focus:border-[#d4af37] focus:outline-hidden",
                 ),
-                class_name="relative col-span-3 row-start-2 min-w-0 w-full md:col-span-1 md:col-start-1 md:row-start-1",
+                class_name="relative col-span-3 row-start-2 min-w-0 w-full max-w-full md:col-span-1 md:col-start-1 md:row-start-1",
             ),
             rx.el.div(
                 rx.el.a(

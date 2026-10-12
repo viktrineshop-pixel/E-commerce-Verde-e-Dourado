@@ -252,9 +252,9 @@ def marketplace_content(
                 class_name="mx-auto w-full max-w-[1440px] px-6 pt-4 lg:px-12",
             ),
             catalog(),
-            class_name="w-full bg-[#faf9f4] text-[#073238]",
+            class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#073238]",
         ),
         footer(),
         on_mount=[StorefrontState.load_catalog, CartState.load_cart],
-        class_name="min-h-dvh w-full bg-[#faf9f4] font-['Inter'] text-[#073238]",
+        class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#073238]",
     )

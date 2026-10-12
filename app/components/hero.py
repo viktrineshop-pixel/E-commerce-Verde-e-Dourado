@@ -63,11 +63,11 @@ def whatsapp_slide() -> rx.Component:
             ),
             rx.el.h2(
                 "Acessar o grupo WhatsApp para inscritos",
-                class_name="max-w-[720px] font-['Cormorant_Garamond'] text-[28px] font-medium leading-[1.02] text-[#f5e9c9] sm:text-4xl lg:text-5xl",
+                class_name="w-full max-w-full font-['Cormorant_Garamond'] text-[28px] font-medium leading-[1.02] text-[#f5e9c9] sm:max-w-[720px] sm:text-4xl lg:text-5xl",
             ),
             rx.el.p(
                 "Um espaço para receber novidades, oportunidades e comunicados especiais da VIKTRINE SHOP.",
-                class_name="mt-3 max-w-[620px] text-xs leading-5 text-[#faf9f4] sm:text-sm",
+                class_name="mt-3 w-full max-w-full text-xs leading-5 text-[#faf9f4] sm:max-w-[620px] sm:text-sm",
             ),
             rx.el.div(
                 rx.icon("clock-3", class_name="h-4 w-4"),
@@ -75,9 +75,9 @@ def whatsapp_slide() -> rx.Component:
                     "Link oficial pendente — em breve",
                     class_name="text-xs font-semibold sm:text-sm",
                 ),
-                class_name="mt-4 flex w-fit items-center gap-2 border border-[#d4af37]/70 bg-[#073238]/80 px-3 py-2 text-[#f5e9c9]",
+                class_name="mt-4 flex w-fit max-w-full items-center gap-2 border border-[#d4af37]/70 bg-[#073238]/80 px-3 py-2 text-[#f5e9c9]",
             ),
-            class_name="mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-center overflow-y-auto px-5 py-4 sm:px-8 sm:py-4 lg:px-12",
+            class_name="mx-auto flex h-[315px] max-h-[315px] w-full min-w-0 max-w-full flex-col justify-center overflow-y-auto px-5 py-4 sm:px-8 sm:py-4 lg:px-12",
         ),
         id="vk-slide-1",
         role="group",

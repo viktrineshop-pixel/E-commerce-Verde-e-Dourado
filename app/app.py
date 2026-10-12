@@ -26,11 +26,13 @@ def index() -> rx.Component:
         ),
         header(),
         rx.el.main(
-            hero(), catalog(), class_name="w-full bg-[#faf9f4] text-[#0d231d]"
+            hero(),
+            catalog(),
+            class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
         on_mount=[StorefrontState.load_catalog, CartState.load_cart],
-        class_name="min-h-dvh w-full bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
+        class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
 
@@ -44,11 +46,12 @@ def cart_page() -> rx.Component:
     return rx.el.div(
         header(),
         rx.el.main(
-            cart_content(), class_name="w-full bg-[#faf9f4] text-[#0d231d]"
+            cart_content(),
+            class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
         on_mount=CartState.load_cart,
-        class_name="min-h-dvh w-full bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
+        class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
 
@@ -62,11 +65,12 @@ def account_page() -> rx.Component:
     return rx.el.div(
         header(),
         rx.el.main(
-            account_content(), class_name="w-full bg-[#faf9f4] text-[#0d231d]"
+            account_content(),
+            class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
         on_mount=[AccountState.load_orders, CartState.load_cart],
-        class_name="min-h-dvh w-full bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
+        class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
 
