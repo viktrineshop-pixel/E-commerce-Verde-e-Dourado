@@ -81,6 +81,10 @@ class StorefrontState(rx.State):
             filters.append(
                 Product.compare_at_price_centavos > Product.price_centavos
             )
+        elif self.category == "achados":
+            filters.append(Product.featured == True)
+        elif self.category == "Até R$ 50":
+            filters.append(Product.price_centavos <= 5000)
         elif self.category != "Todos":
             filters.append(Product.category == self.category)
         if self.price_filter == "Até R$ 200":
@@ -166,6 +170,13 @@ class StorefrontState(rx.State):
             "Acessórios",
             "Novidades",
             "Promoções",
+            "achados",
+            "Até R$ 50",
+            "Casa",
+            "Veículos",
+            "Jardinagem",
+            "Eletrodomésticos",
+            "Notebooks",
         ):
             return
         self.category = value
