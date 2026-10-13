@@ -17,24 +17,27 @@ def brand_slide() -> rx.Component:
     return rx.el.article(
         rx.el.div(
             rx.el.p(
-                "VK VIKTRINE SHOP -",
-                class_name="mb-2 text-[10px] font-semibold tracking-[0.2em] text-[#073238] sm:text-xs",
+                "SEU PRÓXIMO ACHADINHO ESTÁ AQUI",
+                class_name="mb-2 font-['Inter'] text-[9px] font-semibold tracking-[0.08em] text-[#073238] sm:text-xs sm:tracking-[0.2em]",
             ),
             rx.el.h1(
-                "MAIS QUE PRODUTOS,",
-                rx.el.br(),
-                "É A SUA VITRENE.",
+                "Descubra o que combina com você.",
                 class_name="max-w-[760px] font-['Cormorant_Garamond'] text-[30px] font-medium leading-[1.02] text-[#073238] sm:text-4xl lg:text-5xl",
             ),
             rx.el.p(
-                "Tudo em um.",
-                class_name="mt-1 font-['Cormorant_Garamond'] text-2xl italic text-[#0B4146] sm:text-3xl",
+                "Produtos, novidades e oportunidades para encontrar o que você procura.",
+                class_name="mt-2 max-w-[680px] font-['Cormorant_Garamond'] text-xl italic leading-tight text-[#0B4146] sm:text-3xl",
             ),
             rx.el.div(
-                hero_cta("Explorar achadinhos"),
+                rx.el.a(
+                    "↓ Explorar achadinhos ↓",
+                    href="/#catalogo",
+                    on_click=StorefrontState.clear_filters,
+                    class_name="mt-4 flex min-h-10 w-fit items-center border border-[#d4af37] bg-[#d4af37] px-4 py-2 font-['Inter'] text-[11px] font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37]",
+                ),
                 class_name="flex w-full justify-center",
             ),
-            class_name="mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-center overflow-y-auto px-5 py-4 sm:px-8 sm:py-4 lg:px-12",
+            class_name="mx-auto flex h-[283.5px] max-h-[283.5px] w-full max-w-[1440px] flex-col justify-start overflow-y-auto px-5 pt-5 pb-3 sm:h-[315px] sm:max-h-[315px] sm:justify-center sm:px-8 sm:py-4 lg:px-12",
         ),
         id="vk-slide-0",
         role="group",
@@ -163,70 +166,52 @@ def slide_dot(index: int) -> rx.Component:
 
 def category_tile(tile: dict[str, str]) -> rx.Component:
     return rx.el.a(
-        rx.el.img(
-            src=tile["photo"],
-            alt=tile["alt"],
-            loading="lazy",
-            draggable=False,
-            class_name="h-20 w-20 rounded-full bg-[#ece5d5] object-cover transition-transform group-hover:scale-105 motion-reduce:transition-none sm:h-24 sm:w-24 lg:h-28 lg:w-28",
+        rx.el.span(
+            tile["monogram"],
+            aria_hidden=True,
+            class_name="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full border border-[#d4af37] bg-[#0B4146] font-['Cormorant_Garamond'] text-2xl font-semibold text-[#d4af37] transition-colors group-hover:bg-[#12545a] motion-reduce:transition-none sm:h-24 sm:w-24 sm:text-3xl lg:h-28 lg:w-28",
         ),
         rx.el.span(
             tile["label"],
-            class_name="mt-3 text-xs font-medium text-[#073238] sm:text-sm",
+            class_name="mt-2 text-center text-xs font-medium text-[#faf9f4] sm:text-sm",
         ),
-        href="/#catalogo",
-        on_click=StorefrontState.choose_home_category(tile["label"]),
-        class_name="group flex shrink-0 snap-start flex-col items-center px-2 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b7846]",
+        href=tile["href"],
+        aria_label=f"Acessar página editorial de {tile['label']}",
+        class_name="group flex min-w-0 flex-col items-center rounded-sm px-1 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37]",
     )
 
 
 def category_strip() -> rx.Component:
     return rx.el.nav(
+        rx.el.h2(
+            "Nossas Recomendações",
+            class_name="text-center font-['Cormorant_Garamond'] text-xl font-medium text-[#d4af37] sm:text-2xl",
+        ),
         rx.el.div(
             rx.foreach(
                 [
                     {
-                        "label": "Camining",
-                        "photo": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=240&q=80",
-                        "alt": "Moda e compras: inspiração para Camining",
+                        "label": "Amazon",
+                        "monogram": "A",
+                        "href": "/lojas/amazon",
                     },
                     {
-                        "label": "Destaques",
-                        "photo": "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=240&q=80",
-                        "alt": "Seleção de roupas em destaque",
+                        "label": "Mercado Livre",
+                        "monogram": "ML",
+                        "href": "/lojas/mercado-livre",
                     },
                     {
-                        "label": "Infantil",
-                        "photo": "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=240&q=80",
-                        "alt": "Bebê: inspiração para moda infantil",
-                    },
-                    {
-                        "label": "Masculino",
-                        "photo": "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=240&q=80",
-                        "alt": "Look de moda masculina",
-                    },
-                    {
-                        "label": "Vestidos",
-                        "photo": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=240&q=80",
-                        "alt": "Vestido em fotografia editorial",
-                    },
-                    {
-                        "label": "Papaya",
-                        "photo": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=240&q=80&crop=faces",
-                        "alt": "Inspiração de moda para Papaya, fotografia ilustrativa",
-                    },
-                    {
-                        "label": "Makeup",
-                        "photo": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=240&q=80",
-                        "alt": "Produtos e acessórios de maquiagem",
+                        "label": "Shopee",
+                        "monogram": "S",
+                        "href": "/lojas/shopee",
                     },
                 ],
                 category_tile,
             ),
-            class_name="mx-auto flex w-full max-w-[1100px] snap-x snap-proximity items-start justify-between gap-4 overflow-x-auto overscroll-x-contain px-6 py-6 sm:gap-6 sm:px-10 lg:py-8",
+            class_name="mt-1 grid w-full grid-cols-3 items-start gap-2 sm:gap-4",
         ),
-        aria_label="Explorar categorias no catálogo demonstrativo",
-        class_name="w-full border-b border-[#d8d7cc] bg-[#faf9f4] text-[#073238]",
+        aria_label="Nossas recomendações de lojas",
+        class_name="w-full bg-[#073238] px-3 py-5 text-[#faf9f4] sm:px-6 sm:py-6",
     )
 
 
