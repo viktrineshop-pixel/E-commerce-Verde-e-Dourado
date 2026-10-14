@@ -9,6 +9,8 @@ from app.states.cart_state import CartState
 from app.components.account import account_content
 from app.states.account_state import AccountState
 from app.pages import marketplaces
+from app.components.admin import admin_content
+from app.states.admin_state import AdminState
 
 
 @rxe.page(
@@ -71,6 +73,25 @@ def account_page() -> rx.Component:
         footer(),
         on_mount=[AccountState.load_orders, CartState.load_cart],
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
+    )
+
+
+@rxe.page(
+    route="/admin",
+    auth=True,
+    title="Administrar produtos | VIKTRINE SHOP",
+    description="Gerencie o catálogo da VIKTRINE SHOP.",
+)
+def admin_page() -> rx.Component:
+    return rx.el.div(
+        header(),
+        rx.el.main(
+            admin_content(),
+            class_name="min-w-0 w-full flex-1 bg-[#faf9f4] text-[#0d231d]",
+        ),
+        footer(),
+        on_mount=AdminState.load_dashboard,
+        class_name="flex min-h-dvh w-full flex-col bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
 

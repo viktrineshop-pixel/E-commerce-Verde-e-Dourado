@@ -1,6 +1,7 @@
 import reflex as rx
 from app.states.storefront_state import StorefrontState
 from app.states.hero_state import HeroState
+from app.states.admin_state import AdminState
 
 
 def category_link(label: str) -> rx.Component:
@@ -173,6 +174,16 @@ def header() -> rx.Component:
                     aria_label="Minha conta",
                     class_name="flex items-center gap-2 text-sm text-[#f5f1e8] hover:text-[#d4af37]",
                 ),
+                rx.cond(
+                    AdminState.can_manage,
+                    rx.el.a(
+                        rx.icon("package", class_name="h-5 w-5 text-[#d4af37]"),
+                        rx.el.span("Admin", class_name="hidden lg:inline"),
+                        href="/admin",
+                        aria_label="Administrar produtos",
+                        class_name="flex min-h-9 items-center gap-2 text-sm text-[#f5f1e8] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                    ),
+                ),
                 rx.el.a(
                     rx.icon("gift", class_name="h-5 w-5 text-[#d4af37]"),
                     rx.el.span("Sorteio", class_name="hidden lg:inline"),
@@ -249,5 +260,6 @@ def header() -> rx.Component:
                 aria_label="Menu móvel",
             ),
         ),
+        on_mount=AdminState.load_role,
         class_name="relative z-20 w-full bg-[var(--brand-petroleum)] text-[#f5f1e8]",
     )

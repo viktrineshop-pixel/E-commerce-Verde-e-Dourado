@@ -4,7 +4,6 @@ import logging
 from typing import TypedDict
 from sqlalchemy import select, func, or_
 from app.models import Product
-from app.catalog_seed import seed_catalog
 
 
 class ProductView(TypedDict):
@@ -41,15 +40,6 @@ class StorefrontState(rx.State):
         self.loading = True
         self.error = ""
         yield
-        try:
-            await seed_catalog()
-        except Exception as e:
-            logging.exception(f"Error: {e}")
-            self.loading = False
-            self.error = (
-                "Não foi possível carregar o catálogo. Tente novamente."
-            )
-            return
         yield StorefrontState.refresh_products
 
     @rxe.event(auth=False)

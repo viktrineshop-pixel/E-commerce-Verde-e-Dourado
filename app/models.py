@@ -8,6 +8,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     MetaData,
     String,
     Text,
@@ -32,6 +33,47 @@ class Base(MappedAsDataclass, DeclarativeBase, kw_only=True):
             "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
             "pk": "pk_%(table_name)s",
         }
+    )
+
+
+class StoreMember(Base):
+    __tablename__ = "store_members"
+    __table_args__ = (
+        UniqueConstraint("subject", name="uq_store_members_subject"),
+        UniqueConstraint("admin_slot", name="uq_store_members_admin_slot"),
+        CheckConstraint("length(trim(subject)) > 0", name="subject_required"),
+        CheckConstraint("role IN ('admin', 'member')", name="role_valid"),
+        CheckConstraint(
+            "(role = 'admin' AND admin_slot IS NOT NULL AND admin_slot = 1) "
+            "OR (role = 'member' AND admin_slot IS NULL)",
+            name="admin_slot_matches_role",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)
+    subject: Mapped[str] = mapped_column(
+        String(255), nullable=False, default="", server_default=""
+    )
+    role: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="member", server_default="member"
+    )
+    admin_slot: Mapped[int | None] = mapped_column(
+        Integer, nullable=True, default=None
+    )
+    email: Mapped[str | None] = mapped_column(
+        String(320), nullable=True, default=None
+    )
+    name: Mapped[str | None] = mapped_column(
+        String(250), nullable=True, default=None
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), init=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        init=False,
     )
 
 
