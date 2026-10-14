@@ -3,13 +3,14 @@ import reflex_enterprise as rxe
 import logging
 import re
 from decimal import Decimal
-from typing import TypedDict
+from typing import Any, TypedDict
 from urllib.parse import urlsplit, unquote
 from uuid import uuid4
 from sqlalchemy import select, func, text
 from reflex_enterprise.auth import User
 from app.models import Product, StoreMember
 from app.states.authorization import is_admin
+from app.affiliate import PARTNER_ROUTES, safe_affiliate_url
 
 
 def parse_brl(value: str) -> int:
@@ -65,6 +66,8 @@ def empty_draft() -> dict[str, str]:
         "compare_price": "",
         "stock": "0",
         "badge": "",
+        "partner_name": "Amazon",
+        "affiliate_url": "",
     }
 
 
@@ -76,6 +79,7 @@ class AdminProduct(TypedDict):
     image_url: str
     price: str
     stock: int
+    partner_name: str
 
 
 class AdminState(rx.State):
@@ -207,6 +211,7 @@ class AdminState(rx.State):
                         else "/placeholder.svg",
                         price=f"R$ {self._amount(p.price_centavos)}",
                         stock=p.stock,
+                        partner_name=p.partner_name,
                     )
                     for p in rows
                 ]
@@ -275,6 +280,8 @@ class AdminState(rx.State):
                     else "",
                     "stock": str(p.stock),
                     "badge": p.badge,
+                    "partner_name": p.partner_name,
+                    "affiliate_url": p.affiliate_url,
                 }
             return rx.call_script(
                 "document.getElementById('product-editor')?.scrollIntoView({behavior:'smooth', block:'start'}); document.getElementById('admin-title')?.focus({preventScroll:true});"
@@ -300,6 +307,15 @@ class AdminState(rx.State):
                 self.errors[field] = "Preencha este campo."
             elif len(self.draft[field]) > limit:
                 self.errors[field] = f"Use até {limit} caracteres."
+        if self.draft["partner_name"] not in PARTNER_ROUTES:
+            self.errors["partner_name"] = (
+                "Escolha Amazon, Mercado Livre ou Shopee."
+            )
+        affiliate_url = self.draft["affiliate_url"]
+        if affiliate_url and not safe_affiliate_url(affiliate_url):
+            self.errors["affiliate_url"] = (
+                "Use uma URL absoluta https:// segura, sem credenciais, espaços ou caracteres de controle, com até 2048 caracteres. Ou deixe em branco."
+            )
         if not safe_image_url(self.draft["image_url"]):
             self.errors["image_url"] = (
                 "Use https:// ou um caminho local seguro iniciado por / (sem uploads temporários)."
@@ -335,9 +351,12 @@ class AdminState(rx.State):
         return price, compare, stock
 
     @rxe.event(auth=is_admin)
-    async def save_product(self):
+    async def save_product(self, fields: dict[str, Any]):
         if self.busy:
             return
+        for field in self.draft:
+            if field in fields and isinstance(fields[field], str):
+                self.draft[field] = fields[field][:10001]
         self.notice = ""
         self.error = ""
         price, compare, stock = self._validate()
@@ -367,6 +386,8 @@ class AdminState(rx.State):
                         "category",
                         "image_url",
                         "badge",
+                        "partner_name",
+                        "affiliate_url",
                     ):
                         setattr(p, field, self.draft[field])
                     p.price_centavos = price

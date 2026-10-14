@@ -86,12 +86,22 @@ class Product(Base):
             name="compare_at_not_below_price",
         ),
         CheckConstraint("stock >= 0", name="stock_nonnegative"),
+        CheckConstraint(
+            "partner_name IN ('Amazon', 'Mercado Livre', 'Shopee')",
+            name="partner_name_valid",
+        ),
         Index("ix_products_category_featured", "category", "featured"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, init=False)
     # SKU is a stable catalog identifier, never derived from the editable title.
     sku: Mapped[str] = mapped_column(String(100), unique=True, default="")
+    partner_name: Mapped[str] = mapped_column(
+        String(120), nullable=False, default="Amazon", server_default="Amazon"
+    )
+    affiliate_url: Mapped[str] = mapped_column(
+        Text, nullable=False, default="", server_default=""
+    )
     title: Mapped[str] = mapped_column(
         String(250), default="", server_default=""
     )

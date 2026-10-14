@@ -4,6 +4,7 @@ import logging
 from typing import TypedDict
 from sqlalchemy import select, func, or_
 from app.models import Product
+from app.affiliate import effective_destination
 
 
 class ProductView(TypedDict):
@@ -16,6 +17,8 @@ class ProductView(TypedDict):
     compare_price: str
     badge: str
     stock: int
+    partner_name: str
+    destination_url: str
 
 
 class StorefrontState(rx.State):
@@ -125,6 +128,10 @@ class StorefrontState(rx.State):
                         else "",
                         badge=p.badge,
                         stock=p.stock,
+                        partner_name=p.partner_name,
+                        destination_url=effective_destination(
+                            p.partner_name, p.affiliate_url
+                        ),
                     )
                     for p in rows
                 ]

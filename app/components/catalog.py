@@ -1,6 +1,5 @@
 import reflex as rx
 from app.states.storefront_state import StorefrontState, ProductView
-from app.states.cart_state import CartState
 
 
 def category_pill(label: str) -> rx.Component:
@@ -69,7 +68,7 @@ def product_card(product: ProductView) -> rx.Component:
         rx.el.div(
             rx.el.p(
                 product["category"],
-                class_name="mb-2 text-[10px] uppercase tracking-[0.16em] text-[#738077]",
+                class_name="mb-2 text-[10px] uppercase tracking-[0.16em] text-[#d4af37]",
             ),
             rx.el.h3(
                 product["title"],
@@ -91,7 +90,7 @@ def product_card(product: ProductView) -> rx.Component:
             ),
             rx.el.details(
                 rx.el.summary(
-                    "Sobre a peça",
+                    product["partner_name"],
                     rx.icon("plus", class_name="h-3 w-3"),
                     class_name="mt-4 flex cursor-pointer list-none items-center justify-between border-t border-[#deded3] pt-3 text-[11px] text-[#536059] hover:text-[#0d231d]",
                 ),
@@ -100,18 +99,19 @@ def product_card(product: ProductView) -> rx.Component:
                     class_name="pt-3 text-xs leading-relaxed text-[#536059]",
                 ),
             ),
-            rx.el.button(
-                rx.icon("shopping-bag", class_name="h-4 w-4 shrink-0"),
-                rx.cond(
-                    product["stock"] > 0, "Adicionar à sacola", "Indisponível"
+            rx.el.a(
+                rx.el.span(
+                    rx.icon(
+                        "shopping-bag",
+                        aria_hidden=True,
+                        class_name="h-4 w-4 fill-[#d4af37] stroke-[#073238]",
+                    ),
+                    class_name="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-[#073238]",
                 ),
-                type="button",
-                on_click=CartState.add_product(product["id"]),
-                disabled=(product["stock"] <= 0)
-                | CartState.busy
-                | CartState.submitting,
-                aria_label=f"Adicionar {product['title']} à sacola",
-                class_name="mt-4 flex min-h-11 w-full items-center justify-center gap-2 border border-[#0d231d] bg-[#0d231d] px-2 py-3 text-[11px] font-medium text-[#f5f1e8] hover:bg-[#05120e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b7846] disabled:cursor-not-allowed disabled:opacity-40 sm:text-xs",
+                "Ir para a loja",
+                href=product["destination_url"],
+                aria_label=f"Ir para a loja {product['partner_name']}: {product['title']}",
+                class_name="mt-4 flex min-h-11 w-full items-center justify-center gap-2 border border-[#d4af37] bg-[#d4af37] px-2 py-3 text-[11px] font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#073238] sm:text-xs",
             ),
             class_name="px-1 pb-3 pt-5",
         ),

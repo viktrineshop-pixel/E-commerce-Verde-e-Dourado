@@ -210,6 +210,7 @@ def category_strip() -> rx.Component:
             ),
             class_name="mt-1 grid w-full grid-cols-3 items-start gap-2 sm:gap-4",
         ),
+        id="lojas-parceiras",
         aria_label="Nossas recomendações de lojas",
         class_name="w-full bg-[#073238] px-3 py-5 text-[#faf9f4] sm:px-6 sm:py-6",
     )
@@ -291,39 +292,91 @@ def hero() -> rx.Component:
     )
 
 
+def footer_story(title: str, paragraphs: list[str]) -> rx.Component:
+    return rx.el.section(
+        rx.el.h2(
+            title,
+            class_name="font-['Cormorant_Garamond'] text-3xl font-semibold text-[#d4af37]",
+        ),
+        rx.foreach(
+            paragraphs,
+            lambda paragraph: rx.el.p(
+                paragraph, class_name="mt-4 text-sm leading-7 text-[#f5f1e8]/85"
+            ),
+        ),
+        class_name="min-w-0 border-t border-[#d4af37]/25 pt-5",
+    )
+
+
 def footer() -> rx.Component:
     return rx.el.footer(
         rx.el.div(
             rx.el.div(
                 rx.el.a(
-                    "VIKTRINE SHOP",
+                    rx.el.span("VIKTRINE", class_name="block"),
+                    rx.el.span("SHOP", class_name="block"),
                     href="/",
-                    class_name="font-['Cormorant_Garamond'] text-3xl font-semibold tracking-[0.12em] text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
-                ),
-                rx.el.p(
-                    "Seu estilo começa nos detalhes.",
-                    class_name="mt-3 text-xs text-[#b2bdaf]",
+                    aria_label="VIKTRINE SHOP · Início",
+                    class_name="inline-block font-['Cormorant_Garamond'] text-5xl font-bold leading-[0.95] tracking-[0.12em] text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:text-6xl",
                 ),
             ),
             rx.el.nav(
                 rx.el.a(
-                    "Explorar a coleção",
+                    "Ver Achadinhos",
                     href="/#catalogo",
                     class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37]",
                 ),
                 rx.el.a(
-                    "Minha conta",
-                    href="/minha-conta",
-                    class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37]",
+                    "Lojas Parceiras",
+                    href="/#lojas-parceiras",
+                    class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
                 rx.el.a(
-                    "Sacola",
-                    href="/carrinho",
-                    class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37]",
+                    "Minha conta",
+                    href="/minha-conta",
+                    class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
                 class_name="flex flex-wrap gap-6",
             ),
             class_name="flex flex-col justify-between gap-8 md:flex-row md:items-center",
+        ),
+        rx.el.div(
+            footer_story(
+                "Origem",
+                [
+                    "A VIKTRINE SHOP nasceu da união de pessoas de origem humilde que, mesmo diante das dificuldades, encontraram na educação uma oportunidade para construir um futuro melhor.",
+                ],
+            ),
+            footer_story(
+                "Nossa História",
+                [
+                    "Ao longo dessa trajetória, conseguimos chegar à faculdade e transformar tudo o que aprendemos em conhecimento, experiência e vontade de criar algo que pudesse fazer a diferença na vida das pessoas.",
+                    "Foi assim que surgiu a VIKTRINE SHOP: como um projeto criado para facilitar a vida, encontrar boas oportunidades e compartilhar achadinhos que realmente valem a pena.",
+                ],
+            ),
+            footer_story(
+                "Nosso Propósito",
+                [
+                    "Mais do que uma loja, somos uma vitrine de descobertas. Buscamos produtos, oportunidades e novidades para ajudar você a encontrar aquilo que procura e economizar no caminho.",
+                ],
+            ),
+            footer_story(
+                "A Alma do Negócio",
+                [
+                    "Nosso atendimento e nossa alegria são a alma da VIKTRINE SHOP. Queremos que cada pessoa se sinta bem aqui, descubra algo interessante e possa compartilhar esses achadinhos com sua família e com quem ama.",
+                ],
+            ),
+            footer_story(
+                "O Futuro",
+                [
+                    "Temos planos de fazer esse projeto crescer e, no futuro, transformar essa conquista em novas oportunidades para outras pessoas, incluindo ações com instituições de caridade e iniciativas voltadas à educação.",
+                ],
+            ),
+            class_name="mt-12 grid w-full grid-cols-1 items-start gap-x-10 gap-y-9 md:grid-cols-2 lg:grid-cols-3",
+        ),
+        rx.el.p(
+            "A VIKTRINE SHOP nasceu de uma origem simples, cresceu através da educação e continua avançando com um propósito: facilitar a vida das pessoas, compartilhar oportunidades e construir algo que possa fazer o bem. Cada clique seu aqui apoia esse sonho a continuar de pé. Obrigado por fazer parte da nossa história!",
+            class_name="mt-10 border-t border-[#d4af37]/25 pt-8 font-['Cormorant_Garamond'] text-2xl leading-relaxed text-[#faf9f4] md:text-3xl",
         ),
         rx.el.p(
             "VIKTRINE SHOP · Vitrine demonstrativa de moda e acessórios. Fotos ilustrativas de Unsplash.",

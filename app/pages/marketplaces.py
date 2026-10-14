@@ -47,7 +47,7 @@ def amazon_page() -> rx.Component:
             },
             {
                 "title": "Leia os detalhes da peça",
-                "body": "Abra “Sobre a peça” nos cards para conhecer a proposta do produto. Fotos, valores e disponibilidade são demonstrativos, não ofertas do marketplace.",
+                "body": "Abra o nome da loja parceira nos cards para conhecer a descrição do produto. Use “Ir para a loja” para acessar o link HTTPS cadastrado ou, quando não houver um link válido, a página interna da loja.",
             },
         ],
     )
@@ -131,7 +131,7 @@ def mercado_livre_page() -> rx.Component:
                 "number": "03",
                 "category": "Feminino",
                 "title": "Camadas para a rotina",
-                "body": "Tricô, denim e vestidos leves sugerem combinações para diferentes momentos. Confira os detalhes e a disponibilidade demonstrativa antes de adicionar à sacola.",
+                "body": "Tricô, denim e vestidos leves sugerem combinações para diferentes momentos. Confira os detalhes e a disponibilidade demonstrativa antes de usar “Ir para a loja”.",
             },
         ],
         guide_title="Escolha pela rotina que você tem.",
@@ -146,8 +146,8 @@ def mercado_livre_page() -> rx.Component:
                 "body": "Abra os detalhes dos cards e use o filtro “Somente disponíveis”. A disponibilidade exibida pertence ao catálogo demo, não ao Mercado Livre.",
             },
             {
-                "title": "Entenda o fluxo demonstrativo",
-                "body": "Adicionar à sacola mantém você na VIKTRINE SHOP. O pedido é uma demonstração sem cobrança nem entrega; não existe compra ou envio ao marketplace.",
+                "title": "Entenda o destino de cada produto",
+                "body": "“Ir para a loja” abre o link HTTPS cadastrado para o produto. Sem um link válido, abre a página interna da loja parceira. A sacola e o checkout legado são separados desses links e continuam demonstrativos, sem cobrança nem entrega.",
             },
         ],
     )

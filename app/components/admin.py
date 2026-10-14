@@ -11,15 +11,15 @@ def admin_field(field: str, label: str, placeholder: str = "") -> rx.Component:
         ),
         rx.el.input(
             id=f"admin-{field}",
-            default_value=AdminState.draft[field],
             on_change=lambda value: AdminState.set_field(field, value).debounce(
-                300
+                500
             ),
             placeholder=placeholder,
             disabled=AdminState.busy,
             aria_invalid=AdminState.errors.get(field, "") != "",
             aria_describedby=f"error-{field}",
             class_name="min-h-11 w-full rounded-sm border border-[#d8d7cc] bg-[#faf9f4] px-3 py-2 text-sm text-[#0d231d] placeholder:text-[#7b827a] focus:border-[#073238] focus:outline-2 focus:outline-[#d4af37] disabled:opacity-50",
+            default_value=AdminState.draft[field],
         ),
         rx.el.p(
             AdminState.errors.get(field, ""),
@@ -88,6 +88,52 @@ def product_editor() -> rx.Component:
                 ),
                 class_name="flex flex-wrap gap-2",
             ),
+            rx.el.div(
+                rx.el.label(
+                    "Loja parceira *",
+                    html_for="admin-partner_name",
+                    class_name="mb-2 block text-xs font-medium text-[#0d231d]",
+                ),
+                rx.el.div(
+                    rx.el.select(
+                        rx.foreach(
+                            ["Amazon", "Mercado Livre", "Shopee"],
+                            lambda partner: rx.el.option(
+                                partner, value=partner
+                            ),
+                        ),
+                        id="admin-partner_name",
+                        value=AdminState.draft["partner_name"],
+                        on_change=lambda value: AdminState.set_field(
+                            "partner_name", value
+                        ),
+                        disabled=AdminState.busy,
+                        aria_invalid=AdminState.errors.get("partner_name", "")
+                        != "",
+                        aria_describedby="error-partner_name",
+                        class_name="min-h-11 w-full appearance-none rounded-sm border border-[#d8d7cc] bg-[#faf9f4] px-3 py-2 pr-10 text-sm text-[#0d231d] focus:outline-2 focus:outline-[#d4af37] disabled:opacity-50",
+                    ),
+                    rx.icon(
+                        "chevron-down",
+                        aria_hidden=True,
+                        class_name="pointer-events-none absolute right-3 top-3.5 h-4 w-4 text-[#073238]",
+                    ),
+                    class_name="relative w-full",
+                ),
+                rx.el.p(
+                    AdminState.errors.get("partner_name", ""),
+                    id="error-partner_name",
+                    class_name="mt-1 text-xs text-red-600",
+                ),
+                class_name="w-full",
+            ),
+            admin_field(
+                "affiliate_url", "URL de afiliado HTTPS (opcional)", "https://…"
+            ),
+            rx.el.p(
+                "Deixe em branco para abrir a página interna da loja selecionada. Nenhum link externo é criado automaticamente.",
+                class_name="text-xs leading-5 text-[#687268]",
+            ),
             admin_field(
                 "image_url",
                 "URL de imagem permanente *",
@@ -139,7 +185,10 @@ def product_editor() -> rx.Component:
                 rx.icon("save", class_name="h-4 w-4"),
                 rx.cond(AdminState.busy, "Processando…", "Salvar produto"),
                 type="button",
-                on_click=AdminState.save_product,
+                on_click=rx.call_script(
+                    "Object.fromEntries(Array.from(document.querySelectorAll('#product-editor input, #product-editor select')).map(el => [el.id.replace('admin-', ''), el.value]))",
+                    callback=AdminState.save_product,
+                ),
                 disabled=AdminState.busy,
                 class_name="flex min-h-12 w-full items-center justify-center gap-2 rounded-sm bg-[#073238] px-5 py-3 text-sm font-medium text-[#faf9f4] hover:bg-[#0d231d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] disabled:opacity-50",
             ),
@@ -168,7 +217,8 @@ def admin_product_row(product: AdminProduct) -> rx.Component:
                 class_name="break-words text-sm font-medium text-[#0d231d]",
             ),
             rx.el.p(
-                product["category"], class_name="mt-1 text-xs text-[#687268]"
+                f"{product['category']} · {product['partner_name']}",
+                class_name="mt-1 text-xs text-[#687268]",
             ),
             rx.el.p(
                 product["sku"],

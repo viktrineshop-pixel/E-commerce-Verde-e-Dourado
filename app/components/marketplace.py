@@ -223,7 +223,7 @@ def marketplace_content(
                         class_name="mt-0.5 h-4 w-4 shrink-0 text-[#8b7846]",
                     ),
                     rx.el.p(
-                        f"Links e anúncios do {name} ainda não foram configurados. As categorias e os produtos abaixo pertencem apenas ao catálogo demonstrativo da VIKTRINE SHOP; a sacola não envia pedidos ao marketplace.",
+                        f"Este espaço editorial é dedicado a {name}. Nos produtos, “Ir para a loja” acessa o link HTTPS cadastrado ou a página interna da loja parceira quando não há link válido. Confira preços e condições no destino; o checkout demonstrativo da VIKTRINE SHOP permanece separado.",
                         class_name="text-xs leading-6 text-[#536059]",
                     ),
                     class_name="mb-12 flex gap-3 border border-[#ded9cb] bg-[#f0ece1] px-5 py-4",
