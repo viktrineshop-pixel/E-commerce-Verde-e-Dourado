@@ -1,5 +1,33 @@
 import reflex as rx
+import json
 from app.states.admin_state import AdminState, AdminProduct
+
+
+_CATEGORY_SUGGESTIONS = [
+    rx.el.button(
+        label,
+        type="button",
+        on_click=[
+            AdminState.set_field("category", label),
+            rx.call_script(
+                f"(() => {{ const input = document.getElementById('admin-category'); if (input) {{ input.value = {json.dumps(label)}; }} }})()"
+            ),
+        ],
+        disabled=AdminState.busy,
+        key=label,
+        class_name="min-h-9 w-fit rounded-full border border-[#d8d7cc] bg-[#faf9f4] px-3 py-1 text-[11px] text-[#073238] hover:border-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] disabled:opacity-50",
+    )
+    for label in (
+        "Feminino",
+        "Masculino",
+        "Acessórios",
+        "Casa",
+        "Veículos",
+        "Jardinagem",
+        "Eletrodomésticos",
+        "Notebooks",
+    )
+]
 
 
 def admin_field(field: str, label: str, placeholder: str = "") -> rx.Component:
@@ -11,9 +39,7 @@ def admin_field(field: str, label: str, placeholder: str = "") -> rx.Component:
         ),
         rx.el.input(
             id=f"admin-{field}",
-            on_change=lambda value: AdminState.set_field(field, value).debounce(
-                500
-            ),
+            on_change=lambda value: AdminState.set_field(field, value),
             placeholder=placeholder,
             disabled=AdminState.busy,
             aria_invalid=AdminState.errors.get(field, "") != "",
@@ -67,25 +93,7 @@ def product_editor() -> rx.Component:
                 "Escolha uma sugestão abaixo ou digite uma categoria",
             ),
             rx.el.div(
-                rx.foreach(
-                    [
-                        "Feminino",
-                        "Masculino",
-                        "Acessórios",
-                        "Casa",
-                        "Veículos",
-                        "Jardinagem",
-                        "Eletrodomésticos",
-                        "Notebooks",
-                    ],
-                    lambda category: rx.el.button(
-                        category,
-                        type="button",
-                        on_click=AdminState.set_field("category", category),
-                        disabled=AdminState.busy,
-                        class_name="min-h-9 w-fit rounded-full border border-[#d8d7cc] bg-[#faf9f4] px-3 py-1 text-[11px] text-[#073238] hover:border-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] disabled:opacity-50",
-                    ),
-                ),
+                *_CATEGORY_SUGGESTIONS,
                 class_name="flex flex-wrap gap-2",
             ),
             rx.el.div(
@@ -199,6 +207,7 @@ def product_editor() -> rx.Component:
             class_name="mt-6 flex flex-col gap-5",
         ),
         id="product-editor",
+        key=AdminState.sku,
         class_name="min-w-0 scroll-mt-6 rounded-sm border border-[#deded3] bg-white p-5 md:p-7",
     )
 
