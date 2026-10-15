@@ -325,10 +325,6 @@ def catalog() -> rx.Component:
                 class_name="mt-10 flex items-center justify-center gap-5",
             ),
         ),
-        rx.el.p(
-            "Catálogo gerenciado pela administração da VIKTRINE SHOP, com possíveis itens demonstrativos mantidos para edição. O checkout é uma demonstração: não há cobrança de pagamentos nem realização de entregas.",
-            class_name="mt-10 border-t border-[#deded3] pt-5 text-[11px] leading-relaxed text-[#7b827a]",
-        ),
         id="catalogo",
         class_name="mx-auto w-full max-w-[1440px] scroll-mt-6 px-6 py-16 lg:px-12 lg:py-20",
     )

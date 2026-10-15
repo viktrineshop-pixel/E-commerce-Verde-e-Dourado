@@ -1,7 +1,7 @@
 import reflex as rx
 import reflex_enterprise as rxe
 from app.components.header import header
-from app.components.hero import hero, footer
+from app.components.hero import hero, history_section, footer
 from app.components.catalog import catalog
 from app.states.storefront_state import StorefrontState
 from app.components.cart import cart_content
@@ -30,6 +30,7 @@ def index() -> rx.Component:
         rx.el.main(
             hero(),
             catalog(),
+            history_section(),
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
