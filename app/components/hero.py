@@ -9,7 +9,7 @@ def hero_cta(label: str = "Explorar a coleção") -> rx.Component:
         rx.icon("arrow-up-right", class_name="h-4 w-4"),
         href="/#catalogo",
         on_click=StorefrontState.clear_filters,
-        class_name="mt-4 flex min-h-10 w-fit items-center gap-3 border border-[#d4af37] bg-[#d4af37] px-4 py-2 text-[11px] font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37]",
+        class_name="mt-2 flex min-h-10 w-fit items-center gap-3 self-center border border-[#d4af37] bg-[#d4af37] px-4 py-2 text-[11px] font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37] sm:mt-4 sm:self-start",
     )
 
 
@@ -99,43 +99,61 @@ def whatsapp_slide() -> rx.Component:
 def promotion_slide() -> rx.Component:
     return rx.el.article(
         rx.el.div(
+            rx.icon(
+                "gift",
+                aria_hidden=True,
+                class_name="absolute left-[5%] top-[12%] h-12 w-12 text-[#d4af37]/10 sm:h-16 sm:w-16",
+            ),
+            rx.icon(
+                "party-popper",
+                aria_hidden=True,
+                class_name="absolute right-[7%] top-[10%] h-10 w-10 rotate-12 text-[#d4af37]/10 sm:h-14 sm:w-14",
+            ),
+            rx.icon(
+                "sparkles",
+                aria_hidden=True,
+                class_name="absolute bottom-[12%] right-[17%] h-9 w-9 text-[#d4af37]/10 sm:h-12 sm:w-12",
+            ),
+            rx.icon(
+                "sparkles",
+                aria_hidden=True,
+                class_name="absolute bottom-[12%] left-[16%] h-8 w-8 -rotate-12 text-[#d4af37]/10 sm:h-10 sm:w-10",
+            ),
+            aria_hidden=True,
+            class_name="pointer-events-none absolute inset-0 overflow-hidden",
+        ),
+        rx.el.div(
             rx.el.div(
-                rx.icon("gift", class_name="h-5 w-5 text-[#d4af37]"),
+                rx.icon(
+                    "gift", class_name="h-4 w-4 text-[#d4af37] sm:h-5 sm:w-5"
+                ),
                 rx.el.span(
                     "UM CARINHO A MAIS PARA VOCÊ",
-                    class_name="text-[9px] tracking-[0.14em] text-[#e7d49a] sm:text-[10px]",
+                    class_name="text-[8px] tracking-[0.12em] text-[#e7d49a] sm:text-[10px] sm:tracking-[0.14em]",
                 ),
-                class_name="mb-2 flex items-center gap-2",
+                class_name="mb-1 flex items-center justify-center gap-2 sm:mb-2",
             ),
             rx.el.h2(
-                "SORTEIO MENSAL NO PIX!",
-                class_name="max-w-[800px] font-['Cormorant_Garamond'] text-[28px] font-medium leading-[1.02] text-[#f5e9c9] sm:text-4xl lg:text-5xl",
+                "SORTEIO MENSAL: GANHE UM PRESENTE OU O VALOR NO PIX!",
+                class_name="mx-auto max-w-[800px] text-center font-['Cormorant_Garamond'] text-[22px] font-medium leading-[0.98] text-[#f5e9c9] min-[380px]:text-2xl sm:text-left sm:text-4xl sm:leading-[1.02] lg:text-5xl",
             ),
             rx.el.p(
-                "Mensalmente ocorre um sorteio onde é escolhida a compra de uma pessoa que terá 20% do valor da compra devolvido no PIX!",
-                class_name="mt-2 max-w-[650px] text-xs leading-[1.15rem] text-[#faf9f4] sm:text-sm sm:leading-5",
-            ),
-            rx.el.p(
-                "Regra essencial: O cliente precisa seguir a VIKTRINE em todas as redes sociais há mais de um mês para validar o prêmio.",
-                class_name="mt-2 max-w-[650px] border-l-2 border-[#d4af37] bg-[#073238]/85 py-2 pl-3 pr-3 text-[10px] leading-[1.05rem] text-[#f5e9c9] sm:text-xs sm:leading-5",
-            ),
-            rx.el.p(
-                "A lista mensal será publicada aqui quando estiver disponível. Aguardem a divulgação oficial.",
-                class_name="mt-2 w-fit border border-[#d4af37]/70 bg-[#073238]/85 px-3 py-2 text-[10px] font-semibold leading-4 text-[#f5e9c9] sm:text-xs",
+                "Mensalmente ocorre um sorteio especial onde você pode ganhar um presente surpresa exclusivo direto na sua casa com frete grátis, ou se preferir, escolher receber o valor equivalente do prêmio direto em sua conta via PIX",
+                class_name="mx-auto mt-2 max-w-[650px] text-center text-[11px] leading-[1.05rem] text-[#faf9f4] min-[380px]:text-xs sm:mx-0 sm:mt-3 sm:text-left sm:text-sm sm:leading-5",
             ),
             hero_cta(),
-            class_name="mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-start overflow-y-auto px-5 pt-3 pb-5 sm:px-8 sm:pt-3 sm:pb-5 lg:px-12",
+            class_name="relative z-10 mx-auto flex h-[315px] max-h-[315px] w-full max-w-[1440px] flex-col justify-center overflow-y-auto px-4 py-2 sm:items-start sm:px-8 sm:py-4 lg:px-12",
         ),
         id="vk-slide-2",
         role="group",
         aria_roledescription="slide",
-        aria_label="3 de 3: Sorteio mensal no PIX; lista pendente de publicação",
+        aria_label="3 de 3: Sorteio mensal, ganhe um presente ou o valor no PIX",
         aria_hidden=HeroState.active_slide != 2,
         inert=HeroState.active_slide != 2,
         class_name=rx.cond(
             HeroState.active_slide == 2,
-            "vk-promotion-banner col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
-            "vk-promotion-banner invisible col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-0 transition-opacity duration-300 motion-reduce:transition-none",
+            "vk-promotion-banner relative isolate col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-100 transition-opacity duration-300 motion-reduce:transition-none",
+            "vk-promotion-banner relative isolate invisible col-start-1 row-start-1 h-[315px] max-h-[315px] w-full opacity-0 transition-opacity duration-300 motion-reduce:transition-none",
         ),
     )
 
@@ -145,8 +163,8 @@ def slide_dot(index: int) -> rx.Component:
         rx.el.span(
             class_name=rx.cond(
                 HeroState.active_slide == index,
-                "h-2 w-7 rounded-full bg-[#d4af37] transition-all motion-reduce:transition-none",
-                "h-2 w-2 rounded-full bg-[#faf9f4]/50 transition-all motion-reduce:transition-none",
+                "h-[6.4px] w-[22.4px] rounded-full bg-[#d4af37] transition-all motion-reduce:transition-none sm:h-2 sm:w-7",
+                "h-[6.4px] w-[6.4px] rounded-full bg-[#faf9f4]/50 transition-all motion-reduce:transition-none sm:h-2 sm:w-2",
             )
         ),
         id=f"vk-slide-dot-{index}",
@@ -160,7 +178,7 @@ def slide_dot(index: int) -> rx.Component:
             ),
             HeroState.select_slide(index),
         ],
-        class_name="flex h-11 min-w-11 items-center justify-center bg-transparent text-[#faf9f4] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+        class_name="flex h-[35.2px] min-w-[35.2px] items-center justify-center bg-transparent text-[#faf9f4] focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:h-11 sm:min-w-11",
     )
 
 
@@ -335,7 +353,7 @@ def hero() -> rx.Component:
             ),
             rx.el.div(
                 rx.el.button(
-                    rx.icon("chevron-left", class_name="h-5 w-5"),
+                    rx.icon("chevron-left", class_name="h-4 w-4 sm:h-5 sm:w-5"),
                     id="vk-slide-previous",
                     type="button",
                     aria_label="Banner anterior",
@@ -346,14 +364,16 @@ def hero() -> rx.Component:
                         ),
                         HeroState.previous_slide,
                     ],
-                    class_name="flex h-11 w-11 items-center justify-center rounded-full border border-[#d4af37]/50 bg-transparent text-[#faf9f4] hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                    class_name="flex h-[35.2px] w-[35.2px] items-center justify-center rounded-full border border-[#d4af37]/50 bg-transparent text-[#faf9f4] hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:h-11 sm:w-11",
                 ),
                 rx.el.div(
                     rx.foreach([0, 1, 2], slide_dot),
                     class_name="flex items-center gap-1",
                 ),
                 rx.el.button(
-                    rx.icon("chevron-right", class_name="h-5 w-5"),
+                    rx.icon(
+                        "chevron-right", class_name="h-4 w-4 sm:h-5 sm:w-5"
+                    ),
                     id="vk-slide-next",
                     type="button",
                     aria_label="Próximo banner",
@@ -364,13 +384,13 @@ def hero() -> rx.Component:
                         ),
                         HeroState.next_slide,
                     ],
-                    class_name="flex h-11 w-11 items-center justify-center rounded-full border border-[#d4af37]/50 bg-transparent text-[#faf9f4] hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                    class_name="flex h-[35.2px] w-[35.2px] items-center justify-center rounded-full border border-[#d4af37]/50 bg-transparent text-[#faf9f4] hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:h-11 sm:w-11",
                 ),
                 rx.el.span(
                     "Arraste ou use as setas",
                     class_name="ml-4 hidden text-[10px] tracking-wide text-[#faf9f4]/70 sm:inline",
                 ),
-                class_name="flex items-center justify-center gap-5 border-t border-[#d4af37]/20 bg-[#073238] px-6 py-3 text-[#faf9f4]",
+                class_name="flex items-center justify-center gap-5 border-t border-[#d4af37]/20 bg-[#073238] px-6 py-[6px] text-[#faf9f4] sm:py-3",
             ),
             rx.el.p(
                 rx.cond(
@@ -379,7 +399,7 @@ def hero() -> rx.Component:
                     rx.cond(
                         HeroState.active_slide == 1,
                         "Banner 2 de 3: Grupo WhatsApp para inscritos, link em breve",
-                        "Banner 3 de 3: Sorteio mensal no PIX, lista pendente de publicação",
+                        "Banner 3 de 3: Sorteio mensal, ganhe um presente ou o valor no PIX",
                     ),
                 ),
                 aria_live="polite",
