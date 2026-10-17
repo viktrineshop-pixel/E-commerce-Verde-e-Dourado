@@ -13,9 +13,8 @@ from app.components.admin import admin_content
 from app.states.admin_state import AdminState
 
 
-@rxe.page(
+@rx.page(
     route="/",
-    auth=False,
     title="VIKTRINE SHOP | Estilo em cada detalhe",
     description="Explore nossa vitrine demonstrativa de moda e acessórios.",
 )
@@ -60,7 +59,6 @@ def cart_page() -> rx.Component:
 
 @rxe.page(
     route="/minha-conta",
-    auth=True,
     title="Minha conta | VIKTRINE SHOP",
     description="Seu espaço pessoal para acompanhar pedidos e detalhes de entrega.",
 )

@@ -1,5 +1,4 @@
 import reflex as rx
-from reflex_enterprise.auth import User
 from app.states.account_state import AccountState, CustomerOrder, PurchasedItem
 
 
@@ -21,9 +20,7 @@ def account_intro() -> rx.Component:
                     class_name="text-[10px] tracking-[0.22em] text-[#d4af37]",
                 ),
                 rx.el.h1(
-                    "Olá, ",
-                    rx.cond(User.name != "", User.name, "bem-vindo"),
-                    ".",
+                    "Olá, bem-vindo.",
                     class_name="mt-4 break-words font-['Cormorant_Garamond'] text-4xl font-medium leading-tight text-[#f5f1e8] sm:text-5xl lg:text-6xl",
                 ),
                 rx.el.p(
@@ -36,20 +33,12 @@ def account_intro() -> rx.Component:
                         class_name="h-4 w-4 shrink-0 text-[#d4af37]",
                     ),
                     rx.el.span(
-                        rx.cond(
-                            User.email != "", User.email, "Sua conta pessoal"
-                        ),
+                        "Sua conta pessoal",
                         class_name="break-all text-xs text-[#d6cda9]",
                     ),
                     class_name="mt-6 flex items-center gap-3",
                 ),
                 class_name="min-w-0 flex-1",
-            ),
-            rx.el.button(
-                rx.icon("log-out", class_name="h-4 w-4"),
-                "Sair da conta",
-                on_click=User.logout,
-                class_name="flex w-fit shrink-0 items-center gap-3 border border-[#d4af37]/40 bg-transparent px-5 py-3 text-xs text-[#f5f1e8] transition-colors hover:border-[#d4af37] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37]",
             ),
             class_name="mx-auto flex w-full max-w-[1440px] flex-col justify-between gap-8 px-6 py-12 sm:flex-row sm:items-center lg:px-12 lg:py-16",
         ),

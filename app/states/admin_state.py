@@ -7,9 +7,7 @@ from typing import Any, TypedDict
 from urllib.parse import urlsplit, unquote
 from uuid import uuid4
 from sqlalchemy import select, func, text
-from reflex_enterprise.auth import User
 from app.models import Product, StoreMember
-from app.states.authorization import is_admin
 from app.affiliate import PARTNER_ROUTES, safe_affiliate_url
 
 
@@ -83,26 +81,26 @@ class AdminProduct(TypedDict):
 
 
 class AdminState(rx.State):
-    can_manage: bool = rxe.field(False, auth=False)
-    role_loading: bool = rxe.field(True, auth=False)
-    role_error: str = rxe.field("", auth=False)
-    products: list[AdminProduct] = rxe.field([], auth=True)
-    draft: dict[str, str] = rxe.field(empty_draft(), auth=True)
-    errors: dict[str, str] = rxe.field({}, auth=True)
+    can_manage: bool = False
+    role_loading: bool = True
+    role_error: str = ""
+    products: list[AdminProduct] = []
+    draft: dict[str, str] = empty_draft()
+    errors: dict[str, str] = {}
     error: str = rxe.field("", auth=True)
     notice: str = rxe.field("", auth=True)
-    sku: str = rxe.field("Gerado automaticamente ao salvar", auth=True)
+    sku: str = "Gerado automaticamente ao salvar"
     editing: bool = rxe.field(False, auth=True)
     featured: bool = rxe.field(False, auth=True)
     delete_title: str = rxe.field("", auth=True)
     loading: bool = rxe.field(False, auth=True)
     busy: bool = rxe.field(False, auth=True)
-    page: int = rxe.field(1, auth=True)
-    total: int = rxe.field(0, auth=True)
+    page: int = 1
+    total: int = 0
     _editing_id: int = 0
     _delete_id: int = 0
 
-    @rxe.var(auth=True, initial_value="/placeholder.svg")
+    @rx.var
     def preview_url(self) -> str:
         url = self.draft["image_url"].strip()
         return url if safe_image_url(url) else "/placeholder.svg"
@@ -112,8 +110,8 @@ class AdminState(rx.State):
         self.role_error = ""
         self.role_loading = True
         try:
-            user = await User.current() or {}
-            subject = user.get("sub", "")
+            subject = ""
+            user: dict[str, str] = {}
             if (
                 not isinstance(subject, str)
                 or not subject.strip()
@@ -170,17 +168,20 @@ class AdminState(rx.State):
         finally:
             self.role_loading = False
 
-    @rxe.event(auth=False)
+    @rx.event
     async def load_role(self):
         await self._bootstrap()
 
-    @rxe.event(auth=True)
+    @rx.event
     async def load_dashboard(self):
         await self._bootstrap()
         if self.can_manage:
+            from app.states.admin_order_state import AdminOrderState
+
+            yield AdminOrderState.load_orders
             yield AdminState.load_products
 
-    @rxe.event(auth=is_admin)
+    @rx.event
     async def load_products(self):
         self.loading = True
         try:
@@ -235,23 +236,23 @@ class AdminState(rx.State):
         self.featured = False
         self.errors = {}
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     def new_product(self):
         self._clear_draft()
         self.notice = ""
         self.error = ""
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     def set_field(self, field: str, value: str):
         if field in self.draft:
             self.draft[field] = value[:10001]
             self.errors.pop(field, None)
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     def toggle_featured(self):
         self.featured = not self.featured
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     async def edit_product(self, product_id: int):
         self.error = ""
         self.notice = ""
@@ -350,7 +351,7 @@ class AdminState(rx.State):
                 self.errors["stock"] = "Estoque acima do limite permitido."
         return price, compare, stock
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     async def save_product(self, fields: dict[str, Any]):
         if self.busy:
             return
@@ -415,7 +416,7 @@ class AdminState(rx.State):
         finally:
             self.busy = False
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     async def request_delete(self, product_id: int):
         self.error = ""
         self.notice = ""
@@ -441,12 +442,12 @@ class AdminState(rx.State):
                 "Não foi possível preparar a exclusão. Tente novamente."
             )
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     def cancel_delete(self):
         self._delete_id = 0
         self.delete_title = ""
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     async def confirm_delete(self):
         if not self._delete_id or self.busy:
             return
@@ -488,7 +489,7 @@ class AdminState(rx.State):
         finally:
             self.busy = False
 
-    @rxe.event(auth=is_admin)
+    @rxe.event(auth=True)
     def change_page(self, delta: int):
         self.page = min(
             max(1, (self.total + 19) // 20), max(1, self.page + delta)

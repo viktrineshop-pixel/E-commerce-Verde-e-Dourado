@@ -1,6 +1,7 @@
 import reflex as rx
 import json
 from app.states.admin_state import AdminState, AdminProduct
+from app.components.admin_orders import admin_orders
 
 
 _CATEGORY_SUGGESTIONS = [
@@ -401,6 +402,7 @@ def admin_workspace() -> rx.Component:
                 class_name="mb-6 rounded-sm border border-red-200 bg-red-50 p-5",
             ),
         ),
+        admin_orders(),
         rx.el.div(
             product_editor(),
             product_list(),
