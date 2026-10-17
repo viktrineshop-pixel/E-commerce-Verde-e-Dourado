@@ -173,11 +173,93 @@ def category_tile(tile: dict[str, str]) -> rx.Component:
         ),
         rx.el.span(
             tile["label"],
-            class_name="mt-2 text-center text-xs font-medium text-[#faf9f4] sm:text-sm",
+            class_name="mt-2 min-h-8 w-full text-center font-['Inter'] text-[10px] font-medium leading-4 text-[#faf9f4] sm:text-xs",
         ),
         href=tile["href"],
         aria_label=f"Acessar página editorial de {tile['label']}",
-        class_name="group flex min-w-0 flex-col items-center rounded-sm px-1 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37]",
+        class_name=rx.cond(
+            tile["label"] == "Shopee",
+            "group mr-2 flex w-[72px] shrink-0 flex-col items-center rounded-sm py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] sm:mr-4 sm:w-24 lg:w-28",
+            "group flex w-[72px] shrink-0 flex-col items-center rounded-sm py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] sm:w-24 lg:w-28",
+        ),
+    )
+
+
+def recommendation_social(label: str, kind: str) -> rx.Component:
+    return rx.el.div(
+        rx.el.div(
+            rx.el.span(
+                rx.match(
+                    kind,
+                    (
+                        "youtube",
+                        rx.icon(
+                            "play",
+                            class_name="h-7 w-7 fill-[#d4af37] text-[#d4af37] sm:h-9 sm:w-9",
+                        ),
+                    ),
+                    (
+                        "whatsapp",
+                        rx.el.span(
+                            rx.icon(
+                                "message-circle",
+                                class_name="h-9 w-9 text-[#d4af37] sm:h-12 sm:w-12",
+                            ),
+                            rx.icon(
+                                "phone",
+                                class_name="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 text-[#d4af37] sm:h-5 sm:w-5",
+                            ),
+                            class_name="relative inline-flex items-center justify-center",
+                        ),
+                    ),
+                    (
+                        "instagram",
+                        rx.icon(
+                            "camera",
+                            class_name="h-8 w-8 text-[#d4af37] sm:h-11 sm:w-11",
+                        ),
+                    ),
+                    (
+                        "facebook",
+                        rx.el.span(
+                            "f",
+                            class_name="font-['Inter'] text-4xl font-bold leading-none text-[#d4af37] sm:text-5xl",
+                        ),
+                    ),
+                    rx.icon(
+                        "mail",
+                        class_name="h-8 w-8 text-[#d4af37] sm:h-11 sm:w-11",
+                    ),
+                ),
+                aria_hidden=True,
+                class_name=rx.match(
+                    kind,
+                    (
+                        "youtube",
+                        "flex h-[43.2px] w-[64.8px] shrink-0 items-center justify-center rounded-xl border border-[#d4af37]/70 bg-[#0B4146]/50 sm:h-[57.6px] sm:w-[86.4px] lg:h-[67.2px] lg:w-[100.8px]",
+                    ),
+                    (
+                        "whatsapp",
+                        "flex h-[64.8px] w-[64.8px] shrink-0 items-center justify-center rounded-full border border-[#d4af37]/70 bg-[#0B4146]/50 sm:h-[86.4px] sm:w-[86.4px] lg:h-[100.8px] lg:w-[100.8px]",
+                    ),
+                    "flex h-[64.8px] w-[64.8px] shrink-0 items-center justify-center rounded-2xl border border-[#d4af37]/70 bg-[#0B4146]/50 sm:h-[86.4px] sm:w-[86.4px] lg:h-[100.8px] lg:w-[100.8px]",
+                ),
+            ),
+            class_name="flex h-[72px] w-full items-center justify-center sm:h-24 lg:h-28",
+        ),
+        rx.el.span(
+            label,
+            class_name="mt-2 min-h-8 w-full text-center font-['Inter'] text-[10px] font-medium leading-4 text-[#faf9f4] sm:text-xs",
+        ),
+        rx.el.span(
+            "Link pendente",
+            class_name="text-center font-['Inter'] text-[9px] leading-4 text-[#e7d49a]",
+        ),
+        role="group",
+        aria_disabled=True,
+        aria_label=f"{label}: aguardando link oficial",
+        title=f"{label}: aguardando link oficial",
+        class_name="flex w-[72px] shrink-0 cursor-not-allowed flex-col items-center py-1 sm:w-24 lg:w-28",
     )
 
 
@@ -208,10 +290,35 @@ def category_strip() -> rx.Component:
                 ],
                 category_tile,
             ),
-            class_name="mt-1 grid w-full grid-cols-3 items-start gap-2 sm:gap-4",
+            recommendation_social("YouTube vitrine", "youtube"),
+            recommendation_social("WhatsApp Viktrine", "whatsapp"),
+            recommendation_social("Instagram vitrine", "instagram"),
+            recommendation_social("Facebook", "facebook"),
+            recommendation_social("E-mail vitrine", "email"),
+            id="vk-recommendations-scroll",
+            role="region",
+            aria_label="Lojas parceiras e redes sociais. Role para a direita para ver as redes sociais.",
+            aria_describedby="vk-recommendations-hint",
+            tab_index=0,
+            overflow_x="scroll",
+            class_name="mx-auto mt-2 flex w-[240px] max-w-full flex-nowrap items-start gap-2 overflow-x-scroll overscroll-x-contain touch-pan-x px-1 py-2 [scrollbar-color:#d4af37_#073238] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] sm:w-[328px] sm:gap-4 lg:w-[376px]",
+        ),
+        rx.el.p(
+            rx.icon(
+                "move-horizontal",
+                aria_hidden=True,
+                class_name="h-4 w-4 shrink-0 text-[#d4af37]",
+            ),
+            "Deslize para ver as redes sociais →",
+            id="vk-recommendations-hint",
+            class_name="mt-2 flex items-center justify-center gap-2 font-['Inter'] text-[10px] text-[#faf9f4] sm:text-xs",
+        ),
+        rx.el.p(
+            "Com a faixa em foco, use as setas do teclado. Redes sociais aguardando link oficial.",
+            class_name="mt-1 text-center font-['Inter'] text-[9px] leading-4 text-[#e7d49a] sm:text-[10px]",
         ),
         id="lojas-parceiras",
-        aria_label="Nossas recomendações de lojas",
+        aria_label="Nossas recomendações de lojas e redes sociais",
         class_name="w-full bg-[#073238] px-3 py-5 text-[#faf9f4] sm:px-6 sm:py-6",
     )
 
