@@ -6,6 +6,7 @@ from typing import Any, TypedDict
 from zoneinfo import ZoneInfo
 from sqlalchemy import select
 from app.models import Order, OrderItem
+from app.states.authorization import is_admin
 
 
 PAGE_SIZE = 10
@@ -52,14 +53,14 @@ class AdminOrder(TypedDict):
 
 
 class AdminOrderState(rx.State):
-    orders: list[AdminOrder] = []
-    loading: bool = False
-    saving: bool = False
-    saving_id: int = 0
-    page: int = 1
-    has_next: bool = False
-    error: str = ""
-    notice: str = ""
+    orders: list[AdminOrder] = rxe.field([], auth=is_admin)
+    loading: bool = rxe.field(False, auth=is_admin)
+    saving: bool = rxe.field(False, auth=is_admin)
+    saving_id: int = rxe.field(0, auth=is_admin)
+    page: int = rxe.field(1, auth=is_admin)
+    has_next: bool = rxe.field(False, auth=is_admin)
+    error: str = rxe.field("", auth=is_admin)
+    notice: str = rxe.field("", auth=is_admin)
 
     async def _read_page(self, page: int) -> tuple[list[AdminOrder], bool, int]:
         async with rx.asession() as session:
@@ -124,7 +125,7 @@ class AdminOrderState(rx.State):
             ]
         return orders, has_next, page
 
-    @rx.event
+    @rxe.event(auth=is_admin)
     async def load_orders(self, delta: int = 0):
         if self.loading or self.saving:
             return
@@ -177,7 +178,7 @@ class AdminOrderState(rx.State):
                 order.cancelled_at = now if status == "cancelled" else None
         return True
 
-    @rxe.event(auth=True)
+    @rxe.event(auth=is_admin)
     async def save_status(self, fields: dict[str, Any]):
         if self.loading or self.saving:
             return

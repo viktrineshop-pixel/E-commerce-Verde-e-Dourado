@@ -2,6 +2,7 @@ import reflex as rx
 import reflex_enterprise as rxe
 import logging
 from typing import TypedDict
+from reflex_enterprise.auth import User
 from zoneinfo import ZoneInfo
 from sqlalchemy import text, bindparam
 
@@ -42,11 +43,11 @@ class CustomerOrder(TypedDict):
 
 
 class AccountState(rx.State):
-    orders: list[CustomerOrder] = []
-    loading: bool = True
-    error: str = ""
-    page_number: int = 1
-    has_next: bool = False
+    orders: list[CustomerOrder] = rxe.field([], auth=True)
+    loading: bool = rxe.field(True, auth=True)
+    error: str = rxe.field("", auth=True)
+    page_number: int = rxe.field(1, auth=True)
+    has_next: bool = rxe.field(False, auth=True)
     _offset: int = 0
 
     def _money(self, cents: int, currency: str = "BRL") -> str:
@@ -55,7 +56,7 @@ class AccountState(rx.State):
         prefix = "R$" if currency == "BRL" else currency
         return f"{prefix} {formatted}"
 
-    @rx.event
+    @rxe.event(auth=True)
     async def load_orders(self):
         self._offset = 0
         self.page_number = 1
@@ -92,7 +93,16 @@ class AccountState(rx.State):
         self.has_next = False
         yield
         try:
-            subject = ""
+            user = await User.current() or {}
+            subject = user.get("sub", "")
+            if (
+                not isinstance(subject, str)
+                or not subject.strip()
+                or len(subject) > 255
+            ):
+                self.error = "Entre na sua conta para consultar seus pedidos."
+                yield rx.redirect("/login?redirect_to=/minha-conta")
+                return
             async with rx.asession() as session:
                 rows = (
                     (

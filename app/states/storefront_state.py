@@ -22,23 +22,23 @@ class ProductView(TypedDict):
 
 
 class StorefrontState(rx.State):
-    products: list[ProductView] = []
-    search: str = ""
-    category: str = "Todos"
-    sort: str = "Destaques"
-    price_filter: str = "Todos os preços"
-    available_only: bool = False
-    loading: bool = True
-    error: str = ""
-    total: int = 0
-    page_number: int = 1
-    mobile_menu: bool = False
+    products: list[ProductView] = rxe.field([], auth=False)
+    search: str = rxe.field("", auth=False)
+    category: str = rxe.field("Todos", auth=False)
+    sort: str = rxe.field("Destaques", auth=False)
+    price_filter: str = rxe.field("Todos os preços", auth=False)
+    available_only: bool = rxe.field(False, auth=False)
+    loading: bool = rxe.field(True, auth=False)
+    error: str = rxe.field("", auth=False)
+    total: int = rxe.field(0, auth=False)
+    page_number: int = rxe.field(1, auth=False)
+    mobile_menu: bool = rxe.field(False, auth=False)
 
-    @rx.var
+    @rxe.var(auth=False)
     def page_count(self) -> int:
         return max(1, (self.total + 11) // 12)
 
-    @rx.event
+    @rxe.event(auth=False)
     async def load_catalog(self):
         self.loading = True
         self.error = ""

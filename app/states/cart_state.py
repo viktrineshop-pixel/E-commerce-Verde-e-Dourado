@@ -6,6 +6,7 @@ import secrets
 from typing import Any, TypedDict
 from sqlalchemy import select, delete
 from app.models import CartItem, Product, Order, OrderItem
+from reflex_enterprise.auth import User
 
 
 class CartLine(TypedDict):
@@ -21,19 +22,19 @@ class CartLine(TypedDict):
 class CartState(rx.State):
     _cart_key: str = ""
     _last_order_id: int = 0
-    lines: list[CartLine] = []
-    count: int = 0
-    subtotal: str = "R$ 0,00"
-    loading: bool = True
-    busy: bool = False
-    submitting: bool = False
-    error: str = ""
-    notice: str = ""
-    errors: dict[str, str] = {}
-    draft: dict[str, str] = {}
-    confirmed: bool = False
-    order_number: str = ""
-    order_total: str = "R$ 0,00"
+    lines: list[CartLine] = rxe.field([], auth=False)
+    count: int = rxe.field(0, auth=False)
+    subtotal: str = rxe.field("R$ 0,00", auth=False)
+    loading: bool = rxe.field(True, auth=False)
+    busy: bool = rxe.field(False, auth=False)
+    submitting: bool = rxe.field(False, auth=False)
+    error: str = rxe.field("", auth=False)
+    notice: str = rxe.field("", auth=False)
+    errors: dict[str, str] = rxe.field({}, auth=False)
+    draft: dict[str, str] = rxe.field({}, auth=False)
+    confirmed: bool = rxe.field(False, auth=False)
+    order_number: str = rxe.field("", auth=False)
+    order_total: str = rxe.field("R$ 0,00", auth=False)
 
     def _key(self) -> str:
         # Backend-only: never accept a cart identifier from the browser.
@@ -75,7 +76,7 @@ class CartState(rx.State):
                 sum(c.quantity * p.price_centavos for c, p in rows)
             )
 
-    @rx.event
+    @rxe.event(auth=False)
     async def load_cart(self):
         self.loading = True
         self.error = ""
@@ -99,7 +100,7 @@ class CartState(rx.State):
         self.notice = ""
         yield
         try:
-            user: dict[str, str] = {}
+            user = await User.current() or {}
             async with rx.asession() as session:
                 async with session.begin():
                     product = await session.scalar(
@@ -291,7 +292,7 @@ class CartState(rx.State):
         yield
         committed = False
         try:
-            user: dict[str, str] = {}
+            user = await User.current() or {}
             async with rx.asession() as session:
                 async with session.begin():
                     ids = (
