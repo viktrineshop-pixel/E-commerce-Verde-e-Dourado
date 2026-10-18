@@ -4,8 +4,10 @@ import logging
 import re
 import secrets
 from typing import Any, TypedDict
-from sqlalchemy import select, delete
-from app.models import CartItem, Product, Order, OrderItem
+from datetime import datetime, timezone
+from sqlalchemy import select, delete, func
+from app.models import CartItem, Product, Order, OrderItem, Coupon
+from app.coupons import normalize_code, coupon_discount
 from reflex_enterprise.auth import User
 
 
@@ -22,6 +24,15 @@ class CartLine(TypedDict):
 class CartState(rx.State):
     _cart_key: str = ""
     _last_order_id: int = 0
+    _applied_coupon_code: str = ""
+    coupon: str = rxe.field("", auth=False)
+    discount: str = rxe.field("R$ 0,00", auth=False)
+    grand_total: str = rxe.field("R$ 0,00", auth=False)
+    coupon_error: str = rxe.field("", auth=False)
+    coupon_notice: str = rxe.field("", auth=False)
+    order_coupon: str = rxe.field("", auth=False)
+    order_discount: str = rxe.field("R$ 0,00", auth=False)
+    order_subtotal: str = rxe.field("R$ 0,00", auth=False)
     lines: list[CartLine] = rxe.field([], auth=False)
     count: int = rxe.field(0, auth=False)
     subtotal: str = rxe.field("R$ 0,00", auth=False)
@@ -43,10 +54,8 @@ class CartState(rx.State):
         return self._cart_key
 
     def _brl(self, cents: int) -> str:
-        value = f"{cents / 100:,.2f}"
-        return (
-            f"R$ {value.replace(',', '|').replace('.', ',').replace('|', '.')}"
-        )
+        whole = f"{cents // 100:,}".replace(",", ".")
+        return f"R$ {whole},{cents % 100:02d}"
 
     async def _refresh(self):
         async with rx.asession() as session:
@@ -72,9 +81,101 @@ class CartState(rx.State):
                 for c, p in rows
             ]
             self.count = sum(c.quantity for c, p in rows)
-            self.subtotal = self._brl(
-                sum(c.quantity * p.price_centavos for c, p in rows)
-            )
+            subtotal = sum(c.quantity * p.price_centavos for c, p in rows)
+            self.subtotal = self._brl(subtotal)
+            discount = 0
+            self.coupon_error = ""
+            if not rows:
+                self._applied_coupon_code = ""
+                self.coupon_notice = ""
+            if self._applied_coupon_code:
+                coupon = await session.scalar(
+                    select(Coupon)
+                    .where(Coupon.code == self._applied_coupon_code)
+                    .limit(1)
+                )
+                try:
+                    discount = coupon_discount(
+                        coupon, subtotal, datetime.now(timezone.utc)
+                    )
+                except ValueError as e:
+                    self.coupon_error = str(e)
+                    self.coupon_notice = ""
+            self.coupon = self._applied_coupon_code
+            self.discount = self._brl(discount)
+            self.grand_total = self._brl(subtotal - discount)
+
+    @rxe.event(auth=False, background=True)
+    async def apply_coupon(self, form_data: dict[str, Any]):
+        async with self:
+            if self.busy or self.submitting or self.loading or self.confirmed:
+                return
+            self.coupon_error = ""
+            self.coupon_notice = ""
+            try:
+                code = normalize_code(str(form_data.get("coupon_code", "")))
+            except ValueError as e:
+                self.coupon_error = str(e)
+                return
+            self.busy = True
+            key = self._key()
+        try:
+            async with rx.asession() as session:
+                subtotal = int(
+                    await session.scalar(
+                        select(
+                            func.coalesce(
+                                func.sum(
+                                    CartItem.quantity * Product.price_centavos
+                                ),
+                                0,
+                            )
+                        )
+                        .select_from(CartItem)
+                        .join(Product, Product.id == CartItem.product_id)
+                        .where(CartItem.cart_key == key)
+                    )
+                    or 0
+                )
+                coupon = await session.scalar(
+                    select(Coupon).where(Coupon.code == code).limit(1)
+                )
+                discount = coupon_discount(
+                    coupon, subtotal, datetime.now(timezone.utc)
+                )
+            async with self:
+                self._applied_coupon_code = code
+                self.coupon = code
+                self.discount = self._brl(discount)
+                self.grand_total = self._brl(subtotal - discount)
+                self.coupon_notice = "Cupom aplicado. O desconto será conferido novamente ao enviar o pedido."
+        except Exception as e:
+            logging.exception(f"Error: {e}")
+            async with self:
+                self.coupon_error = (
+                    str(e)
+                    if isinstance(e, ValueError)
+                    else "Não foi possível aplicar o cupom. Tente novamente."
+                )
+        finally:
+            async with self:
+                self.busy = False
+        async with self:
+            applied = not self.coupon_error
+        if applied:
+            yield CartState.load_cart
+
+    @rxe.event(auth=False)
+    def remove_coupon(self):
+        if self.busy or self.submitting or self.loading:
+            return
+        self._applied_coupon_code = ""
+        self.coupon = ""
+        self.discount = "R$ 0,00"
+        self.grand_total = self.subtotal
+        self.coupon_error = ""
+        self.coupon_notice = "Cupom removido."
+        return CartState.load_cart
 
     @rxe.event(auth=False)
     async def load_cart(self):
@@ -335,10 +436,22 @@ class CartState(rx.State):
                             raise ValueError(
                                 f"{title}: estoque insuficiente. Ajuste a sacola antes de continuar."
                             )
-                    total = sum(
+                    subtotal = sum(
                         c.quantity * by_id[c.product_id].price_centavos
                         for c in items
                     )
+                    discount = 0
+                    coupon_code = self._applied_coupon_code
+                    if coupon_code:
+                        coupon = await session.scalar(
+                            select(Coupon)
+                            .where(Coupon.code == coupon_code)
+                            .with_for_update()
+                        )
+                        discount = coupon_discount(
+                            coupon, subtotal, datetime.now(timezone.utc)
+                        )
+                    total = subtotal - discount
                     order = Order(
                         purchaser_sub=str(user.get("sub", "")),
                         contact_name=values["recipient"],
@@ -352,8 +465,10 @@ class CartState(rx.State):
                         shipping_city=values["city"],
                         shipping_state=values["state"],
                         shipping_postal_code=values["cep"],
-                        subtotal_centavos=total,
+                        subtotal_centavos=subtotal,
                         shipping_centavos=0,
+                        coupon_code=coupon_code or None,
+                        discount_centavos=discount,
                         total_centavos=total,
                         status="pending",
                     )
@@ -386,6 +501,15 @@ class CartState(rx.State):
             self._last_order_id = order_id
             self.order_number = f"ML-{order_id:06d}"
             self.order_total = self._brl(total)
+            self.order_subtotal = self._brl(subtotal)
+            self.order_coupon = coupon_code
+            self.order_discount = self._brl(discount)
+            self._applied_coupon_code = ""
+            self.coupon = ""
+            self.discount = "R$ 0,00"
+            self.grand_total = "R$ 0,00"
+            self.coupon_error = ""
+            self.coupon_notice = ""
             self.confirmed = True
             self.lines = []
             self.count = 0

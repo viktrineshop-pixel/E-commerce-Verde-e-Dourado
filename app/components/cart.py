@@ -279,6 +279,17 @@ def order_confirmation() -> rx.Component:
             "Pedido recebido/aguardando atendimento",
             class_name="mx-auto mt-4 w-fit border border-[#deded3] bg-[#f5f3eb] px-4 py-2 text-xs text-[#536059]",
         ),
+        rx.cond(
+            CartState.order_coupon != "",
+            rx.el.div(
+                rx.el.p(f"Subtotal: {CartState.order_subtotal}"),
+                rx.el.p(
+                    f"Cupom {CartState.order_coupon} · Desconto: {CartState.order_discount}",
+                    class_name="mt-2 break-all text-[#073238]",
+                ),
+                class_name="mt-6 text-sm text-[#536059]",
+            ),
+        ),
         rx.el.p(
             f"Total registrado: {CartState.order_total} · Frete grátis",
             class_name="mt-6 text-sm text-[#0d231d]",
@@ -300,6 +311,88 @@ def order_confirmation() -> rx.Component:
         id="pedido-recebido",
         aria_live="polite",
         class_name="border border-[#deded3] bg-white px-5 py-16 text-center sm:px-10",
+    )
+
+
+def cart_coupon() -> rx.Component:
+    return rx.el.div(
+        rx.el.form(
+            rx.el.label(
+                "Código do cupom",
+                html_for="cart-coupon-code",
+                class_name="mb-2 block text-xs font-medium text-[#073238]",
+            ),
+            rx.el.div(
+                rx.el.input(
+                    name="coupon_code",
+                    id="cart-coupon-code",
+                    placeholder="Seu código",
+                    default_value=CartState.coupon,
+                    key=CartState.coupon,
+                    max_length=100,
+                    auto_complete="off",
+                    disabled=CartState.busy
+                    | CartState.submitting
+                    | CartState.loading,
+                    aria_invalid=CartState.coupon_error != "",
+                    aria_describedby="cart-coupon-feedback",
+                    class_name="min-h-11 w-full min-w-0 rounded-sm border border-[#d8d7cc] bg-[#faf9f4] px-3 text-sm uppercase text-[#073238] focus:outline-2 focus:outline-[#d4af37] disabled:opacity-50",
+                ),
+                rx.el.button(
+                    rx.cond(CartState.busy, "Aguarde…", "Aplicar"),
+                    type="submit",
+                    disabled=CartState.busy
+                    | CartState.submitting
+                    | CartState.loading,
+                    class_name="min-h-11 rounded-sm bg-[#073238] px-4 text-xs text-[#faf9f4] hover:bg-[#0d231d] focus-visible:outline-2 focus-visible:outline-[#d4af37] disabled:opacity-50",
+                ),
+                class_name="flex gap-2",
+            ),
+            on_submit=CartState.apply_coupon,
+            reset_on_submit=False,
+        ),
+        rx.cond(
+            CartState.coupon != "",
+            rx.el.div(
+                rx.el.span(
+                    rx.icon("ticket-percent", class_name="h-4 w-4 shrink-0"),
+                    CartState.coupon,
+                    class_name="flex min-w-0 items-center gap-2 break-all text-xs text-[#073238]",
+                ),
+                rx.el.button(
+                    "Remover cupom",
+                    type="button",
+                    on_click=CartState.remove_coupon,
+                    disabled=CartState.busy
+                    | CartState.submitting
+                    | CartState.loading,
+                    class_name="min-h-11 shrink-0 bg-transparent text-xs text-[#073238] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-[#d4af37] disabled:opacity-50",
+                ),
+                class_name="mt-2 flex flex-wrap items-center justify-between gap-2",
+            ),
+        ),
+        rx.el.div(
+            rx.cond(
+                CartState.coupon_error != "",
+                rx.el.p(
+                    CartState.coupon_error,
+                    role="alert",
+                    class_name="mt-2 text-xs leading-5 text-red-700",
+                ),
+            ),
+            rx.cond(
+                CartState.coupon_notice != "",
+                rx.el.p(
+                    CartState.coupon_notice,
+                    role="status",
+                    class_name="mt-2 text-xs leading-5 text-[#536059]",
+                ),
+            ),
+            id="cart-coupon-feedback",
+            aria_live="polite",
+        ),
+        aria_busy=CartState.busy | CartState.loading,
+        class_name="mt-6 border-t border-[#deded3] pt-5",
     )
 
 
@@ -331,9 +424,18 @@ def cart_contents() -> rx.Component:
                 rx.el.span("Grátis", class_name="font-medium text-[#0d231d]"),
                 class_name="mt-4 flex justify-between text-sm text-[#536059]",
             ),
+            cart_coupon(),
+            rx.cond(
+                CartState.coupon != "",
+                rx.el.div(
+                    rx.el.span("Desconto do cupom"),
+                    rx.el.span(f"− {CartState.discount}"),
+                    class_name="mt-4 flex justify-between gap-3 text-sm text-[#073238]",
+                ),
+            ),
             rx.el.div(
                 rx.el.span("Total"),
-                rx.el.span(CartState.subtotal),
+                rx.el.span(CartState.grand_total),
                 class_name="mt-6 flex justify-between border-t border-[#deded3] pt-6 text-lg font-semibold text-[#0d231d]",
             ),
             rx.el.p(

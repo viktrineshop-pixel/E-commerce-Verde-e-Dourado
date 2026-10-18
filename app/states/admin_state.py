@@ -180,7 +180,9 @@ class AdminState(rx.State):
         if self.can_manage:
             from app.states.admin_order_state import AdminOrderState
             from app.states.admin_click_state import AdminClickState
+            from app.states.admin_coupon_state import AdminCouponState
 
+            yield AdminCouponState.load_coupons
             yield AdminClickState.load_report
             yield AdminOrderState.load_orders
             yield AdminState.load_products
