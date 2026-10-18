@@ -11,6 +11,7 @@ from app.states.account_state import AccountState
 from app.pages import marketplaces
 from app.components.admin import admin_content
 from app.states.admin_state import AdminState
+from app.click_tracking import click_api
 
 
 @rxe.page(
@@ -97,6 +98,7 @@ def admin_page() -> rx.Component:
 
 
 app = rxe.App(
+    api_transformer=click_api,
     theme=rx.theme(appearance="light"),
     stylesheets=["/brand.css"],
     head_components=[

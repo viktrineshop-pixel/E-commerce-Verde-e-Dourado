@@ -2,6 +2,7 @@ import reflex as rx
 import json
 from app.states.admin_state import AdminState, AdminProduct
 from app.components.admin_orders import admin_orders
+from app.components.admin_clicks import admin_clicks
 
 
 _CATEGORY_SUGGESTIONS = [
@@ -403,6 +404,7 @@ def admin_workspace() -> rx.Component:
             ),
         ),
         admin_orders(),
+        admin_clicks(),
         rx.el.div(
             product_editor(),
             product_list(),

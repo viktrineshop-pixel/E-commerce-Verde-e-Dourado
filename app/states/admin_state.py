@@ -179,7 +179,9 @@ class AdminState(rx.State):
         await self._bootstrap()
         if self.can_manage:
             from app.states.admin_order_state import AdminOrderState
+            from app.states.admin_click_state import AdminClickState
 
+            yield AdminClickState.load_report
             yield AdminOrderState.load_orders
             yield AdminState.load_products
 

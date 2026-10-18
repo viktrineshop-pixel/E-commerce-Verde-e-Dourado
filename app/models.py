@@ -136,6 +136,114 @@ class Product(Base):
     )
 
 
+class ProductLinkClick(Base):
+    __tablename__ = "product_link_clicks"
+    __table_args__ = (
+        CheckConstraint(
+            "marketplace IN ('Amazon', 'Mercado Livre', 'Shopee')",
+            name="marketplace_valid",
+        ),
+        Index(
+            "ix_product_link_clicks_product_created", "product_id", "created_at"
+        ),
+        Index(
+            "ix_product_link_clicks_marketplace_created",
+            "marketplace",
+            "created_at",
+        ),
+        Index("ix_product_link_clicks_created", "created_at"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)
+    # Preserve click history and snapshots when a catalog product is deleted.
+    product_id: Mapped[int | None] = mapped_column(
+        ForeignKey("products.id", ondelete="SET NULL"),
+        nullable=True,
+        default=None,
+    )
+    title: Mapped[str] = mapped_column(
+        String(250), nullable=False, default="", server_default=""
+    )
+    sku: Mapped[str] = mapped_column(
+        String(100), nullable=False, default="", server_default=""
+    )
+    marketplace: Mapped[str] = mapped_column(
+        String(120), nullable=False, default="Amazon", server_default="Amazon"
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        init=False,
+    )
+
+
+class Coupon(Base):
+    __tablename__ = "coupons"
+    __table_args__ = (
+        UniqueConstraint("code", name="uq_coupons_code"),
+        CheckConstraint("length(trim(code)) > 0", name="code_required"),
+        CheckConstraint("code = upper(trim(code))", name="code_normalized"),
+        CheckConstraint(
+            "discount_kind IN ('percent', 'fixed')", name="discount_kind_valid"
+        ),
+        CheckConstraint("discount_value > 0", name="discount_value_positive"),
+        CheckConstraint(
+            "discount_kind <> 'percent' OR discount_value <= 100",
+            name="percent_within_bounds",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)
+    code: Mapped[str] = mapped_column(String(100), nullable=False)
+    discount_kind: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="percent", server_default="percent"
+    )
+    # Whole percentage points for percent; BRL centavos for fixed.
+    discount_value: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=1, server_default=text("1")
+    )
+    active: Mapped[bool] = mapped_column(
+        nullable=False, default=False, server_default=text("false")
+    )
+    expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, default=None
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        init=False,
+    )
+
+
+class CustomerFavorite(Base):
+    __tablename__ = "customer_favorites"
+    __table_args__ = (
+        UniqueConstraint(
+            "subject",
+            "product_id",
+            name="uq_customer_favorites_subject_product",
+        ),
+        CheckConstraint("length(trim(subject)) > 0", name="subject_required"),
+        Index("ix_customer_favorites_subject", "subject"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)
+    subject: Mapped[str] = mapped_column(String(255), nullable=False)
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        init=False,
+    )
+
+
 class CartItem(Base):
     __tablename__ = "cart_items"
     __table_args__ = (
@@ -240,6 +348,9 @@ class Order(Base):
     )
     discount_centavos: Mapped[int] = mapped_column(
         BigInteger, default=0, server_default=text("0")
+    )
+    coupon_code: Mapped[str | None] = mapped_column(
+        String(100), nullable=True, default=None
     )
     total_centavos: Mapped[int] = mapped_column(
         BigInteger, default=0, server_default=text("0")

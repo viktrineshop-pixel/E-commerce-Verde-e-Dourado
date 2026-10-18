@@ -1,5 +1,6 @@
 import reflex as rx
 from app.states.storefront_state import StorefrontState, ProductView
+from app.click_tracking import tracking_url
 
 
 def category_pill(label: str) -> rx.Component:
@@ -109,7 +110,7 @@ def product_card(product: ProductView) -> rx.Component:
                     class_name="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-[#073238]",
                 ),
                 "Ir para a loja",
-                href=product["destination_url"],
+                href=tracking_url(product["id"]),
                 aria_label=f"Ir para a loja {product['partner_name']}: {product['title']}",
                 class_name="mt-4 flex min-h-11 w-full items-center justify-center gap-2 border border-[#d4af37] bg-[#d4af37] px-2 py-3 text-[11px] font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#073238] sm:text-xs",
             ),

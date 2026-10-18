@@ -86,7 +86,7 @@ class AffiliateTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         source = (root / "app/components/catalog.py").read_text()
         self.assertNotIn("CartState", source)
-        self.assertIn('href=product["destination_url"]', source)
+        self.assertIn('href=tracking_url(product["id"])', source)
         self.assertIn('"Ir para a loja"', source)
         self.assertIn('product["partner_name"]', source)
 
