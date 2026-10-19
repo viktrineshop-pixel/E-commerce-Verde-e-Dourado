@@ -9,4 +9,4 @@
 - [x] Registrar de forma persistente os cliques em “Ir para a loja” sem impedir a navegação e exibir no admin totais reais por produto e marketplace, preservando a identidade verde-petróleo, dourado e tipografia editorial da loja.
 - [x] Permitir cadastrar, editar e desativar cupons no admin, validar/aplicar códigos na sacola e gravar o desconto e total recalculado no pedido demonstrativo.
 - [x] Permitir que clientes logados adicionem e removam favoritos na vitrine e consultem sua lista na página Minha conta, com dados exclusivos por identidade.
-- [ ] Buscar pedidos no admin por número do pedido ou e-mail do cliente, com resultados paginados e controles de status existentes funcionando também nos resultados.
+- [x] Buscar pedidos no admin por número do pedido ou e-mail do cliente, com resultados paginados e controles de status existentes funcionando também nos resultados.
