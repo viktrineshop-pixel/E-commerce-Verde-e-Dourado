@@ -1,6 +1,8 @@
 import reflex as rx
 from reflex_enterprise.auth import User
 from app.states.account_state import AccountState, CustomerOrder, PurchasedItem
+from app.states.favorite_state import FavoriteState
+from app.components.favorites import favorites_section
 
 
 def catalog_link() -> rx.Component:
@@ -44,7 +46,7 @@ def account_intro() -> rx.Component:
             rx.el.button(
                 rx.icon("log-out", class_name="h-4 w-4"),
                 "Sair da conta",
-                on_click=User.logout,
+                on_click=[FavoriteState.clear_presentation, User.logout],
                 type="button",
                 class_name="flex w-fit items-center gap-3 border border-[#d4af37]/50 bg-transparent px-5 py-3 text-xs text-[#f5f1e8] hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37]",
             ),
@@ -374,4 +376,5 @@ def account_content() -> rx.Component:
             ),
             class_name="mx-auto w-full max-w-[1440px] px-6 py-10 text-[#0d231d] lg:px-12 lg:py-14",
         ),
+        favorites_section(),
     )

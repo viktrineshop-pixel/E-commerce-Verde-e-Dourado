@@ -7,6 +7,6 @@
 - [x] Criar subpáginas internas dedicadas a Amazon, Shopee e Mercado Livre com navegação integrada e visual verde-petróleo e dourado, prontas para conteúdo futuro.
 - [x] Reformular a página inicial com carrossel arrastável de dois banners, texto promocional fornecido e fileira fotográfica circular de categorias.
 - [x] Registrar de forma persistente os cliques em “Ir para a loja” sem impedir a navegação e exibir no admin totais reais por produto e marketplace, preservando a identidade verde-petróleo, dourado e tipografia editorial da loja.
-- [ ] Permitir cadastrar, editar e desativar cupons no admin, validar/aplicar códigos na sacola e gravar o desconto e total recalculado no pedido demonstrativo.
+- [x] Permitir cadastrar, editar e desativar cupons no admin, validar/aplicar códigos na sacola e gravar o desconto e total recalculado no pedido demonstrativo.
 - [ ] Permitir que clientes logados adicionem e removam favoritos na vitrine e consultem sua lista na página Minha conta, com dados exclusivos por identidade.
 - [ ] Buscar pedidos no admin por número do pedido ou e-mail do cliente, com resultados paginados e controles de status existentes funcionando também nos resultados.

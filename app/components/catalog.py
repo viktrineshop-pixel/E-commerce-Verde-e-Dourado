@@ -1,6 +1,7 @@
 import reflex as rx
 from app.states.storefront_state import StorefrontState, ProductView
 from app.click_tracking import tracking_url
+from app.components.favorites import favorite_control, favorite_feedback
 
 
 def category_pill(label: str) -> rx.Component:
@@ -63,6 +64,10 @@ def product_card(product: ProductView) -> rx.Component:
                     "Indisponível",
                     class_name="absolute bottom-4 left-4 w-fit bg-[#0d231d] px-3 py-1.5 text-[10px] text-[#f5f1e8]",
                 ),
+            ),
+            rx.el.div(
+                favorite_control(product["id"], product["title"]),
+                class_name="absolute right-2 top-2 sm:right-3 sm:top-3",
             ),
             class_name="relative overflow-hidden bg-[#e9e6df]",
         ),
@@ -234,6 +239,7 @@ def catalog() -> rx.Component:
             ),
             class_name="flex flex-wrap items-start justify-between gap-4 py-6",
         ),
+        rx.el.div(favorite_feedback(), class_name="mb-5"),
         rx.cond(
             StorefrontState.loading,
             rx.el.div(

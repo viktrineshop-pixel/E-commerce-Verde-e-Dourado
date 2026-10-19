@@ -145,6 +145,9 @@ class StorefrontState(rx.State):
             )
         finally:
             self.loading = False
+        from app.states.favorite_state import FavoriteState
+
+        yield FavoriteState.sync_auth
 
     def _brl(self, cents: int) -> str:
         value = f"{cents / 100:,.2f}"

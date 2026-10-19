@@ -8,6 +8,7 @@ from app.components.cart import cart_content
 from app.states.cart_state import CartState
 from app.components.account import account_content
 from app.states.account_state import AccountState
+from app.states.favorite_state import FavoriteState
 from app.pages import marketplaces
 from app.components.admin import admin_content
 from app.states.admin_state import AdminState
@@ -73,7 +74,11 @@ def account_page() -> rx.Component:
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
-        on_mount=[AccountState.load_orders, CartState.load_cart],
+        on_mount=[
+            AccountState.load_orders,
+            CartState.load_cart,
+            FavoriteState.sync_auth,
+        ],
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 

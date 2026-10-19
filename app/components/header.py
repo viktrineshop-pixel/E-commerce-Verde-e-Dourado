@@ -2,6 +2,7 @@ import reflex as rx
 from app.states.storefront_state import StorefrontState
 from app.states.hero_state import HeroState
 from app.states.admin_state import AdminState
+from app.states.favorite_state import FavoriteState
 
 
 def category_link(label: str) -> rx.Component:
@@ -260,6 +261,6 @@ def header() -> rx.Component:
                 aria_label="Menu móvel",
             ),
         ),
-        on_mount=AdminState.load_role,
+        on_mount=[AdminState.load_role, FavoriteState.sync_auth],
         class_name="relative z-20 w-full bg-[var(--brand-petroleum)] text-[#f5f1e8]",
     )
