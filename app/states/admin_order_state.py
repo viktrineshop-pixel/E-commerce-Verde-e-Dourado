@@ -1,10 +1,12 @@
 import reflex as rx
 import reflex_enterprise as rxe
 import logging
+import re
 from datetime import datetime, timezone
 from typing import Any, TypedDict
 from zoneinfo import ZoneInfo
-from sqlalchemy import select
+from sqlalchemy import Select, func, select
+from sqlalchemy.sql.elements import ColumnElement
 from app.models import Order, OrderItem
 from app.states.authorization import is_admin
 
@@ -20,6 +22,82 @@ STATUS_LABELS = {
     "refunded": "Reembolsado",
 }
 EDITABLE_STATUSES = frozenset({"pending", "processing", "shipped", "cancelled"})
+SEARCH_MAX_LENGTH = 320
+SEARCH_EMAIL_MIN_LENGTH = 3
+MAX_ORDER_ID = 2_147_483_647
+_ORDER_NUMBER_RE = re.compile(r"^(?:ml[-\s]?)?(\d{1,12})$")
+_EMAIL_FRAGMENT_RE = re.compile(r"^[a-z0-9.!#$%&'*+/=?^_`{|}~@-]+$")
+
+
+def escape_like(value: str) -> str:
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
+def parse_order_query(raw: str) -> tuple[str, str, str]:
+    """Return (kind, value, label); kind is '', 'id' or 'email'."""
+    if not isinstance(raw, str):
+        raise ValueError("Digite um número de pedido ou um e-mail válido.")
+    text = raw.strip()
+    if not text:
+        return "", "", ""
+    if len(text) > SEARCH_MAX_LENGTH:
+        raise ValueError(
+            f"A busca aceita no máximo {SEARCH_MAX_LENGTH} caracteres."
+        )
+    lowered = text.lower()
+    number = _ORDER_NUMBER_RE.match(lowered)
+    if number:
+        order_id = int(number.group(1))
+        if order_id <= 0 or order_id > MAX_ORDER_ID:
+            raise ValueError(
+                "Número de pedido inválido. Use o formato ML-000123 ou apenas o número."
+            )
+        return "id", str(order_id), f"Pedido ML-{order_id:06d}"
+    if len(lowered) < SEARCH_EMAIL_MIN_LENGTH:
+        raise ValueError(
+            f"Para buscar por e-mail, digite pelo menos {SEARCH_EMAIL_MIN_LENGTH} caracteres."
+        )
+    if not _EMAIL_FRAGMENT_RE.match(lowered):
+        raise ValueError(
+            "Use um número de pedido (ML-000123) ou parte de um e-mail, sem espaços ou acentos."
+        )
+    return "email", lowered, f"E-mail contendo “{lowered}”"
+
+
+def order_search_filter(kind: str, value: str) -> ColumnElement[bool] | None:
+    if kind == "id":
+        order_id = int(value)
+        if order_id <= 0 or order_id > MAX_ORDER_ID:
+            raise ValueError("Número de pedido inválido.")
+        return Order.id == order_id
+    if kind == "email":
+        if not value:
+            raise ValueError("E-mail de busca vazio.")
+        return func.lower(Order.contact_email).like(
+            f"%{escape_like(value)}%", escape="\\"
+        )
+    if kind == "":
+        return None
+    raise ValueError("Tipo de busca desconhecido.")
+
+
+def orders_page_statement(page: int, kind: str = "", value: str = "") -> Select:
+    statement = select(
+        Order.id,
+        Order.created_at,
+        Order.contact_name,
+        Order.contact_email,
+        Order.total_centavos,
+        Order.status,
+    )
+    condition = order_search_filter(kind, value)
+    if condition is not None:
+        statement = statement.where(condition)
+    return (
+        statement.order_by(Order.created_at.desc(), Order.id.desc())
+        .offset((max(1, page) - 1) * PAGE_SIZE)
+        .limit(PAGE_SIZE + 1)
+    )
 
 
 def order_money(cents: int) -> str:
@@ -61,24 +139,20 @@ class AdminOrderState(rx.State):
     has_next: bool = rxe.field(False, auth=is_admin)
     error: str = rxe.field("", auth=is_admin)
     notice: str = rxe.field("", auth=is_admin)
+    query_text: str = rxe.field("", auth=is_admin)
+    search_kind: str = rxe.field("", auth=is_admin)
+    search_value: str = rxe.field("", auth=is_admin)
+    search_label: str = rxe.field("", auth=is_admin)
+    search_error: str = rxe.field("", auth=is_admin)
+    form_version: int = rxe.field(0, auth=is_admin)
 
-    async def _read_page(self, page: int) -> tuple[list[AdminOrder], bool, int]:
+    async def _read_page(
+        self, page: int, kind: str = "", value: str = ""
+    ) -> tuple[list[AdminOrder], bool, int]:
+        page = max(1, page)
+        statement = orders_page_statement(page, kind, value)
         async with rx.asession() as session:
-            rows = (
-                await session.execute(
-                    select(
-                        Order.id,
-                        Order.created_at,
-                        Order.contact_name,
-                        Order.contact_email,
-                        Order.total_centavos,
-                        Order.status,
-                    )
-                    .order_by(Order.created_at.desc(), Order.id.desc())
-                    .offset((page - 1) * PAGE_SIZE)
-                    .limit(PAGE_SIZE + 1)
-                )
-            ).all()
+            rows = (await session.execute(statement)).all()
             has_next = len(rows) > PAGE_SIZE
             rows = rows[:PAGE_SIZE]
             items: dict[int, list[AdminOrderItem]] = {
@@ -125,18 +199,15 @@ class AdminOrderState(rx.State):
             ]
         return orders, has_next, page
 
-    @rxe.event(auth=is_admin)
-    async def load_orders(self, delta: int = 0):
-        if self.loading or self.saving:
-            return
-        if delta not in (-1, 0, 1) or (delta == 1 and not self.has_next):
-            return
-        page = max(1, self.page + delta)
+    async def _load_page(self, page: int):
         self.loading = True
         self.error = ""
         self.notice = ""
         try:
-            orders, has_next, page = await self._read_page(page)
+            kind, value = self.search_kind, self.search_value
+            orders, has_next, page = await self._read_page(page, kind, value)
+            if not orders and page > 1:
+                orders, has_next, page = await self._read_page(1, kind, value)
             self.orders = orders
             self.has_next = has_next
             self.page = page
@@ -147,6 +218,51 @@ class AdminOrderState(rx.State):
             self.error = "Não foi possível carregar os pedidos. Use Atualizar pedidos para tentar novamente."
         finally:
             self.loading = False
+
+    @rxe.event(auth=is_admin)
+    async def load_orders(self, delta: int = 0):
+        if self.loading or self.saving:
+            return
+        if delta not in (-1, 0, 1) or (delta == 1 and not self.has_next):
+            return
+        await self._load_page(max(1, self.page + delta))
+
+    @rxe.event(auth=is_admin)
+    async def search_orders(self, form_data: dict[str, Any]):
+        if self.loading or self.saving:
+            return
+        raw = form_data.get("query", "")
+        raw = raw if isinstance(raw, str) else ""
+        self.query_text = raw.strip()[:SEARCH_MAX_LENGTH]
+        self.search_error = ""
+        try:
+            kind, value, label = parse_order_query(raw)
+            if not kind:
+                raise ValueError(
+                    "Digite um número de pedido ou um e-mail para buscar, ou use Limpar para ver todos."
+                )
+        except ValueError as e:
+            logging.exception(f"Error: {e}")
+            self.search_error = str(e)
+            return
+        self.query_text = raw.strip()
+        self.search_kind = kind
+        self.search_value = value
+        self.search_label = label
+        self.form_version += 1
+        await self._load_page(1)
+
+    @rxe.event(auth=is_admin)
+    async def clear_search(self):
+        if self.loading or self.saving:
+            return
+        self.query_text = ""
+        self.search_kind = ""
+        self.search_value = ""
+        self.search_label = ""
+        self.search_error = ""
+        self.form_version += 1
+        await self._load_page(1)
 
     async def _persist_status(
         self, order_id: int, status: str, expected: str
@@ -218,7 +334,9 @@ class AdminOrderState(rx.State):
                 else f"Pedido ML-{order_id:06d} já está com o status {STATUS_LABELS[status]}."
             )
             try:
-                orders, has_next, page = await self._read_page(page)
+                orders, has_next, page = await self._read_page(
+                    page, self.search_kind, self.search_value
+                )
                 self.orders = orders
                 self.has_next = has_next
                 self.page = page

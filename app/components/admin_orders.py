@@ -154,6 +154,143 @@ def admin_order_card(order: AdminOrder) -> rx.Component:
     )
 
 
+def order_search_form() -> rx.Component:
+    return rx.el.form(
+        rx.el.label(
+            "Buscar pedidos",
+            html_for="admin-order-search",
+            class_name="font-['Cormorant_Garamond'] text-xl text-[#073238]",
+        ),
+        rx.el.p(
+            "Número exato (ML-000123 ou 123) ou parte do e-mail do cliente, sem diferenciar maiúsculas.",
+            id="admin-order-search-help",
+            class_name="mt-1 text-xs text-[#596559]",
+        ),
+        rx.el.div(
+            rx.el.div(
+                rx.icon(
+                    "search",
+                    aria_hidden=True,
+                    class_name="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-[#073238]",
+                ),
+                rx.el.input(
+                    id="admin-order-search",
+                    name="query",
+                    type="search",
+                    placeholder="ML-000123 ou cliente@email.com",
+                    default_value=AdminOrderState.query_text,
+                    max_length=320,
+                    auto_complete="off",
+                    aria_describedby=rx.cond(
+                        AdminOrderState.search_error != "",
+                        "admin-order-search-help admin-order-search-error",
+                        "admin-order-search-help",
+                    ),
+                    aria_invalid=rx.cond(
+                        AdminOrderState.search_error != "", "true", "false"
+                    ),
+                    class_name="min-h-11 w-full rounded-sm border border-[#d8d7cc] bg-white py-2 pl-10 pr-3 text-sm text-[#0d231d] placeholder:text-[#7a857c] focus:outline-2 focus:outline-[#d4af37]",
+                ),
+                class_name="relative min-w-0 flex-1",
+            ),
+            rx.el.div(
+                rx.el.button(
+                    rx.icon("search", class_name="h-4 w-4"),
+                    "Buscar",
+                    type="submit",
+                    disabled=AdminOrderState.loading | AdminOrderState.saving,
+                    class_name="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-sm bg-[#073238] px-5 text-xs font-medium text-[#faf9f4] hover:bg-[#0d231d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4af37] disabled:cursor-wait disabled:opacity-50 sm:flex-none",
+                ),
+                rx.el.button(
+                    rx.icon("x", class_name="h-4 w-4"),
+                    "Limpar",
+                    type="button",
+                    on_click=AdminOrderState.clear_search,
+                    disabled=AdminOrderState.loading | AdminOrderState.saving,
+                    class_name="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-sm border border-[#d8d7cc] bg-white px-5 text-xs text-[#073238] hover:bg-[#faf9f4] focus-visible:outline-2 focus-visible:outline-[#d4af37] disabled:opacity-50 sm:flex-none",
+                ),
+                class_name="flex gap-3",
+            ),
+            class_name="mt-3 flex flex-col gap-3 sm:flex-row",
+        ),
+        rx.cond(
+            AdminOrderState.search_error != "",
+            rx.el.p(
+                rx.icon(
+                    "circle-alert",
+                    aria_hidden=True,
+                    class_name="h-4 w-4 shrink-0",
+                ),
+                AdminOrderState.search_error,
+                id="admin-order-search-error",
+                role="alert",
+                class_name="mt-3 flex items-start gap-2 text-xs text-red-700",
+            ),
+        ),
+        rx.cond(
+            AdminOrderState.search_kind != "",
+            rx.el.p(
+                rx.icon(
+                    "filter",
+                    aria_hidden=True,
+                    class_name="h-4 w-4 shrink-0 text-[#d4af37]",
+                ),
+                f"Filtro aplicado: {AdminOrderState.search_label} · Página {AdminOrderState.page}",
+                role="status",
+                class_name="mt-3 flex items-center gap-2 break-all text-xs font-medium text-[#073238]",
+            ),
+        ),
+        on_submit=AdminOrderState.search_orders,
+        key=AdminOrderState.form_version.to_string(),
+        role="search",
+        aria_label="Buscar pedidos por número ou e-mail",
+        class_name="mt-5 rounded-sm border border-[#deded3] bg-[#faf9f4] p-4",
+    )
+
+
+def orders_empty_state() -> rx.Component:
+    return rx.el.div(
+        rx.cond(
+            AdminOrderState.search_kind != "",
+            rx.icon(
+                "search-x",
+                aria_hidden=True,
+                class_name="mx-auto h-8 w-8 text-[#073238]",
+            ),
+            rx.icon(
+                "package-open",
+                aria_hidden=True,
+                class_name="mx-auto h-8 w-8 text-[#073238]",
+            ),
+        ),
+        rx.el.p(
+            rx.cond(
+                AdminOrderState.search_kind != "",
+                f"Nenhum pedido corresponde a: {AdminOrderState.search_label}.",
+                rx.cond(
+                    AdminOrderState.page <= 1,
+                    "Nenhum pedido registrado ainda.",
+                    "Nenhum pedido registrado nesta página.",
+                ),
+            ),
+            class_name="mt-3 break-all text-sm text-[#596559]",
+        ),
+        rx.cond(
+            AdminOrderState.search_kind != "",
+            rx.el.button(
+                rx.icon("x", class_name="h-4 w-4"),
+                "Limpar busca e ver todos",
+                type="button",
+                on_click=AdminOrderState.clear_search,
+                disabled=AdminOrderState.loading | AdminOrderState.saving,
+                class_name="mx-auto mt-4 flex min-h-11 items-center gap-2 rounded-sm border border-[#d8d7cc] bg-white px-4 text-xs text-[#073238] hover:bg-[#faf9f4] focus-visible:outline-2 focus-visible:outline-[#d4af37] disabled:opacity-50",
+            ),
+        ),
+        role="status",
+        class_name="mt-5 rounded-sm border border-dashed border-[#d8d7cc] bg-[#faf9f4] p-8 text-center",
+    )
+
+
 def admin_orders() -> rx.Component:
     return rx.el.section(
         rx.el.div(
@@ -181,6 +318,7 @@ def admin_orders() -> rx.Component:
             "Checkout demonstrativo: os status são apenas registros administrativos. Salvar não realiza pagamentos, envios ou entregas reais. Status históricos são exibidos sem criar ações de pagamento ou entrega.",
             class_name="mt-4 rounded-sm border border-[#d4af37]/40 bg-[#faf9f4] p-3 text-xs leading-6 text-[#596559]",
         ),
+        order_search_form(),
         rx.cond(
             AdminOrderState.error != "",
             rx.el.p(
@@ -212,18 +350,7 @@ def admin_orders() -> rx.Component:
                 ),
                 rx.cond(
                     AdminOrderState.error == "",
-                    rx.el.div(
-                        rx.icon(
-                            "package-open",
-                            aria_hidden=True,
-                            class_name="mx-auto h-8 w-8 text-[#073238]",
-                        ),
-                        rx.el.p(
-                            "Nenhum pedido registrado nesta página.",
-                            class_name="mt-3 text-sm text-[#596559]",
-                        ),
-                        class_name="mt-5 rounded-sm border border-dashed border-[#d8d7cc] bg-[#faf9f4] p-8 text-center",
-                    ),
+                    orders_empty_state(),
                 ),
             ),
         ),

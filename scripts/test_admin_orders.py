@@ -9,7 +9,51 @@ from app.states.admin_order_state import (
     STATUS_LABELS,
     order_money,
     order_date,
+    escape_like,
+    parse_order_query,
+    orders_page_statement,
 )
+from sqlalchemy.dialects import postgresql
+
+
+class OrderSearchTests(unittest.TestCase):
+    def test_order_numbers(self):
+        self.assertEqual(parse_order_query(" ML-000123 ")[:2], ("id", "123"))
+        self.assertEqual(parse_order_query("ml123")[:2], ("id", "123"))
+        self.assertEqual(parse_order_query("42")[2], "Pedido ML-000042")
+        for bad in ("ML-000000", "0", "99999999999"):
+            with self.assertRaises(ValueError):
+                parse_order_query(bad)
+
+    def test_email_validation(self):
+        self.assertEqual(
+            parse_order_query("  Ana@Mail.COM ")[:2], ("email", "ana@mail.com")
+        )
+        self.assertEqual(parse_order_query(""), ("", "", ""))
+        for bad in ("ab", "a b@x.com", "x' OR 1=1", "a" * 321):
+            with self.assertRaises(ValueError):
+                parse_order_query(bad)
+
+    def test_wildcard_escape(self):
+        self.assertEqual(escape_like("a_b%c\\"), "a\\_b\\%c\\\\")
+
+    def test_filter_before_pagination(self):
+        compiled = orders_page_statement(2, "email", "a_b%").compile(
+            dialect=postgresql.dialect()
+        )
+        sql = str(compiled)
+        self.assertIn("lower(orders.contact_email) LIKE", sql)
+        self.assertIn("ESCAPE", sql)
+        self.assertLess(sql.index("WHERE"), sql.index("LIMIT"))
+        self.assertIn("%a\\_b\\%%", compiled.params.values())
+        self.assertNotIn("a_b", sql)
+        compiled = orders_page_statement(1, "id", "7").compile(
+            dialect=postgresql.dialect()
+        )
+        self.assertIn("orders.id =", str(compiled))
+        self.assertIn(7, compiled.params.values())
+        with self.assertRaises(ValueError):
+            orders_page_statement(1, "raw", "1=1")
 
 
 class OrderPresentationTests(unittest.TestCase):
