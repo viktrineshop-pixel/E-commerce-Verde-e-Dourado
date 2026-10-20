@@ -11,7 +11,7 @@ class DiscoveryAuditState(rx.State):
     rows: list[dict[str, str]] = rxe.field([], auth=is_admin)
     page: int = rxe.field(1, auth=is_admin)
     total: int = rxe.field(0, auth=is_admin)
-    product_id: int = rxe.field(0, auth=is_admin)
+    audit_product_id: int = rxe.field(0, auth=is_admin)
     loading: bool = rxe.field(False, auth=is_admin)
     error: str = rxe.field("", auth=is_admin)
 
@@ -32,7 +32,7 @@ class DiscoveryAuditState(rx.State):
                 raise ValueError(
                     "Informe um ID de produto positivo ou deixe vazio para todos."
                 )
-            self.product_id = int(raw) if raw else 0
+            self.audit_product_id = int(raw) if raw else 0
             self.page = 1
             return DiscoveryAuditState.load
         except ValueError as e:
@@ -45,7 +45,7 @@ class DiscoveryAuditState(rx.State):
             if self.loading:
                 return
             self.loading, self.error = True, ""
-            page, product_id = self.page, self.product_id
+            page, product_id = self.page, self.audit_product_id
         try:
             rows, total = await read_page("audit", page, product_id=product_id)
             async with self:

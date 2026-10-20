@@ -13,13 +13,15 @@ from app.pages import marketplaces
 from app.components.admin import admin_content
 from app.states.admin_state import AdminState
 from app.click_tracking import click_api
+from app.pages.product import product_page
+from app.states.product_detail_state import ProductDetailState
 
 
 @rxe.page(
     route="/",
     auth=False,
-    title="VIKTRINE SHOP | Estilo em cada detalhe",
-    description="Explore nossa vitrine demonstrativa de moda e acessórios.",
+    title="Viktrine | Descubra e compare ofertas",
+    description="Descubra produtos editoriais e compare ofertas com fontes registradas. Compras nas lojas externas.",
 )
 def index() -> rx.Component:
     return rx.el.div(
@@ -36,7 +38,7 @@ def index() -> rx.Component:
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
-        on_mount=[StorefrontState.load_catalog, CartState.load_cart],
+        on_mount=CartState.load_cart,
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
@@ -100,6 +102,16 @@ def admin_page() -> rx.Component:
         on_mount=AdminState.load_dashboard,
         class_name="flex min-h-dvh w-full flex-col bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
+
+
+@rxe.page(
+    route="/produto/[product_id]",
+    auth=False,
+    title="Produto e ofertas | Viktrine",
+    description="Compare ofertas da mesma variante e moeda e consulte suas fontes e observações reais.",
+)
+def product_detail_page() -> rx.Component:
+    return product_page()
 
 
 app = rxe.App(

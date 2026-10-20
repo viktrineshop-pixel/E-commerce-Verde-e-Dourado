@@ -1,6 +1,5 @@
 import reflex as rx
 from app.states.favorite_state import FavoriteState, FavoriteProduct
-from app.click_tracking import tracking_url
 
 
 def favorite_control(
@@ -122,12 +121,12 @@ def favorite_card(product: FavoriteProduct) -> rx.Component:
             ),
             rx.el.div(
                 rx.el.a(
-                    "Ir para a loja",
+                    "Comparar ofertas",
                     rx.icon(
                         "arrow-up-right", aria_hidden=True, class_name="h-4 w-4"
                     ),
-                    href=tracking_url(product["id"]),
-                    aria_label=f"Ir para a loja {product['partner_name']}: {product['title']}",
+                    href=f"/produto/{product['id']}",
+                    aria_label=f"Comparar ofertas: {product['title']}",
                     class_name="inline-flex min-h-11 items-center gap-2 border border-[#d4af37] bg-[#d4af37] px-3 py-2 text-xs font-medium text-[#073238] hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#073238]",
                 ),
                 rx.el.button(

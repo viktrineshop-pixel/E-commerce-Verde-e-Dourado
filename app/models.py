@@ -181,7 +181,7 @@ class ProductLinkClick(Base):
     __tablename__ = "product_link_clicks"
     __table_args__ = (
         CheckConstraint(
-            "marketplace IN ('Amazon', 'Mercado Livre', 'Shopee')",
+            "length(trim(marketplace)) > 0",
             name="marketplace_valid",
         ),
         Index(

@@ -261,6 +261,10 @@ def header() -> rx.Component:
                 aria_label="Menu móvel",
             ),
         ),
-        on_mount=[AdminState.load_role, FavoriteState.sync_auth],
+        on_mount=[
+            AdminState.load_role,
+            FavoriteState.sync_auth,
+            StorefrontState.load_catalog,
+        ],
         class_name="relative z-20 w-full bg-[var(--brand-petroleum)] text-[#f5f1e8]",
     )

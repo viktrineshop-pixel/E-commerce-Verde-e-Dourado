@@ -4,6 +4,7 @@ import logging
 from typing import TypedDict
 from reflex_enterprise.auth import User
 from sqlalchemy import bindparam, text
+from app.public_catalog import PUBLIC_CTE, eligible_product
 
 
 class FavoriteProduct(TypedDict):
@@ -56,6 +57,9 @@ class FavoriteState(rx.State):
     @rxe.event(auth=False)
     def clear_presentation(self):
         self._clear()
+        from app.states.saved_list_state import SavedListState
+
+        return SavedListState.clear_presentation
 
     @rxe.event(auth=False)
     async def sync_auth(self):
@@ -64,12 +68,22 @@ class FavoriteState(rx.State):
             subject = await self._current_subject()
             if not subject:
                 self._clear()
+                from app.states.saved_list_state import SavedListState
+
+                yield SavedListState.clear_presentation
                 return
             if subject != self._subject:
                 self._clear()
+                from app.states.saved_list_state import SavedListState
+
+                lists = await self.get_state(SavedListState)
+                lists.clear_presentation()
             self._subject = subject
             self.signed_in = True
             yield FavoriteState.load_favorites
+            from app.states.saved_list_state import SavedListState
+
+            yield SavedListState.load_lists
         except Exception as e:
             logging.exception(f"Error: {e}")
             self._clear()
@@ -99,19 +113,59 @@ class FavoriteState(rx.State):
                 self.ready = False
                 self.error = ""
                 storefront = await self.get_state(StorefrontState)
-                catalog_ids = [product["id"] for product in storefront.products]
+                from app.states.product_detail_state import ProductDetailState
+
+                detail = await self.get_state(ProductDetailState)
+                catalog_ids = list(
+                    set(
+                        [product["id"] for product in storefront.products]
+                        + [product["id"] for product in detail.groups]
+                    )
+                )
                 page = self.page_number
             async with rx.asession() as session:
+                await session.execute(
+                    text(
+                        "SELECT pg_advisory_xact_lock(hashtextextended(:subject, 0))"
+                    ),
+                    {"subject": subject},
+                )
+                await session.execute(
+                    text("""
+                    INSERT INTO saved_lists (owner_sub, slug, title, visibility)
+                    SELECT :subject, 'favorites', 'Favoritos', 'private'
+                    WHERE EXISTS (SELECT 1 FROM customer_favorites WHERE subject = :subject)
+                    ON CONFLICT (owner_sub, slug) DO NOTHING
+                """),
+                    {"subject": subject},
+                )
+                await session.execute(
+                    text("""
+                    INSERT INTO saved_list_items (list_id, owner_sub, product_id, position, created_at)
+                    SELECT l.id, l.owner_sub, f.product_id, 0, f.created_at
+                    FROM customer_favorites f JOIN saved_lists l ON l.owner_sub = f.subject AND l.slug = 'favorites'
+                    WHERE f.subject = :subject
+                    ON CONFLICT (list_id, product_id) DO NOTHING
+                """),
+                    {"subject": subject},
+                )
+                await session.execute(
+                    text(
+                        "DELETE FROM customer_favorites WHERE subject = :subject"
+                    ),
+                    {"subject": subject},
+                )
+                await session.commit()
                 saved_ids = []
                 if catalog_ids:
                     saved_ids = list(
                         (
                             await session.scalars(
-                                text("""
-                            SELECT f.product_id FROM customer_favorites f
-                            JOIN products p ON p.id = f.product_id
-                            WHERE f.subject = :subject AND f.product_id IN :ids
-                            LIMIT 12
+                                text(f"""{PUBLIC_CTE}
+                            SELECT i.product_id FROM saved_list_items i
+                            JOIN saved_lists l ON l.id = i.list_id AND l.owner_sub = i.owner_sub
+                            WHERE l.owner_sub = :subject AND l.slug = 'favorites' AND i.product_id IN :ids
+                              AND EXISTS (SELECT 1 FROM eligible e WHERE e.product_id = i.product_id)
                         """).bindparams(bindparam("ids", expanding=True)),
                                 {"subject": subject, "ids": catalog_ids},
                             )
@@ -120,14 +174,13 @@ class FavoriteState(rx.State):
                 rows = (
                     (
                         await session.execute(
-                            text("""
-                        SELECT p.id, p.title, p.image_url,
-                               COALESCE(p.price_centavos, 0) AS price_centavos,
-                               p.partner_name
-                        FROM customer_favorites f JOIN products p ON p.id = f.product_id
-                        WHERE f.subject = :subject
-                        ORDER BY f.created_at DESC, f.id DESC
-                        LIMIT 13 OFFSET :offset
+                            text(f"""{PUBLIC_CTE}
+                        SELECT p.id, p.title, p.image_url
+                        FROM saved_list_items i JOIN saved_lists l ON l.id = i.list_id AND l.owner_sub = i.owner_sub
+                        JOIN products p ON p.id = i.product_id
+                        WHERE l.owner_sub = :subject AND l.slug = 'favorites'
+                          AND EXISTS (SELECT 1 FROM eligible e WHERE e.product_id = p.id)
+                        ORDER BY i.created_at DESC, i.id DESC LIMIT 13 OFFSET :offset
                     """),
                             {"subject": subject, "offset": (page - 1) * 12},
                         )
@@ -140,8 +193,8 @@ class FavoriteState(rx.State):
                     id=row["id"],
                     title=row["title"],
                     image_url=row["image_url"] or "/placeholder.svg",
-                    price=self._money(row["price_centavos"]),
-                    partner_name=row["partner_name"],
+                    price="Compare os preços observados no detalhe",
+                    partner_name="Produto editorial",
                 )
                 for row in rows[:12]
             ]
@@ -175,12 +228,6 @@ class FavoriteState(rx.State):
                     self.loading = False
                     self.ready = False
                     self.error = "Não foi possível carregar seus favoritos. Tente novamente."
-
-    def _money(self, cents: int) -> str:
-        value = f"{cents / 100:,.2f}"
-        return (
-            f"R$ {value.replace(',', '|').replace('.', ',').replace('|', '.')}"
-        )
 
     @rxe.event(auth=True)
     def change_page(self, direction: int):
@@ -217,13 +264,21 @@ class FavoriteState(rx.State):
                     return
                 self.pending_id = product_id
             async with rx.asession() as session:
-                exists = await session.scalar(
+                await session.execute(
                     text(
-                        "SELECT id FROM products WHERE id = :id FOR KEY SHARE"
+                        "SELECT pg_advisory_xact_lock(hashtextextended(:subject, 0))"
                     ),
+                    {"subject": subject},
+                )
+                await session.execute(
+                    text("SELECT pg_advisory_xact_lock(71420932)")
+                )
+                await session.execute(
+                    text("SELECT id FROM products WHERE id = :id FOR SHARE"),
                     {"id": product_id},
                 )
-                if saved and exists is None:
+                exists = await eligible_product(session, product_id)
+                if saved and not exists:
                     async with self:
                         if generation == self._generation:
                             self.saved_ids = [
@@ -239,18 +294,26 @@ class FavoriteState(rx.State):
                     )
                 if saved:
                     await session.execute(
+                        text(
+                            "INSERT INTO saved_lists (owner_sub, slug, title, visibility) VALUES (:subject, 'favorites', 'Favoritos', 'private') ON CONFLICT (owner_sub, slug) DO NOTHING"
+                        ),
+                        {"subject": subject},
+                    )
+                    await session.execute(
                         text("""
-                        INSERT INTO customer_favorites (subject, product_id)
-                        VALUES (:subject, :id)
-                        ON CONFLICT (subject, product_id) DO NOTHING
+                        INSERT INTO saved_list_items (list_id, owner_sub, product_id, position)
+                        SELECT id, owner_sub, :id, 0 FROM saved_lists
+                        WHERE owner_sub = :subject AND slug = 'favorites'
+                        ON CONFLICT (list_id, product_id) DO NOTHING
                     """),
                         {"subject": subject, "id": product_id},
                     )
                 else:
                     await session.execute(
                         text("""
-                        DELETE FROM customer_favorites
-                        WHERE subject = :subject AND product_id = :id
+                        DELETE FROM saved_list_items i USING saved_lists l
+                        WHERE i.list_id = l.id AND i.owner_sub = l.owner_sub
+                          AND l.owner_sub = :subject AND l.slug = 'favorites' AND i.product_id = :id
                     """),
                         {"subject": subject, "id": product_id},
                     )
@@ -268,7 +331,7 @@ class FavoriteState(rx.State):
                     if saved
                     else "Produto removido dos favoritos."
                 )
-                if exists is None:
+                if not exists:
                     self.notice = "O produto saiu do catálogo e foi removido da sua lista."
                 if not saved:
                     self.saved_ids = [

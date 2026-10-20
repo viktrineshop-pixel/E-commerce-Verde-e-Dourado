@@ -3,6 +3,7 @@ from reflex_enterprise.auth import User
 from app.states.account_state import AccountState, CustomerOrder, PurchasedItem
 from app.states.favorite_state import FavoriteState
 from app.components.favorites import favorites_section
+from app.components.saved_lists import lists_section
 
 
 def catalog_link() -> rx.Component:
@@ -377,4 +378,5 @@ def account_content() -> rx.Component:
             class_name="mx-auto w-full max-w-[1440px] px-6 py-10 text-[#0d231d] lg:px-12 lg:py-14",
         ),
         favorites_section(),
+        lists_section(),
     )

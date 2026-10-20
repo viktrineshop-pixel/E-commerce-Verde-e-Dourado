@@ -1,6 +1,8 @@
 import reflex as rx
 from app.states.storefront_state import StorefrontState, ProductView
-from app.click_tracking import tracking_url
+from app.components.offer_comparison import offer_row
+from app.components.catalog_filters import discovery_filters
+from app.components.saved_lists import list_add_control
 from app.components.favorites import favorite_control, favorite_feedback
 
 
@@ -29,100 +31,59 @@ def sort_option(label: str) -> rx.Component:
     )
 
 
-def price_option(label: str) -> rx.Component:
-    return rx.el.button(
-        label,
-        on_click=StorefrontState.choose_price(label),
-        aria_pressed=StorefrontState.price_filter == label,
-        class_name=rx.cond(
-            StorefrontState.price_filter == label,
-            "rounded-sm border border-[#0d231d] bg-[#0d231d] px-4 py-2 text-xs text-white",
-            "rounded-sm border border-[#d8d7cc] bg-[#faf9f4] px-4 py-2 text-xs text-[#536059] hover:border-[#0d231d]",
-        ),
-    )
-
-
 def product_card(product: ProductView) -> rx.Component:
     return rx.el.article(
         rx.el.div(
-            rx.el.img(
-                src=product["image_url"],
-                alt=product["title"],
-                loading="lazy",
-                class_name="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-105",
-            ),
-            rx.cond(
-                product["badge"] != "",
-                rx.el.span(
-                    product["badge"],
-                    class_name="absolute left-4 top-4 w-fit bg-[#faf9f4]/95 px-3 py-1.5 text-[10px] font-medium tracking-wide text-[#0d231d]",
+            rx.el.a(
+                rx.el.img(
+                    src=product["image_url"],
+                    alt=product["title"],
+                    loading="lazy",
+                    class_name="aspect-[4/3] w-full bg-[#efede4] object-contain",
                 ),
-            ),
-            rx.cond(
-                product["stock"] == 0,
-                rx.el.span(
-                    "Indisponível",
-                    class_name="absolute bottom-4 left-4 w-fit bg-[#0d231d] px-3 py-1.5 text-[10px] text-[#f5f1e8]",
-                ),
+                href=f"/produto/{product['id']}",
+                class_name="block focus-visible:outline-2 focus-visible:outline-[#d4af37]",
             ),
             rx.el.div(
                 favorite_control(product["id"], product["title"]),
-                class_name="absolute right-2 top-2 sm:right-3 sm:top-3",
+                class_name="absolute right-3 top-3",
             ),
-            class_name="relative overflow-hidden bg-[#e9e6df]",
+            class_name="relative",
         ),
         rx.el.div(
-            rx.el.p(
-                product["category"],
-                class_name="mb-2 text-[10px] uppercase tracking-[0.16em] text-[#d4af37]",
-            ),
+            rx.el.p(product["category"], class_name="text-xs text-gray-600"),
             rx.el.h3(
-                product["title"],
-                class_name="text-sm font-medium text-[#0d231d] md:text-base",
+                rx.el.a(
+                    product["title"],
+                    href=f"/produto/{product['id']}",
+                    class_name="hover:underline focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                ),
+                class_name="mt-3 font-['Cormorant_Garamond'] text-3xl text-[#073238]",
+            ),
+            rx.el.p(
+                product["brand_model"], class_name="mt-2 text-xs text-gray-600"
+            ),
+            rx.el.p(
+                f"{product['variant']} · {product['currency']}",
+                class_name="mt-3 text-xs font-medium text-[#073238]",
+            ),
+            rx.el.p(
+                product["description"],
+                class_name="mt-3 whitespace-pre-wrap text-sm leading-6 text-gray-600",
             ),
             rx.el.div(
-                rx.el.span(
-                    product["price"],
-                    class_name="text-sm font-semibold text-[#0d231d]",
-                ),
-                rx.cond(
-                    product["compare_price"] != "",
-                    rx.el.s(
-                        product["compare_price"],
-                        class_name="text-xs text-[#7b827a]",
-                    ),
-                ),
-                class_name="mt-2 flex flex-wrap items-center gap-3",
-            ),
-            rx.el.details(
-                rx.el.summary(
-                    product["partner_name"],
-                    rx.icon("plus", class_name="h-3 w-3"),
-                    class_name="mt-4 flex cursor-pointer list-none items-center justify-between border-t border-[#deded3] pt-3 text-[11px] text-[#536059] hover:text-[#0d231d]",
-                ),
-                rx.el.p(
-                    product["description"],
-                    class_name="pt-3 text-xs leading-relaxed text-[#536059]",
-                ),
+                rx.foreach(product["offers"], offer_row), class_name="mt-4"
             ),
             rx.el.a(
-                rx.el.span(
-                    rx.icon(
-                        "shopping-bag",
-                        aria_hidden=True,
-                        class_name="h-4 w-4 fill-[#d4af37] stroke-[#073238]",
-                    ),
-                    class_name="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-[#073238]",
-                ),
-                "Ir para a loja",
-                href=tracking_url(product["id"]),
-                aria_label=f"Ir para a loja {product['partner_name']}: {product['title']}",
-                class_name="mt-4 flex min-h-11 w-full items-center justify-center gap-2 border border-[#d4af37] bg-[#d4af37] px-2 py-3 text-[11px] font-semibold text-[#073238] transition-colors hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#073238] sm:text-xs",
+                "Detalhes, fontes e histórico",
+                href=f"/produto/{product['id']}",
+                class_name="block min-h-11 py-3 text-xs text-[#073238] underline focus-visible:outline-2 focus-visible:outline-[#d4af37]",
             ),
-            class_name="px-1 pb-3 pt-5",
+            list_add_control(product["id"]),
+            class_name="p-5",
         ),
-        key=product["id"],
-        class_name="group min-w-0 bg-transparent",
+        key=product["key"],
+        class_name="min-w-0 border border-[#dedfd5] bg-white text-[#073238]",
     )
 
 
@@ -140,7 +101,7 @@ def catalog() -> rx.Component:
                 ),
             ),
             rx.el.p(
-                "Peças versáteis. Detalhes que fazem a diferença.",
+                "Viktrine · Ofertas publicadas com fonte e revisão manual. Compras nas lojas externas.",
                 class_name="mt-4 text-xs leading-relaxed text-[#687268] md:mt-0",
             ),
             class_name="flex flex-col justify-between gap-3 md:flex-row md:items-end",
@@ -150,18 +111,6 @@ def catalog() -> rx.Component:
                 rx.foreach(
                     [
                         "Todos",
-                        "Feminino",
-                        "Masculino",
-                        "Acessórios",
-                        "Novidades",
-                        "Promoções",
-                        "achados",
-                        "Até R$ 50",
-                        "Casa",
-                        "Veículos",
-                        "Jardinagem",
-                        "Eletrodomésticos",
-                        "Notebooks",
                     ],
                     category_pill,
                 ),
@@ -177,7 +126,6 @@ def catalog() -> rx.Component:
                 rx.el.div(
                     rx.foreach(
                         [
-                            "Destaques",
                             "Menor preço",
                             "Maior preço",
                             "Mais recentes",
@@ -190,44 +138,11 @@ def catalog() -> rx.Component:
             ),
             class_name="mt-8 flex flex-col justify-between gap-3 border-b border-[#deded3] pb-5 md:flex-row md:items-center md:gap-8",
         ),
+        discovery_filters(),
         rx.el.div(
-            rx.el.details(
-                rx.el.summary(
-                    rx.icon("sliders-horizontal", class_name="h-3.5 w-3.5"),
-                    "Filtrar por preço e disponibilidade",
-                    rx.icon("chevron-down", class_name="h-3 w-3"),
-                    class_name="flex cursor-pointer list-none items-center gap-2 text-xs text-[#536059]",
-                ),
-                rx.el.div(
-                    rx.foreach(
-                        [
-                            "Todos os preços",
-                            "Até R$ 200",
-                            "R$ 200 a R$ 400",
-                            "Acima de R$ 400",
-                        ],
-                        price_option,
-                    ),
-                    rx.el.button(
-                        rx.icon(
-                            "check",
-                            class_name=rx.cond(
-                                StorefrontState.available_only,
-                                "h-4 w-4 text-[#0d231d]",
-                                "h-4 w-4 text-[#c4c8bd]",
-                            ),
-                        ),
-                        "Somente disponíveis",
-                        aria_pressed=StorefrontState.available_only,
-                        on_click=StorefrontState.toggle_available,
-                        class_name="flex items-center gap-2 px-3 py-2 text-xs text-[#536059]",
-                    ),
-                    class_name="mt-4 flex flex-wrap gap-2",
-                ),
-            ),
             rx.el.div(
                 rx.el.span(
-                    f"{StorefrontState.total} produtos",
+                    f"{StorefrontState.total} grupos de produto, variante e moeda",
                     class_name="text-xs text-[#687268]",
                 ),
                 rx.el.button(
@@ -255,7 +170,7 @@ def catalog() -> rx.Component:
                 ),
                 role="status",
                 aria_label="Carregando produtos",
-                class_name="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-7",
+                class_name="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3",
             ),
             rx.cond(
                 StorefrontState.error != "",
@@ -284,11 +199,11 @@ def catalog() -> rx.Component:
                             class_name="mx-auto mb-5 h-8 w-8 text-[#8b7846]",
                         ),
                         rx.el.h3(
-                            "Nenhuma peça encontrada",
+                            "Nenhuma oferta elegível encontrada",
                             class_name="font-['Cormorant_Garamond'] text-3xl text-[#0d231d]",
                         ),
                         rx.el.p(
-                            "Experimente outra busca ou ajuste os filtros.",
+                            "Ajuste a busca ou os filtros. Produtos demonstrativos, ofertas sem evidência e links não revisados não aparecem aqui.",
                             class_name="mt-3 text-sm text-[#687268]",
                         ),
                         rx.el.button(
@@ -300,7 +215,7 @@ def catalog() -> rx.Component:
                     ),
                     rx.el.div(
                         rx.foreach(StorefrontState.products, product_card),
-                        class_name="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4 lg:gap-x-7",
+                        class_name="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3",
                     ),
                 ),
             ),
