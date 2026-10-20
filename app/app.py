@@ -86,8 +86,8 @@ def account_page() -> rx.Component:
 @rxe.page(
     route="/admin",
     auth=True,
-    title="Administrar produtos | VIKTRINE SHOP",
-    description="Gerencie o catálogo da VIKTRINE SHOP.",
+    title="Curadoria editorial | Viktrine",
+    description="Produtos editoriais, ofertas e evidências da Viktrine.",
 )
 def admin_page() -> rx.Component:
     return rx.el.div(

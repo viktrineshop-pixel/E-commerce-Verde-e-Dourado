@@ -5,7 +5,6 @@ import re
 from decimal import Decimal
 from typing import Any, TypedDict
 from urllib.parse import urlsplit, unquote
-from uuid import uuid4
 from sqlalchemy import select, func, text
 from app.models import Product, StoreMember
 from reflex_enterprise.auth import User
@@ -185,7 +184,11 @@ class AdminState(rx.State):
             yield AdminCouponState.load_coupons
             yield AdminClickState.load_report
             yield AdminOrderState.load_orders
-            yield AdminState.load_products
+            from app.states.discovery_state import DiscoveryState
+            from app.states.discovery_audit_state import DiscoveryAuditState
+
+            yield DiscoveryState.load
+            yield DiscoveryAuditState.load
 
     @rxe.event(auth=is_admin)
     async def load_products(self):
@@ -359,68 +362,7 @@ class AdminState(rx.State):
 
     @rxe.event(auth=is_admin)
     async def save_product(self, fields: dict[str, Any]):
-        if self.busy:
-            return
-        for field in self.draft:
-            if field in fields and isinstance(fields[field], str):
-                self.draft[field] = fields[field][:10001]
-        self.notice = ""
-        self.error = ""
-        price, compare, stock = self._validate()
-        if self.errors:
-            self.error = "Revise os campos indicados. O formulário foi mantido."
-            return
-        self.busy = True
-        try:
-            async with rx.asession() as session:
-                async with session.begin():
-                    if self._editing_id:
-                        p = await session.scalar(
-                            select(Product)
-                            .where(Product.id == self._editing_id)
-                            .with_for_update()
-                        )
-                        if p is None:
-                            raise ValueError(
-                                "Este produto foi excluído. Copie os dados ou inicie um novo cadastro."
-                            )
-                    else:
-                        p = Product(sku=f"VK-{uuid4().hex.upper()}")
-                        session.add(p)
-                    for field in (
-                        "title",
-                        "description",
-                        "category",
-                        "image_url",
-                        "badge",
-                        "partner_name",
-                        "affiliate_url",
-                    ):
-                        setattr(p, field, self.draft[field])
-                    p.price_centavos = price
-                    p.compare_at_price_centavos = compare
-                    p.stock = stock
-                    p.featured = self.featured
-                    await session.flush()
-                    saved_id, saved_sku = p.id, p.sku
-            self._editing_id = saved_id
-            self.sku = saved_sku
-            self.editing = True
-            self.notice = (
-                "Produto salvo. As informações estão disponíveis na vitrine."
-            )
-            yield AdminState.load_products
-            from app.states.storefront_state import StorefrontState
-
-            yield StorefrontState.refresh_products
-        except ValueError as e:
-            logging.exception(f"Error: {e}")
-            self.error = str(e)
-        except Exception as e:
-            logging.exception(f"Error: {e}")
-            self.error = "Não foi possível salvar o produto. Os campos foram mantidos; tente novamente."
-        finally:
-            self.busy = False
+        self.error = "O cadastro legado foi substituído. Use a curadoria editorial para salvar produtos e ofertas com auditoria."
 
     @rxe.event(auth=is_admin)
     async def request_delete(self, product_id: int):
@@ -472,12 +414,36 @@ class AdminState(rx.State):
                         raise ValueError(
                             "O produto já foi excluído. Atualize a lista."
                         )
-                    await session.delete(p)
+                    from app.discovery import (
+                        snapshot,
+                        audit,
+                        reconcile_publication,
+                    )
+
+                    actor = str((await User.current() or {}).get("sub", ""))
+                    before = snapshot(p)
+                    p.status = (
+                        "draft" if p.sku.startswith("DEMO-") else "archived"
+                    )
+                    p.reviewed_at = None
+                    p.reviewed_by_sub = None
+                    await audit(
+                        session,
+                        p,
+                        before,
+                        actor,
+                        "archive",
+                        "Arquivamento pelo fluxo legado",
+                        p.id,
+                    )
+                    await reconcile_publication(
+                        session, actor, "Arquivamento pelo fluxo legado"
+                    )
             if self._editing_id == self._delete_id:
                 self._clear_draft()
             self._delete_id = 0
             self.delete_title = ""
-            self.notice = "Produto excluído. Sacolas foram ajustadas e o histórico dos pedidos foi preservado."
+            self.notice = "Registro arquivado sem exclusão física; produtos demonstrativos permanecem rascunhos. Pedidos históricos preservados."
             yield AdminState.load_products
             from app.states.storefront_state import StorefrontState
             from app.states.cart_state import CartState

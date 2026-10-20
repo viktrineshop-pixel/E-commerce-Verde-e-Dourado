@@ -1025,9 +1025,7 @@ class ProductAudit(Base):
     action: Mapped[str] = mapped_column(
         String(80), default="", server_default=""
     )
-    diff: Mapped[dict[str, object]] = mapped_column(
-        JSONB, default_factory=dict, server_default=text("'{}'::jsonb")
-    )
+    diff: Mapped[dict[str, object]] = mapped_column(JSONB, default_factory=dict)
     reason: Mapped[str | None] = mapped_column(
         Text, nullable=True, default=None
     )

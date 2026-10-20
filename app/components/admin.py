@@ -4,6 +4,7 @@ from app.states.admin_state import AdminState, AdminProduct
 from app.components.admin_orders import admin_orders
 from app.components.admin_clicks import admin_clicks
 from app.components.admin_coupons import admin_coupons
+from app.components.discovery import discovery_workspace
 
 
 _CATEGORY_SUGGESTIONS = [
@@ -404,14 +405,10 @@ def admin_workspace() -> rx.Component:
                 class_name="mb-6 rounded-sm border border-red-200 bg-red-50 p-5",
             ),
         ),
+        discovery_workspace(),
         admin_orders(),
         admin_clicks(),
         admin_coupons(),
-        rx.el.div(
-            product_editor(),
-            product_list(),
-            class_name="grid w-full grid-cols-1 items-start gap-6 xl:grid-cols-2",
-        ),
         class_name="w-full",
     )
 
@@ -419,7 +416,7 @@ def admin_workspace() -> rx.Component:
 def admin_content() -> rx.Component:
     return rx.el.div(
         rx.el.p(
-            "VIKTRINE SHOP · ADMINISTRAÇÃO",
+            "Viktrine · ADMINISTRAÇÃO",
             class_name="text-[10px] font-medium tracking-[0.2em] text-[#8b7846]",
         ),
         rx.el.h1(
@@ -427,7 +424,7 @@ def admin_content() -> rx.Component:
             class_name="mt-3 font-['Cormorant_Garamond'] text-4xl leading-tight text-[#073238] sm:text-5xl",
         ),
         rx.el.p(
-            "Gerencie os produtos da vitrine. O checkout continua demonstrativo: não há pagamentos nem entregas reais.",
+            "Organize produtos editoriais e ofertas de lojas externas, com revisão, evidências e auditoria. Os pedidos históricos, relatórios e cupons existentes são preservados nesta etapa.",
             class_name="mt-4 max-w-3xl text-sm leading-6 text-[#687268]",
         ),
         rx.el.div(
