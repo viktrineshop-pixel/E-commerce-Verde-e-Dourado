@@ -3,16 +3,25 @@ import reflex_enterprise as rxe
 import logging
 import re
 from app.public_catalog import ProductView, product_detail
+from app.landing_products import (
+    LandingView,
+    empty_landing,
+    published_landing,
+    normalize_slug,
+)
 
 
 class ProductDetailState(rx.State):
     groups: list[ProductView] = rxe.field([], auth=False)
+    landing: LandingView = rxe.field(empty_landing(), auth=False)
     loading: bool = rxe.field(True, auth=False)
     error: str = rxe.field("", auth=False)
     _generation: int = 0
 
     @rxe.var(auth=False)
     def seo_title(self) -> str:
+        if self.landing["id"]:
+            return f"{self.landing['nome']} | Viktrine"
         return (
             f"{self.groups[0]['title']} | Ofertas na Viktrine"
             if self.groups
@@ -21,6 +30,8 @@ class ProductDetailState(rx.State):
 
     @rxe.var(auth=False)
     def seo_description(self) -> str:
+        if self.landing["id"]:
+            return f"{self.landing['descricao'][:180]} · Compras na loja externa por link de afiliado."
         return (
             f"{self.groups[0]['description'][:200]} · Compare fontes e datas; compras nas lojas externas."
             if self.groups
@@ -30,6 +41,8 @@ class ProductDetailState(rx.State):
     @rxe.var(auth=False)
     def canonical_path(self) -> str:
         raw = self.router.page.params.get("product_id", "")
+        if self.landing["id"]:
+            return f"/produto/{self.landing['slug']}"
         return (
             f"/produto/{int(raw)}"
             if isinstance(raw, str)
@@ -47,18 +60,33 @@ class ProductDetailState(rx.State):
             self.loading = True
             self.error = ""
             self.groups = []
+            self.landing = empty_landing()
         try:
             groups = []
+            landing = empty_landing()
             if (
                 isinstance(raw, str)
                 and re.fullmatch(r"[0-9]{1,10}", raw)
                 and 0 < int(raw) <= 2147483647
             ):
                 groups = await product_detail(int(raw))
+            elif (
+                isinstance(raw, str)
+                and raw
+                and not raw.isdigit()
+                and len(raw) <= 250
+            ):
+                try:
+                    slug = normalize_slug(raw)
+                except ValueError:
+                    slug = ""
+                if slug:
+                    landing = await published_landing(slug)
             async with self:
                 if generation != self._generation:
                     return
                 self.groups = groups
+                self.landing = landing
                 self.loading = False
         except Exception as e:
             logging.exception(f"Error: {e}")

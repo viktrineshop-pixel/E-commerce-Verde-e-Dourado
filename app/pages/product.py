@@ -6,6 +6,7 @@ from app.components.hero import footer
 from app.components.offer_comparison import offer_evidence
 from app.components.favorites import favorite_control, favorite_feedback
 from app.components.saved_lists import list_add_control
+from app.components.landing_products import landing_detail
 
 
 def detail_group(product: ProductView) -> rx.Component:
@@ -96,19 +97,23 @@ def product_page() -> rx.Component:
                         class_name="p-8 text-[#073238]",
                     ),
                     rx.cond(
-                        ProductDetailState.groups.length() == 0,
-                        rx.el.div(
-                            rx.el.h1(
-                                "Produto não disponível na descoberta",
-                                class_name="font-['Cormorant_Garamond'] text-4xl text-[#073238]",
+                        ProductDetailState.landing["id"] > 0,
+                        landing_detail(),
+                        rx.cond(
+                            ProductDetailState.groups.length() == 0,
+                            rx.el.div(
+                                rx.el.h1(
+                                    "Produto não disponível na descoberta",
+                                    class_name="font-['Cormorant_Garamond'] text-4xl text-[#073238]",
+                                ),
+                                rx.el.p(
+                                    "Não há oferta publicada com evidência e link elegível para este produto. Nenhum encaminhamento está disponível.",
+                                    class_name="mt-4 text-sm text-gray-600",
+                                ),
+                                class_name="border border-[#dedfd5] p-8",
                             ),
-                            rx.el.p(
-                                "Não há oferta publicada com evidência e link elegível para este produto. Nenhum encaminhamento está disponível.",
-                                class_name="mt-4 text-sm text-gray-600",
-                            ),
-                            class_name="border border-[#dedfd5] p-8",
+                            rx.foreach(ProductDetailState.groups, detail_group),
                         ),
-                        rx.foreach(ProductDetailState.groups, detail_group),
                     ),
                 ),
             ),

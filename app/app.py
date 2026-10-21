@@ -16,6 +16,9 @@ from app.click_tracking import click_api
 from app.pages.product import product_page
 from app.states.product_detail_state import ProductDetailState
 from app.seo import PRIVATE_META, sitemap_href
+from app.components.landing_admin import landing_admin_content
+from app.components.landing_products import landing_catalog
+from app.states.landing_admin_state import LandingAdminState
 
 
 @rxe.page(
@@ -35,6 +38,7 @@ def index() -> rx.Component:
         rx.el.main(
             hero(),
             catalog(),
+            landing_catalog(),
             history_section(),
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
@@ -107,6 +111,26 @@ def admin_page() -> rx.Component:
         footer(),
         on_mount=AdminState.load_dashboard,
         class_name="flex min-h-dvh w-full flex-col bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
+    )
+
+
+@rxe.page(
+    route="/admin/novo-produto",
+    auth=True,
+    title="Produtos de afiliados | Viktrine",
+    meta=PRIVATE_META,
+    description="Cadastro, revisão e publicação de páginas de produtos e materiais fornecidos pela administração.",
+)
+def landing_admin_page() -> rx.Component:
+    return rx.el.div(
+        header(),
+        rx.el.main(
+            landing_admin_content(),
+            class_name="min-w-0 w-full flex-1 bg-[#faf9f4] text-[#073238]",
+        ),
+        footer(),
+        on_mount=[AdminState.load_dashboard, LandingAdminState.load_products],
+        class_name="flex min-h-dvh w-full flex-col bg-[#faf9f4] font-['Inter'] text-[#073238]",
     )
 
 

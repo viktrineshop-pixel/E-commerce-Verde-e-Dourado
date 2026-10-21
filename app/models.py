@@ -18,7 +18,7 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import BYTEA, JSONB
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -36,6 +36,133 @@ class Base(MappedAsDataclass, DeclarativeBase, kw_only=True):
             "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
             "pk": "pk_%(table_name)s",
         }
+    )
+
+
+class Produto(Base):
+    __tablename__ = "produtos"
+    __table_args__ = (
+        UniqueConstraint("slug", name="uq_produtos_slug"),
+        CheckConstraint("length(trim(nome)) > 0", name="nome_required"),
+        CheckConstraint(
+            "slug = lower(trim(slug)) AND slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'",
+            name="slug_normalized",
+        ),
+        CheckConstraint(
+            "link_afiliado_original = '' OR "
+            "(link_afiliado_original ~ '^https://[^/@[:space:]]+(/|$)' "
+            "AND link_afiliado_original !~ '[[:space:]]' "
+            "AND strpos(link_afiliado_original, chr(92)) = 0)",
+            name="affiliate_url_https",
+        ),
+        CheckConstraint(
+            "NOT published OR length(trim(link_afiliado_original)) > 0",
+            name="published_link_required",
+        ),
+        Index("ix_produtos_published_created", "published", "created_at"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)
+    nome: Mapped[str] = mapped_column(
+        String(250), nullable=False, default="", server_default=""
+    )
+    descricao: Mapped[str] = mapped_column(
+        Text, nullable=False, default="", server_default=""
+    )
+    link_afiliado_original: Mapped[str] = mapped_column(
+        Text, nullable=False, default="", server_default=""
+    )
+    slug: Mapped[str] = mapped_column(
+        String(250), nullable=False, default="", server_default=""
+    )
+    published: Mapped[bool] = mapped_column(
+        nullable=False, default=False, server_default=text("false")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        init=False,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+        init=False,
+    )
+
+
+class MediaProvaSocial(Base):
+    __tablename__ = "media_prova_social"
+    __table_args__ = (
+        CheckConstraint("produto_id IS NOT NULL", name="produto_required"),
+        CheckConstraint("tipo IN ('image', 'video')", name="tipo_valid"),
+        CheckConstraint(
+            "content_type = lower(trim(content_type)) AND "
+            "((tipo = 'image' AND content_type ~ '^image/[a-z0-9.+-]+$') OR "
+            "(tipo = 'video' AND content_type ~ '^video/[a-z0-9.+-]+$'))",
+            name="content_type_matches_tipo",
+        ),
+        CheckConstraint(
+            "(url_ficheiro ~ '^/media/prova-social/[1-9][0-9]*$' "
+            "AND file_bytes IS NOT NULL) OR "
+            "(url_ficheiro ~ '^https://[^/@[:space:]]+(/|$)' "
+            "AND url_ficheiro !~ '[[:space:]]' "
+            "AND strpos(url_ficheiro, chr(92)) = 0 "
+            "AND file_bytes IS NULL)",
+            name="persistent_media_source",
+        ),
+        CheckConstraint(
+            "file_bytes IS NULL OR octet_length(file_bytes) > 0",
+            name="file_bytes_nonempty",
+        ),
+        CheckConstraint(
+            "filename IS NULL OR length(trim(filename)) > 0",
+            name="filename_nonblank",
+        ),
+        CheckConstraint("position >= 0", name="position_nonnegative"),
+        Index(
+            "ix_media_prova_social_produto_position",
+            "produto_id",
+            "position",
+            "id",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)
+    produto_id: Mapped[int | None] = mapped_column(
+        ForeignKey(
+            "produtos.id",
+            name="fk_media_prova_social_produto_id_produtos",
+            ondelete="CASCADE",
+        ),
+        nullable=True,
+        default=None,
+    )
+    tipo: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="image", server_default="image"
+    )
+    url_ficheiro: Mapped[str] = mapped_column(
+        Text, nullable=False, default="", server_default=""
+    )
+    content_type: Mapped[str] = mapped_column(
+        String(127), nullable=False, default="", server_default=""
+    )
+    file_bytes: Mapped[bytes | None] = mapped_column(
+        BYTEA, nullable=True, default=None, deferred=True, repr=False
+    )
+    filename: Mapped[str | None] = mapped_column(
+        String(255), nullable=True, default=None
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        init=False,
+    )
+    position: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default=text("0")
     )
 
 

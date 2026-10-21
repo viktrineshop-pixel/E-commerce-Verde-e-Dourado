@@ -406,6 +406,12 @@ def admin_workspace() -> rx.Component:
                 class_name="mb-6 rounded-sm border border-red-200 bg-red-50 p-5",
             ),
         ),
+        rx.el.a(
+            rx.icon("plus", class_name="h-4 w-4"),
+            "Produtos de afiliados e mídias de divulgação",
+            href="/admin/novo-produto",
+            class_name="mb-6 inline-flex min-h-12 items-center gap-3 rounded-sm border border-[#d8d7cc] bg-white px-5 py-3 text-sm text-[#073238] hover:bg-[#faf9f4] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+        ),
         discovery_workspace(),
         operations(),
         admin_orders(),

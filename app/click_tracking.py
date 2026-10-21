@@ -12,6 +12,7 @@ from app.models import ProductLinkClick
 from app.public_catalog import PUBLIC_CTE
 from app.discovery import safe_https
 from app.seo import sitemap, robots
+from app.landing_products import serve_landing_media
 
 
 def tracking_url(product_id: rx.Var[int]) -> rx.Var[str]:
@@ -154,6 +155,11 @@ async def track_offer_click(request: Request) -> RedirectResponse:
 
 click_api = Starlette(
     routes=[
+        Route(
+            "/media/prova-social/{media_id}",
+            serve_landing_media,
+            methods=["GET"],
+        ),
         Route("/sitemap.xml", sitemap, methods=["GET"]),
         Route("/robots.txt", robots, methods=["GET"]),
         Route(
