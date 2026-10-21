@@ -175,7 +175,7 @@ def favorites_section() -> rx.Component:
                     class_name="mt-2 font-['Cormorant_Garamond'] text-4xl text-[#073238] sm:text-5xl",
                 ),
                 rx.el.p(
-                    "Guarde os seus achados para voltar a eles quando quiser.",
+                    "Guarde produtos na Viktrine para comparar ofertas depois. Favoritos são exclusivos da conta e não reservam produtos nem registram compras.",
                     class_name="mt-3 text-sm text-[#687268]",
                 ),
             ),
@@ -223,7 +223,7 @@ def favorites_section() -> rx.Component:
                                     class_name="mt-5 font-['Cormorant_Garamond'] text-3xl text-[#073238]",
                                 ),
                                 rx.el.p(
-                                    "Você ainda não salvou produtos. Toque no coração de uma peça no catálogo para começar.",
+                                    "Você ainda não salvou produtos. Toque no coração de um produto na descoberta para começar.",
                                     class_name="mx-auto mt-3 max-w-lg text-sm leading-7 text-[#687268]",
                                 ),
                                 class_name="border border-[#dedfd5] bg-white px-6 py-12 text-center",

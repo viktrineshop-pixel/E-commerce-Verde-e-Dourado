@@ -3,7 +3,7 @@ from app.states.storefront_state import StorefrontState
 from app.states.hero_state import HeroState
 
 
-def hero_cta(label: str = "Explorar a coleção") -> rx.Component:
+def hero_cta(label: str = "Comparar ofertas") -> rx.Component:
     return rx.el.a(
         label,
         rx.icon("arrow-up-right", class_name="h-4 w-4"),
@@ -25,7 +25,7 @@ def brand_slide() -> rx.Component:
                 class_name="max-w-[760px] font-['Cormorant_Garamond'] text-[30px] font-medium leading-[1.02] text-[#073238] sm:text-4xl lg:text-5xl",
             ),
             rx.el.p(
-                "Produtos, novidades e oportunidades para encontrar o que você procura.",
+                "Curadoria editorial, comparação de ofertas e links para lojas externas.",
                 class_name="mt-2 max-w-[680px] font-['Cormorant_Garamond'] text-xl italic leading-tight text-[#0B4146] sm:text-3xl",
             ),
             rx.el.div(
@@ -42,7 +42,7 @@ def brand_slide() -> rx.Component:
         id="vk-slide-0",
         role="group",
         aria_roledescription="slide",
-        aria_label="1 de 3: VIKTRINE SHOP",
+        aria_label="1 de 3: Viktrine",
         aria_hidden=HeroState.active_slide != 0,
         inert=HeroState.active_slide != 0,
         class_name=rx.cond(
@@ -65,17 +65,17 @@ def whatsapp_slide() -> rx.Component:
                 class_name="mb-2 flex items-center gap-2",
             ),
             rx.el.h2(
-                "Acessar o grupo WhatsApp para inscritos",
+                "Canais de novidades ainda pendentes",
                 class_name="w-full max-w-full font-['Cormorant_Garamond'] text-[28px] font-medium leading-[1.02] text-[#f5e9c9] sm:max-w-[720px] sm:text-4xl lg:text-5xl",
             ),
             rx.el.p(
-                "Um espaço para receber novidades, oportunidades e comunicados especiais da VIKTRINE SHOP.",
+                "A Viktrine não possui notificações ou automações conectadas. Redes sociais e grupo WhatsApp aguardam links oficiais; não há inscrição disponível.",
                 class_name="mt-3 w-full max-w-full text-xs leading-5 text-[#faf9f4] sm:max-w-[620px] sm:text-sm",
             ),
             rx.el.div(
                 rx.icon("clock-3", class_name="h-4 w-4"),
                 rx.el.span(
-                    "Link oficial pendente — em breve",
+                    "Canal pendente · sem previsão confirmada",
                     class_name="text-xs font-semibold sm:text-sm",
                 ),
                 class_name="mt-4 flex w-fit max-w-full items-center gap-2 border border-[#d4af37]/70 bg-[#073238]/80 px-3 py-2 text-[#f5e9c9]",
@@ -85,7 +85,7 @@ def whatsapp_slide() -> rx.Component:
         id="vk-slide-1",
         role="group",
         aria_roledescription="slide",
-        aria_label="2 de 3: Grupo WhatsApp para inscritos, link oficial em breve",
+        aria_label="2 de 3: Canais de comunicação pendentes",
         aria_hidden=HeroState.active_slide != 1,
         inert=HeroState.active_slide != 1,
         class_name=rx.cond(
@@ -128,17 +128,17 @@ def promotion_slide() -> rx.Component:
                     "gift", class_name="h-4 w-4 text-[#d4af37] sm:h-5 sm:w-5"
                 ),
                 rx.el.span(
-                    "UM CARINHO A MAIS PARA VOCÊ",
+                    "COMPARE COM CONTEXTO",
                     class_name="text-[8px] tracking-[0.12em] text-[#e7d49a] sm:text-[10px] sm:tracking-[0.14em]",
                 ),
                 class_name="mb-1 flex items-center justify-center gap-2 sm:mb-2",
             ),
             rx.el.h2(
-                "SORTEIO MENSAL: GANHE UM PRESENTE OU O VALOR NO PIX!",
+                "Fontes registradas. Escolhas informadas.",
                 class_name="mx-auto max-w-[800px] text-center font-['Cormorant_Garamond'] text-[22px] font-medium leading-[0.98] text-[#f5e9c9] min-[380px]:text-2xl sm:text-left sm:text-4xl sm:leading-[1.02] lg:text-5xl",
             ),
             rx.el.p(
-                "Mensalmente ocorre um sorteio especial onde você pode ganhar um presente surpresa exclusivo direto na sua casa com frete grátis, ou se preferir, escolher receber o valor equivalente do prêmio direto em sua conta via PIX",
+                "Preços e fontes são observações inseridas pela administração, não consultas ao vivo. Confira a data, compare a mesma variante e confirme condições na loja externa. A Viktrine não possui checkout nem confirmação de conversões.",
                 class_name="mx-auto mt-2 max-w-[650px] text-center text-[11px] leading-[1.05rem] text-[#faf9f4] min-[380px]:text-xs sm:mx-0 sm:mt-3 sm:text-left sm:text-sm sm:leading-5",
             ),
             hero_cta(),
@@ -147,7 +147,7 @@ def promotion_slide() -> rx.Component:
         id="vk-slide-2",
         role="group",
         aria_roledescription="slide",
-        aria_label="3 de 3: Sorteio mensal, ganhe um presente ou o valor no PIX",
+        aria_label="3 de 3: Comparação de ofertas e fontes registradas",
         aria_hidden=HeroState.active_slide != 2,
         inert=HeroState.active_slide != 2,
         class_name=rx.cond(
@@ -284,7 +284,7 @@ def recommendation_social(label: str, kind: str) -> rx.Component:
 def category_strip() -> rx.Component:
     return rx.el.nav(
         rx.el.h2(
-            "Nossas Recomendações",
+            "Lojas e canais editoriais",
             class_name="text-center font-['Cormorant_Garamond'] text-xl font-medium text-[#d4af37] sm:text-2xl",
         ),
         rx.el.div(
@@ -315,7 +315,7 @@ def category_strip() -> rx.Component:
             recommendation_social("E-mail vitrine", "email"),
             id="vk-recommendations-scroll",
             role="region",
-            aria_label="Lojas parceiras e redes sociais. Role para a direita para ver as redes sociais.",
+            aria_label="Páginas independentes de lojas e redes sociais. Role para a direita para ver as redes sociais.",
             aria_describedby="vk-recommendations-hint",
             tab_index=0,
             overflow_x="scroll",
@@ -395,11 +395,11 @@ def hero() -> rx.Component:
             rx.el.p(
                 rx.cond(
                     HeroState.active_slide == 0,
-                    "Banner 1 de 3: VIKTRINE SHOP",
+                    "Banner 1 de 3: Viktrine",
                     rx.cond(
                         HeroState.active_slide == 1,
-                        "Banner 2 de 3: Grupo WhatsApp para inscritos, link em breve",
-                        "Banner 3 de 3: Sorteio mensal, ganhe um presente ou o valor no PIX",
+                        "Banner 2 de 3: Canais de comunicação pendentes",
+                        "Banner 3 de 3: Comparação de ofertas e fontes registradas",
                     ),
                 ),
                 aria_live="polite",
@@ -409,7 +409,7 @@ def hero() -> rx.Component:
             id="vk-home-carousel",
             role="region",
             aria_roledescription="carrossel",
-            aria_label="Novidades VIKTRINE SHOP. Use as setas esquerda e direita, Home ou End para navegar.",
+            aria_label="Novidades Viktrine. Use as setas esquerda e direita, Home ou End para navegar.",
             tab_index=0,
             on_mount=HeroState.initialize_carousel,
             on_unmount=HeroState.stop_carousel,
@@ -441,40 +441,40 @@ def history_section() -> rx.Component:
         rx.el.div(
             rx.el.div(
                 history_chapter(
-                    "Origem",
+                    "Uma vitrine de descobertas",
                     [
-                        "A VIKTRINE SHOP nasceu da união de pessoas de origem humilde que, mesmo diante das dificuldades, encontraram na educação uma oportunidade para construir um futuro melhor."
+                        "A Viktrine é uma plataforma de descoberta de produtos, comparação de ofertas e encaminhamento por links de afiliados. Não é uma loja que processa compras."
                     ],
                 ),
                 history_chapter(
-                    "Nossa História",
+                    "Curadoria editorial",
                     [
-                        "Ao longo dessa trajetória, conseguimos chegar à faculdade e transformar tudo o que aprendemos em conhecimento, experiência e vontade de criar algo que pudesse fazer a diferença na vida das pessoas.",
-                        "Foi assim que surgiu a VIKTRINE SHOP: como um projeto criado para facilitar a vida, encontrar boas oportunidades e compartilhar achadinhos que realmente valem a pena.",
+                        "Produtos e ofertas passam por revisão editorial. Preços, datas e fontes são registrados pela administração; não há consulta automática às lojas.",
+                        "Produtos demonstrativos e ofertas sem evidência ou link elegível ficam fora da descoberta pública. Se não houver ofertas elegíveis, a vitrine permanece vazia.",
                     ],
                 ),
                 history_chapter(
                     "Nosso Propósito",
                     [
-                        "Mais do que uma loja, somos uma vitrine de descobertas. Buscamos produtos, oportunidades e novidades para ajudar você a encontrar aquilo que procura e economizar no caminho."
+                        "Ajudar você a comparar produtos da mesma variante e moeda com contexto. Histórico de preço aparece somente quando existem observações reais registradas."
                     ],
                 ),
                 history_chapter(
-                    "A Alma do Negócio",
+                    "Você escolhe o destino",
                     [
-                        "Nosso atendimento e nossa alegria são a alma da VIKTRINE SHOP. Queremos que cada pessoa se sinta bem aqui, descubra algo interessante e possa compartilhar esses achadinhos com sua família e com quem ama."
+                        "A compra acontece na loja externa. Preço final, frete, disponibilidade, pagamento e entrega dependem do destino; um clique não comprova compra ou conversão."
                     ],
                 ),
                 history_chapter(
-                    "O Futuro",
+                    "Integrações e limites",
                     [
-                        "Temos planos de fazer esse projeto crescer e, no futuro, transformar essa conquista em novas oportunidades para outras pessoas, incluindo ações com instituições de caridade e iniciativas voltadas à educação."
+                        "Não há integração ao vivo com varejistas, confirmação de conversões ou notificações conectadas. Links sociais e canal de contato aguardam confirmação; não simulamos essas conexões."
                     ],
                 ),
                 class_name="grid w-full grid-cols-1 items-start gap-x-10 gap-y-9 md:grid-cols-2 lg:grid-cols-3",
             ),
             rx.el.p(
-                "A VIKTRINE SHOP nasceu de uma origem simples, cresceu através da educação e continua avançando com um propósito: facilitar a vida das pessoas, compartilhar oportunidades e construir algo que possa fazer o bem. Cada clique seu aqui apoia esse sonho a continuar de pé. Obrigado por fazer parte da nossa história!",
+                "Descubra, compare e guarde seus favoritos. A Viktrine não registra novas compras, não reserva estoque e não possui checkout de produtos. Os pedidos anteriores são preservados apenas como arquivo demonstrativo.",
                 class_name="mt-10 border-t border-[#d4af37]/40 pt-8 font-['Cormorant_Garamond'] text-2xl leading-relaxed text-[#000000] md:text-3xl",
             ),
             class_name="mx-auto w-full max-w-[1440px] px-6 py-16 lg:px-12 lg:py-20",
@@ -491,10 +491,9 @@ def footer() -> rx.Component:
         rx.el.div(
             rx.el.div(
                 rx.el.a(
-                    rx.el.span("VIKTRINE", class_name="block"),
-                    rx.el.span("SHOP", class_name="block"),
+                    rx.el.span("Viktrine", class_name="block"),
                     href="/",
-                    aria_label="VIKTRINE SHOP · Início",
+                    aria_label="Viktrine · Início",
                     class_name="inline-block font-['Cormorant_Garamond'] text-5xl font-bold leading-[0.95] tracking-[0.12em] text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:text-6xl",
                 ),
             ),
@@ -505,8 +504,13 @@ def footer() -> rx.Component:
                     class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37]",
                 ),
                 rx.el.a(
-                    "Lojas Parceiras",
+                    "Páginas de lojas",
                     href="/#lojas-parceiras",
+                    class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                ),
+                rx.el.a(
+                    "Privacidade e LGPD",
+                    href="/privacidade",
                     class_name="text-xs text-[#f5f1e8] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
                 rx.el.a(
@@ -517,6 +521,14 @@ def footer() -> rx.Component:
                 class_name="flex flex-wrap gap-6",
             ),
             class_name="flex flex-col justify-between gap-8 md:flex-row md:items-center",
+        ),
+        rx.el.p(
+            "Links de afiliados: a Viktrine pode receber comissão por compras realizadas nas lojas externas. A presença de uma página editorial não indica endosso ou parceria oficial.",
+            class_name="mt-8 border-t border-[#d4af37]/25 pt-6 text-xs leading-6 text-[#f5f1e8]",
+        ),
+        rx.el.p(
+            "Preços e fontes são observações inseridas pela administração. Sem integrações ao vivo com varejistas, confirmação de conversões ou checkout de produtos. Confira preço, frete, disponibilidade e cupons no destino.",
+            class_name="mt-3 text-xs leading-6 text-[#e7dfcb]",
         ),
         class_name="w-full bg-[var(--brand-petroleum-deep)] px-6 py-12 text-[#f5f1e8] lg:px-12",
     )

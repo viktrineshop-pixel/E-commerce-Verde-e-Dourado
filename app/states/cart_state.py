@@ -11,6 +11,10 @@ from app.coupons import normalize_code, coupon_discount
 from reflex_enterprise.auth import User
 
 
+def legacy_commerce_disabled(context) -> bool:
+    return False
+
+
 class CartLine(TypedDict):
     product_id: int
     title: str
@@ -105,8 +109,9 @@ class CartState(rx.State):
             self.discount = self._brl(discount)
             self.grand_total = self._brl(subtotal - discount)
 
-    @rxe.event(auth=False, background=True)
+    @rxe.event(auth=legacy_commerce_disabled, background=True)
     async def apply_coupon(self, form_data: dict[str, Any]):
+        return
         async with self:
             if self.busy or self.submitting or self.loading or self.confirmed:
                 return
@@ -165,8 +170,9 @@ class CartState(rx.State):
         if applied:
             yield CartState.load_cart
 
-    @rxe.event(auth=False)
+    @rxe.event(auth=legacy_commerce_disabled)
     def remove_coupon(self):
+        return
         if self.busy or self.submitting or self.loading:
             return
         self._applied_coupon_code = ""
@@ -192,8 +198,9 @@ class CartState(rx.State):
         finally:
             self.loading = False
 
-    @rxe.event(auth=False)
+    @rxe.event(auth=legacy_commerce_disabled)
     async def add_product(self, product_id: int):
+        return
         if self.busy or self.submitting:
             return
         self.busy = True
@@ -263,8 +270,9 @@ class CartState(rx.State):
         finally:
             self.busy = False
 
-    @rxe.event(auth=False)
+    @rxe.event(auth=legacy_commerce_disabled)
     async def change_quantity(self, product_id: int, delta: int):
+        return
         if delta not in (-1, 1) or self.busy or self.submitting:
             return
         self.busy = True
@@ -310,8 +318,9 @@ class CartState(rx.State):
         finally:
             self.busy = False
 
-    @rxe.event(auth=False)
+    @rxe.event(auth=legacy_commerce_disabled)
     async def remove_product(self, product_id: int):
+        return
         if self.busy or self.submitting:
             return
         self.busy = True
@@ -376,8 +385,9 @@ class CartState(rx.State):
         values["cep"] = cep
         return values, errors
 
-    @rxe.event(auth=False)
+    @rxe.event(auth=legacy_commerce_disabled)
     async def place_order(self, form_data: dict[str, Any]):
+        return
         if self.submitting or self.busy or self.confirmed:
             return
         values, errors = self._validate(form_data)

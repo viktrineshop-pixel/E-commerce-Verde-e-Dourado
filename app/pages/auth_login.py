@@ -42,12 +42,9 @@ def login_page(*, providers: Sequence, **context) -> rx.Component:
         rx.el.main(
             rx.el.div(
                 rx.el.a(
-                    rx.el.span("VIKTRINE", class_name="block leading-none"),
-                    rx.el.span(
-                        "SHOP", class_name="mt-2 block text-xl tracking-[0.3em]"
-                    ),
+                    rx.el.span("Viktrine", class_name="block leading-none"),
                     href="/",
-                    aria_label="VIKTRINE SHOP — página inicial",
+                    aria_label="Viktrine — página inicial",
                     class_name="inline-block font-['Cormorant_Garamond'] text-5xl font-medium tracking-[0.1em] text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
                 rx.el.section(
@@ -64,7 +61,7 @@ def login_page(*, providers: Sequence, **context) -> rx.Component:
                         class_name="mt-3 font-['Cormorant_Garamond'] text-4xl font-medium text-[#073238]",
                     ),
                     rx.el.p(
-                        "Entre na sua conta para acompanhar seus pedidos e continuar a sua história com a VIKTRINE SHOP.",
+                        "Entre para salvar favoritos, organizar listas privadas e consultar o arquivo demonstrativo de pedidos anteriores. A Viktrine encaminha ofertas; compras são feitas nas lojas externas.",
                         class_name="mt-4 text-sm leading-7 text-[#52615b]",
                     ),
                     rx.el.div(
@@ -72,7 +69,7 @@ def login_page(*, providers: Sequence, **context) -> rx.Component:
                         class_name="mt-8 flex flex-col gap-3",
                     ),
                     rx.el.a(
-                        "Continuar explorando a coleção",
+                        "Continuar descobrindo ofertas",
                         href="/",
                         class_name="mt-6 inline-block text-xs text-[#073238] underline underline-offset-4 hover:text-[#71602f] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                     ),

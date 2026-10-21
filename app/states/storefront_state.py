@@ -175,9 +175,10 @@ class StorefrontState(rx.State):
     def clear_filters(self):
         self.search = ""
         self.category = "Todos"
-        self.sort = "Destaques"
-        self.price_filter = "Todos os preços"
-        self.available_only = False
+        self.sort = "Mais recentes"
+        self.merchant = ""
+        self.minimum = ""
+        self.maximum = ""
         self.page_number = 1
         return StorefrontState.refresh_products
 

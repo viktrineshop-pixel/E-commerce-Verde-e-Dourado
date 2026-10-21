@@ -169,7 +169,7 @@ def lists_section() -> rx.Component:
                 class_name="font-['Cormorant_Garamond'] text-4xl text-[#073238]",
             ),
             rx.el.p(
-                "Organize produtos sem reservar estoque nem comprar na Viktrine. Listas são exclusivas desta conta.",
+                "Organize descobertas na Viktrine. Listas e notas são exclusivas desta conta, não reservas ou pedidos; compras acontecem nas lojas externas.",
                 class_name="mt-3 text-sm text-gray-600",
             ),
             rx.el.p(

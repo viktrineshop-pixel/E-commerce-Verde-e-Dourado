@@ -4,8 +4,8 @@ from app.components.header import header
 from app.components.hero import hero, history_section, footer
 from app.components.catalog import catalog
 from app.states.storefront_state import StorefrontState
-from app.components.cart import cart_content
-from app.states.cart_state import CartState
+from app.pages.privacy import privacy_content
+from app.states.legacy_navigation_state import LegacyNavigationState
 from app.components.account import account_content
 from app.states.account_state import AccountState
 from app.states.favorite_state import FavoriteState
@@ -38,7 +38,6 @@ def index() -> rx.Component:
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
-        on_mount=CartState.load_cart,
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
@@ -46,18 +45,22 @@ def index() -> rx.Component:
 @rxe.page(
     route="/carrinho",
     auth=False,
-    title="Sua sacola | VIKTRINE SHOP",
-    description="Revise sua sacola e registre um pedido sem cobrança de pagamento.",
+    title="Descoberta de ofertas | Viktrine",
+    description="A Viktrine não possui sacola ou checkout. Compras nas lojas externas.",
 )
-def cart_page() -> rx.Component:
+def legacy_cart_redirect_page() -> rx.Component:
     return rx.el.div(
         header(),
         rx.el.main(
-            cart_content(),
+            rx.el.p(
+                "A Viktrine não possui sacola ou checkout de produtos. Você será encaminhado à descoberta de ofertas.",
+                on_mount=LegacyNavigationState.redirect_to_discovery,
+                role="status",
+                class_name="px-6 py-16 text-sm leading-7 text-[#073238]",
+            ),
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
-        on_mount=CartState.load_cart,
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
@@ -65,8 +68,8 @@ def cart_page() -> rx.Component:
 @rxe.page(
     route="/minha-conta",
     auth=True,
-    title="Minha conta | VIKTRINE SHOP",
-    description="Seu espaço pessoal para acompanhar pedidos e detalhes de entrega.",
+    title="Minha conta | Viktrine",
+    description="Favoritos, listas privadas e arquivo demonstrativo de pedidos anteriores, somente leitura.",
 )
 def account_page() -> rx.Component:
     return rx.el.div(
@@ -78,7 +81,6 @@ def account_page() -> rx.Component:
         footer(),
         on_mount=[
             AccountState.load_orders,
-            CartState.load_cart,
             FavoriteState.sync_auth,
         ],
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
@@ -112,6 +114,16 @@ def admin_page() -> rx.Component:
 )
 def product_detail_page() -> rx.Component:
     return product_page()
+
+
+@rxe.page(
+    route="/privacidade",
+    auth=False,
+    title="Privacidade e LGPD | Viktrine",
+    description="Práticas atuais de dados, identidade, favoritos, listas, cliques e arquivo demonstrativo da Viktrine.",
+)
+def privacy_page() -> rx.Component:
+    return privacy_content()
 
 
 app = rxe.App(

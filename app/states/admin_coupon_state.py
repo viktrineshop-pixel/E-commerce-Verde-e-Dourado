@@ -221,7 +221,7 @@ class AdminCouponState(rx.State):
                 self.editing = True
                 self.draft["code"] = code
                 self.revision += 1
-                self.notice = "Cupom salvo. Pedidos anteriores mantêm seus códigos e descontos registrados."
+                self.notice = "Registro legado salvo. O arquivo de pedidos anteriores permanece intacto; não há aplicação em compras."
         except IntegrityError as e:
             logging.exception(f"Error: {e}")
             async with self:
@@ -271,7 +271,7 @@ class AdminCouponState(rx.State):
                     self.active = active
                     self.revision += 1
                 self.notice = (
-                    "Cupom ativado. A validade ainda será conferida na sacola."
+                    "Registro legado ativado. Não é aplicado na Viktrine nem representa um cupom de loja externa."
                     if active
                     else "Cupom desativado. O histórico dos pedidos foi preservado."
                 )

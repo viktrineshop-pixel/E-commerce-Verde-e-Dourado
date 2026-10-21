@@ -446,10 +446,8 @@ class AdminState(rx.State):
             self.notice = "Registro arquivado sem exclusão física; produtos demonstrativos permanecem rascunhos. Pedidos históricos preservados."
             yield AdminState.load_products
             from app.states.storefront_state import StorefrontState
-            from app.states.cart_state import CartState
 
             yield StorefrontState.refresh_products
-            yield CartState.load_cart
         except ValueError as e:
             logging.exception(f"Error: {e}")
             self._delete_id = 0

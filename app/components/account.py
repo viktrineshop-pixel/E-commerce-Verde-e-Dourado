@@ -8,7 +8,7 @@ from app.components.saved_lists import lists_section
 
 def catalog_link() -> rx.Component:
     return rx.el.a(
-        "Explorar a coleção",
+        "Explorar ofertas",
         rx.icon("arrow-up-right", class_name="h-4 w-4"),
         href="/#catalogo",
         class_name="inline-flex w-fit items-center gap-4 border border-[#d4af37] bg-[#0d231d] px-6 py-3 text-xs font-medium text-[#f5f1e8] transition-colors hover:bg-[#17392e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#d4af37]",
@@ -28,7 +28,7 @@ def account_intro() -> rx.Component:
                     class_name="mt-4 break-words font-['Cormorant_Garamond'] text-4xl font-medium leading-tight text-[#f5f1e8] sm:text-5xl lg:text-6xl",
                 ),
                 rx.el.p(
-                    "Cada escolha conta uma história. Acompanhe as suas por aqui.",
+                    "Seus favoritos, listas privadas e arquivo demonstrativo na Viktrine. Compras acontecem nas lojas externas.",
                     class_name="mt-4 text-sm leading-7 text-[#c5c9bd]",
                 ),
                 rx.el.div(
@@ -146,7 +146,7 @@ def order_card(order: CustomerOrder) -> rx.Component:
         ),
         rx.el.details(
             rx.el.summary(
-                rx.el.span("Ver peças e detalhes de entrega"),
+                rx.el.span("Consultar itens e dados históricos"),
                 rx.icon(
                     "chevron-down",
                     class_name="h-4 w-4 transition-transform group-open:rotate-180",
@@ -156,7 +156,7 @@ def order_card(order: CustomerOrder) -> rx.Component:
             rx.el.div(
                 rx.el.div(
                     rx.el.h4(
-                        "Sua seleção",
+                        "Itens do arquivo",
                         class_name="font-['Cormorant_Garamond'] text-3xl text-[#0d231d]",
                     ),
                     rx.el.p(
@@ -179,7 +179,7 @@ def order_card(order: CustomerOrder) -> rx.Component:
                             rx.icon(
                                 "map-pin", class_name="h-4 w-4 text-[#8b7846]"
                             ),
-                            "Entrega",
+                            "Endereço registrado no arquivo",
                             class_name="flex items-center gap-2 text-sm font-semibold text-[#0d231d]",
                         ),
                         rx.el.p(
@@ -208,7 +208,7 @@ def order_card(order: CustomerOrder) -> rx.Component:
                     ),
                     rx.el.dl(
                         amount_row("Subtotal", order["subtotal"]),
-                        amount_row("Entrega", order["shipping"]),
+                        amount_row("Frete histórico", order["shipping"]),
                         amount_row("Desconto", order["discount"]),
                         rx.el.div(
                             rx.el.dt("Total do pedido"),
@@ -277,15 +277,15 @@ def orders_empty() -> rx.Component:
     return rx.el.div(
         rx.icon("shopping-bag", class_name="mx-auto h-9 w-9 text-[#a68c3a]"),
         rx.el.h3(
-            "Sua história começa com uma escolha.",
+            "Nenhum registro histórico nesta conta.",
             class_name="mt-6 font-['Cormorant_Garamond'] text-3xl text-[#0d231d] sm:text-4xl",
         ),
         rx.el.p(
-            "Você ainda não tem pedidos nesta conta. Descubra as peças que combinam com você.",
+            "Não há pedidos anteriores associados à sua identidade neste arquivo demonstrativo.",
             class_name="mx-auto mt-4 max-w-lg text-sm leading-7 text-[#687268]",
         ),
         rx.el.p(
-            "Pedidos feitos sem login não aparecem aqui. Entre na conta antes de finalizar sua próxima sacola.",
+            "A Viktrine não cria novos pedidos. Compras externas não aparecem neste arquivo; favoritos e listas não são reservas.",
             class_name="mx-auto mt-3 max-w-lg text-xs leading-6 text-[#687268]",
         ),
         rx.el.div(catalog_link(), class_name="mt-8 flex justify-center"),
@@ -310,17 +310,17 @@ def account_content() -> rx.Component:
                         class_name="text-[10px] tracking-[0.2em] text-[#8b7846]",
                     ),
                     rx.el.h2(
-                        "Meus pedidos",
+                        "Arquivo demonstrativo de pedidos anteriores",
                         class_name="mt-2 font-['Cormorant_Garamond'] text-4xl text-[#0d231d] sm:text-5xl",
                     ),
                     rx.el.p(
-                        "Consulte sua seleção e os detalhes de cada entrega.",
+                        "Somente leitura. Valores, endereços e status são registros antigos, não confirmação de venda, pagamento ou entrega.",
                         class_name="mt-3 text-sm text-[#687268]",
                     ),
                 ),
                 rx.el.button(
                     rx.icon("refresh-cw", class_name="h-4 w-4"),
-                    "Atualizar pedidos",
+                    "Atualizar arquivo",
                     on_click=AccountState.refresh_orders,
                     disabled=AccountState.loading,
                     class_name="flex w-fit items-center gap-2 border border-[#dedfd5] bg-white px-4 py-3 text-xs text-[#0d231d] hover:border-[#d4af37] disabled:cursor-wait disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-[#d4af37]",
@@ -368,7 +368,7 @@ def account_content() -> rx.Component:
                                 class_name="mt-8 flex flex-wrap items-center justify-between gap-4",
                             ),
                             rx.el.p(
-                                "O status indica a etapa registrada do pedido. Esta loja demonstrativa não realiza cobrança de pagamento.",
+                                "Status preservados apenas como dados históricos. A Viktrine não processa novos pedidos, pagamentos ou envios.",
                                 class_name="mt-6 text-xs leading-6 text-[#687268]",
                             ),
                         ),

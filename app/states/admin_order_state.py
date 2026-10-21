@@ -192,7 +192,7 @@ class AdminOrderState(rx.State):
                     contact_email=row.contact_email,
                     total=order_money(row.total_centavos),
                     status=row.status,
-                    status_label=STATUS_LABELS.get(row.status, row.status),
+                    status_label=f"Status histórico: {STATUS_LABELS.get(row.status, row.status)}",
                     items=items[row.id],
                 )
                 for row in rows
@@ -267,6 +267,9 @@ class AdminOrderState(rx.State):
     async def _persist_status(
         self, order_id: int, status: str, expected: str
     ) -> bool:
+        raise ValueError(
+            "Arquivo demonstrativo somente leitura. Alterações de status estão desativadas."
+        )
         if (
             order_id <= 0
             or status not in EDITABLE_STATUSES
@@ -296,6 +299,8 @@ class AdminOrderState(rx.State):
 
     @rxe.event(auth=is_admin)
     async def save_status(self, fields: dict[str, Any]):
+        self.error = "Arquivo demonstrativo somente leitura. Nenhum status pode ser alterado."
+        return
         if self.loading or self.saving:
             return
         self.error = ""

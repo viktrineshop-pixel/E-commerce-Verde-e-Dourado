@@ -78,11 +78,11 @@ def coupon_editor() -> rx.Component:
                 disabled=AdminCouponState.busy | AdminCouponState.loading,
                 class_name="h-4 w-4 accent-[#073238] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
             ),
-            "Ativo para aplicação na sacola",
+            "Registro legado ativo (sem aplicação em compras)",
             class_name="mt-4 flex min-h-11 items-center gap-3 text-xs text-[#073238]",
         ),
         rx.el.p(
-            "Códigos não diferenciam maiúsculas e minúsculas. Validade até o fim do dia em Brasília. Sem data = sem vencimento. Desconto limitado ao subtotal; percentual arredondado para baixo em centavos.",
+            "Estes campos preservam as regras do cadastro legado. Ativar ou editar não publica um cupom de loja externa nem habilita aplicação de desconto na Viktrine.",
             class_name="mt-2 text-xs leading-6 text-[#596559]",
         ),
         rx.el.div(
@@ -167,7 +167,7 @@ def admin_coupons() -> rx.Component:
         rx.el.div(
             rx.el.h2(
                 rx.icon("ticket-percent", class_name="h-6 w-6 text-[#8b7846]"),
-                "Cupons de desconto",
+                "Cupons locais legados",
                 class_name="flex items-center gap-3 font-['Cormorant_Garamond'] text-3xl text-[#073238]",
             ),
             rx.el.button(
@@ -181,7 +181,7 @@ def admin_coupons() -> rx.Component:
             class_name="flex flex-wrap items-center justify-between gap-3",
         ),
         rx.el.p(
-            "Desative em vez de excluir: o histórico de uso nos pedidos permanece intacto.",
+            "Registros locais da antiga demonstração, não cupons das lojas externas. A Viktrine não aplica descontos nem possui checkout. Cupons informativos de lojas são cadastrados na curadoria editorial com fonte e condições; o arquivo de pedidos permanece intacto.",
             class_name="mt-3 text-xs leading-6 text-[#596559]",
         ),
         rx.cond(

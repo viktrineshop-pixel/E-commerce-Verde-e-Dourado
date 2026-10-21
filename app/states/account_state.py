@@ -194,9 +194,7 @@ class AccountState(rx.State):
                         number=f"ML-{row['id']:06d}",
                         date=date.strftime("%d/%m/%Y · %H:%M"),
                         status=row["status"],
-                        status_label=labels.get(
-                            row["status"], "Pedido registrado"
-                        ),
+                        status_label=f"Status histórico: {labels.get(row['status'], 'Registro demonstrativo')}",
                         subtotal=self._money(row["subtotal"], row["currency"]),
                         shipping=self._money(row["shipping"], row["currency"]),
                         discount=self._money(row["discount"], row["currency"]),

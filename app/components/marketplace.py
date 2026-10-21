@@ -1,9 +1,7 @@
 import reflex as rx
 from app.components.header import header
 from app.components.hero import footer
-from app.components.catalog import catalog
 from app.states.storefront_state import StorefrontState
-from app.states.cart_state import CartState
 
 
 def marketplace_tabs(active: str) -> rx.Component:
@@ -67,10 +65,7 @@ def curated_category(item: dict[str, str]) -> rx.Component:
             class_name="mt-7 w-fit border-b border-[#8b7846] pb-1 text-xs font-medium text-[#0B4146]",
         ),
         href="/#catalogo",
-        on_click=[
-            StorefrontState.clear_filters,
-            StorefrontState.choose_category(item["category"]),
-        ],
+        on_click=StorefrontState.clear_filters,
         key=item["category"],
         class_name="group flex h-full flex-col border border-[#ded9cb] bg-[#faf9f4] p-6 transition-colors hover:bg-[#f0ece1] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8b7846] lg:p-8",
     )
@@ -91,7 +86,7 @@ def editorial_guide(
             ),
             rx.el.p(body, class_name="mt-5 text-sm leading-7 text-[#536059]"),
             rx.el.a(
-                "Ver toda a coleção demonstrativa",
+                "Explorar a descoberta geral da Viktrine",
                 rx.icon("arrow-right", aria_hidden=True, class_name="h-4 w-4"),
                 href="/#catalogo",
                 on_click=StorefrontState.clear_filters,
@@ -173,7 +168,7 @@ def marketplace_content(
                         class_name="mb-10 flex flex-wrap items-center gap-2 text-xs",
                     ),
                     rx.el.p(
-                        "VIKTRINE SHOP · PÁGINA EDITORIAL INDEPENDENTE",
+                        "Viktrine · PÁGINA EDITORIAL INDEPENDENTE",
                         class_name="text-[10px] leading-5 tracking-[0.2em] text-[#d4af37]",
                     ),
                     rx.el.div(
@@ -206,7 +201,7 @@ def marketplace_content(
                         class_name="grid items-end gap-7 md:grid-cols-2 lg:gap-16",
                     ),
                     rx.el.p(
-                        f"Este é um espaço interno da VIKTRINE SHOP dedicado ao tema {name}. Não é uma loja oficial, parceria ou integração com o marketplace.",
+                        f"Este é um espaço interno da Viktrine dedicado ao tema {name}. Não é uma loja oficial, parceria ou integração com o marketplace.",
                         class_name="mt-9 border-t border-white/15 pt-5 text-xs leading-6 text-[#e7dfcb]",
                     ),
                     class_name="mx-auto w-full max-w-[1440px] px-6 py-10 lg:px-12 lg:py-14",
@@ -223,7 +218,7 @@ def marketplace_content(
                         class_name="mt-0.5 h-4 w-4 shrink-0 text-[#8b7846]",
                     ),
                     rx.el.p(
-                        f"Este espaço editorial é dedicado a {name}. Nos produtos, “Ir para a loja” acessa o link HTTPS cadastrado ou a página interna da loja parceira quando não há link válido. Confira preços e condições no destino; o checkout demonstrativo da VIKTRINE SHOP permanece separado.",
+                        f"Este espaço editorial independente é dedicado a {name}, sem endosso ou integração oficial. Os atalhos abaixo abrem a descoberta geral, não uma seleção de produtos desta loja. Encaminhamentos externos só aparecem em ofertas elegíveis com links revisados.",
                         class_name="text-xs leading-6 text-[#536059]",
                     ),
                     class_name="mb-12 flex gap-3 border border-[#ded9cb] bg-[#f0ece1] px-5 py-4",
@@ -238,7 +233,7 @@ def marketplace_content(
                         class_name="mt-3 font-['Cormorant_Garamond'] text-4xl text-[#073238] md:text-5xl",
                     ),
                     rx.el.p(
-                        "Atalhos para as categorias da nossa vitrine. Cada escolha abre o catálogo interno com o filtro correspondente.",
+                        "Sugestões editoriais para orientar sua comparação. Todos os atalhos levam à descoberta geral; use os filtros reais de categoria e loja no catálogo.",
                         class_name="mt-4 text-sm leading-7 text-[#536059]",
                     ),
                     rx.el.div(
@@ -251,10 +246,30 @@ def marketplace_content(
                 editorial_guide(guide_title, guide_body, tips),
                 class_name="mx-auto w-full max-w-[1440px] px-6 pt-4 lg:px-12",
             ),
-            catalog(),
+            rx.el.section(
+                rx.icon(
+                    "book-open",
+                    aria_hidden=True,
+                    class_name="h-7 w-7 text-[#8b7846]",
+                ),
+                rx.el.h2(
+                    "Sem catálogo específico carregado nesta página",
+                    class_name="mt-4 font-['Cormorant_Garamond'] text-3xl text-[#073238]",
+                ),
+                rx.el.p(
+                    "Esta página contém orientações editoriais, não anúncios oficiais ou um catálogo desta loja. Na descoberta geral, o filtro de loja usa os registros reais das ofertas elegíveis; se não houver resultados, será exibido um estado vazio.",
+                    class_name="mt-4 text-sm leading-7 text-[#536059]",
+                ),
+                rx.el.a(
+                    "Explorar ofertas e filtrar por loja",
+                    href="/#catalogo",
+                    on_click=StorefrontState.clear_filters,
+                    class_name="mt-6 inline-flex min-h-11 items-center border-b border-[#8b7846] text-sm text-[#073238] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                ),
+                class_name="mx-auto w-full max-w-[1440px] px-6 py-12 lg:px-12",
+            ),
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#073238]",
         ),
         footer(),
-        on_mount=[StorefrontState.load_catalog, CartState.load_cart],
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#073238]",
     )

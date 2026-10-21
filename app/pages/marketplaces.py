@@ -6,14 +6,14 @@ from app.components.marketplace import marketplace_content
 @rxe.page(
     route="/lojas/amazon",
     auth=False,
-    title="Amazon · Curadoria independente | VIKTRINE SHOP",
-    description="Essenciais e combinações atemporais no catálogo demonstrativo da VIKTRINE SHOP. Sem vínculo ou integração com a Amazon.",
+    title="Amazon · Curadoria independente | Viktrine",
+    description="Orientações editoriais independentes da Viktrine. Sem endosso, catálogo oficial ou integração com a Amazon.",
 )
 def amazon_page() -> rx.Component:
     return marketplace_content(
         name="Amazon",
         headline="Essenciais que acompanham a sua rotina.",
-        intro="Neste espaço dedicado ao tema Amazon, nossa proposta editorial é começar pelo que permanece: peças versáteis, combinações simples e detalhes bem escolhidos. Explore a nossa própria vitrine, sem sair da VIKTRINE SHOP.",
+        intro="Neste espaço independente dedicado ao tema Amazon, apresentamos sugestões editoriais para orientar escolhas. Os atalhos levam à descoberta geral da Viktrine, não a uma seleção de produtos da Amazon.",
         categories=[
             {
                 "number": "01",
@@ -35,7 +35,7 @@ def amazon_page() -> rx.Component:
             },
         ],
         guide_title="Menos peças. Mais combinações.",
-        guide_body="Um guarda-roupa versátil começa por escolhas que funcionam juntas. Use estas sugestões para percorrer o catálogo demo com intenção, sem confundir nossa seleção com anúncios da Amazon.",
+        guide_body="Use estas orientações na descoberta geral, sem confundi-las com anúncios da Amazon. Não há seleção específica desta loja nesta página.",
         tips=[
             {
                 "title": "Comece por uma paleta simples",
@@ -47,7 +47,7 @@ def amazon_page() -> rx.Component:
             },
             {
                 "title": "Leia os detalhes da peça",
-                "body": "Abra o nome da loja parceira nos cards para conhecer a descrição do produto. Use “Ir para a loja” para acessar o link HTTPS cadastrado ou, quando não houver um link válido, a página interna da loja.",
+                "body": "Consulte os detalhes do produto, a data e a fonte da oferta. “Ir para a loja” só está disponível para ofertas elegíveis com links revisados; confirme as condições no destino.",
             },
         ],
     )
@@ -56,20 +56,20 @@ def amazon_page() -> rx.Component:
 @rxe.page(
     route="/lojas/shopee",
     auth=False,
-    title="Shopee · Curadoria independente | VIKTRINE SHOP",
-    description="Inspiração para experimentar detalhes e descobrir novidades na vitrine demo. Sem vínculo ou integração com a Shopee.",
+    title="Shopee · Curadoria independente | Viktrine",
+    description="Orientações de descoberta e comparação da Viktrine. Sem endosso, catálogo oficial ou integração com a Shopee.",
 )
 def shopee_page() -> rx.Component:
     return marketplace_content(
         name="Shopee",
         headline="Novas ideias para o seu jeito de vestir.",
-        intro="A página temática Shopee é o nosso convite para experimentar: variar um acessório, descobrir uma textura ou olhar de novo para uma combinação. A seleção é editorial e usa exclusivamente o catálogo demonstrativo da VIKTRINE SHOP.",
+        intro="A página temática Shopee é o nosso convite para experimentar: variar um acessório, descobrir uma textura ou olhar de novo para uma combinação. As orientações são independentes, sem produtos específicos da Shopee nesta página.",
         categories=[
             {
                 "number": "01",
-                "category": "Novidades",
+                "category": "Descoberta",
                 "title": "Um novo ponto de partida",
-                "body": "Conheça as peças marcadas como novidade na vitrine demo. Um vestido leve ou um tricô de textura suave pode inspirar uma composição diferente.",
+                "body": "Explore somente produtos com ofertas elegíveis na descoberta geral. Use as categorias reais disponíveis nos filtros.",
             },
             {
                 "number": "02",
@@ -79,9 +79,9 @@ def shopee_page() -> rx.Component:
             },
             {
                 "number": "03",
-                "category": "Promoções",
+                "category": "Comparação",
                 "title": "Olhe além do desconto",
-                "body": "Explore os produtos com preço comparativo no catálogo demonstrativo. Observe a proposta de uso antes do valor: não há cupons ou ofertas da Shopee nesta página.",
+                "body": "Compare a mesma variante e moeda. Consulte datas e fontes; esta página não promete promoções da Shopee.",
             },
         ],
         guide_title="Experimente sem perder a sua essência.",
@@ -97,7 +97,7 @@ def shopee_page() -> rx.Component:
             },
             {
                 "title": "Compare com calma",
-                "body": "Use os filtros de preço e a ordenação no catálogo abaixo. Os preços comparativos são da demonstração; não representam promoções ou condições da Shopee.",
+                "body": "Na descoberta geral, use os filtros reais de preço, categoria e loja. Preços são observações inseridas pela administração, não consultas ao vivo à Shopee.",
             },
         ],
     )
@@ -106,14 +106,14 @@ def shopee_page() -> rx.Component:
 @rxe.page(
     route="/lojas/mercado-livre",
     auth=False,
-    title="Mercado Livre · Curadoria independente | VIKTRINE SHOP",
-    description="Escolhas práticas para o cotidiano no catálogo demo da VIKTRINE SHOP. Sem vínculo ou integração com o Mercado Livre.",
+    title="Mercado Livre · Curadoria independente | Viktrine",
+    description="Orientações editoriais da Viktrine. Sem endosso, catálogo oficial ou integração com o Mercado Livre.",
 )
 def mercado_livre_page() -> rx.Component:
     return marketplace_content(
         name="Mercado Livre",
         headline="Escolhas práticas. Estilo todos os dias.",
-        intro="Na nossa página temática Mercado Livre, o olhar editorial vai para a praticidade: vestir com conforto, organizar os essenciais e montar combinações para uma rotina real. Todos os caminhos levam à vitrine demonstrativa interna da VIKTRINE SHOP.",
+        intro="Na nossa página temática Mercado Livre, o olhar editorial vai para a praticidade: vestir com conforto, organizar os essenciais e montar combinações para uma rotina real. Os atalhos levam à descoberta geral da Viktrine, não a um catálogo do Mercado Livre.",
         categories=[
             {
                 "number": "01",
@@ -131,7 +131,7 @@ def mercado_livre_page() -> rx.Component:
                 "number": "03",
                 "category": "Feminino",
                 "title": "Camadas para a rotina",
-                "body": "Tricô, denim e vestidos leves sugerem combinações para diferentes momentos. Confira os detalhes e a disponibilidade demonstrativa antes de usar “Ir para a loja”.",
+                "body": "Tricô, denim e vestidos leves sugerem combinações para diferentes momentos. Consulte fontes e datas das ofertas na descoberta geral e confirme disponibilidade no destino.",
             },
         ],
         guide_title="Escolha pela rotina que você tem.",
@@ -143,11 +143,11 @@ def mercado_livre_page() -> rx.Component:
             },
             {
                 "title": "Confira a descrição e a disponibilidade",
-                "body": "Abra os detalhes dos cards e use o filtro “Somente disponíveis”. A disponibilidade exibida pertence ao catálogo demo, não ao Mercado Livre.",
+                "body": "Consulte a descrição e a data da observação. A Viktrine não tem estoque próprio; disponibilidade e condições devem ser confirmadas na loja externa.",
             },
             {
                 "title": "Entenda o destino de cada produto",
-                "body": "“Ir para a loja” abre o link HTTPS cadastrado para o produto. Sem um link válido, abre a página interna da loja parceira. A sacola e o checkout legado são separados desses links e continuam demonstrativos, sem cobrança nem entrega.",
+                "body": "“Ir para a loja” encaminha por um link de oferta elegível e revisado. A Viktrine pode receber comissão, mas não processa compras, pagamentos ou entregas nem confirma conversões.",
             },
         ],
     )

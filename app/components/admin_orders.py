@@ -23,9 +23,7 @@ def order_item(item: AdminOrderItem) -> rx.Component:
 
 def order_status_form(order: AdminOrder) -> rx.Component:
     return rx.el.form(
-        rx.el.input(
-            type="hidden", name="order_id", value=order["id"].to_string()
-        ),
+        rx.el.input(type="hidden", name="order_id", value=str(order["id"])),
         rx.el.input(type="hidden", name="expected", value=order["status"]),
         rx.el.label(
             "Registrar status",
@@ -148,7 +146,10 @@ def admin_order_card(order: AdminOrder) -> rx.Component:
             ),
             class_name="mt-4 flex flex-wrap justify-between gap-3",
         ),
-        order_status_form(order),
+        rx.el.p(
+            "Arquivo demonstrativo · somente leitura; status histórico não confirma pagamento ou envio.",
+            class_name="mt-5 border-t border-[#deded3] pt-4 text-xs leading-6 text-[#596559]",
+        ),
         key=order["id"],
         class_name="min-w-0 rounded-sm border border-[#deded3] bg-white p-5 text-[#0d231d]",
     )
@@ -269,7 +270,7 @@ def orders_empty_state() -> rx.Component:
                 f"Nenhum pedido corresponde a: {AdminOrderState.search_label}.",
                 rx.cond(
                     AdminOrderState.page <= 1,
-                    "Nenhum pedido registrado ainda.",
+                    "Nenhum pedido anterior neste arquivo.",
                     "Nenhum pedido registrado nesta página.",
                 ),
             ),
@@ -296,7 +297,7 @@ def admin_orders() -> rx.Component:
         rx.el.div(
             rx.el.div(
                 rx.el.h2(
-                    "Gestão de pedidos",
+                    "Arquivo demonstrativo de pedidos anteriores",
                     class_name="font-['Cormorant_Garamond'] text-3xl text-[#073238]",
                 ),
                 rx.el.p(
@@ -306,7 +307,7 @@ def admin_orders() -> rx.Component:
             ),
             rx.el.button(
                 rx.icon("refresh-cw", class_name="h-4 w-4"),
-                "Atualizar pedidos",
+                "Atualizar arquivo",
                 type="button",
                 on_click=AdminOrderState.load_orders(0),
                 disabled=AdminOrderState.loading | AdminOrderState.saving,
@@ -315,7 +316,7 @@ def admin_orders() -> rx.Component:
             class_name="flex flex-wrap items-center justify-between gap-4",
         ),
         rx.el.p(
-            "Checkout demonstrativo: os status são apenas registros administrativos. Salvar não realiza pagamentos, envios ou entregas reais. Status históricos são exibidos sem criar ações de pagamento ou entrega.",
+            "Arquivo somente leitura. Busca e paginação consultam registros anteriores preservados. Não é possível criar pedidos ou alterar status, pagamentos e envios.",
             class_name="mt-4 rounded-sm border border-[#d4af37]/40 bg-[#faf9f4] p-3 text-xs leading-6 text-[#596559]",
         ),
         order_search_form(),

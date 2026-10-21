@@ -381,7 +381,7 @@ def admin_workspace() -> rx.Component:
                     class_name="mt-2 break-words text-sm text-[#0d231d]",
                 ),
                 rx.el.p(
-                    "O produto será retirado das sacolas. Os dados históricos dos pedidos serão preservados.",
+                    "O produto será arquivado na curadoria. Os dados históricos dos pedidos serão preservados.",
                     class_name="mt-2 text-xs text-[#687268]",
                 ),
                 rx.el.div(
@@ -424,7 +424,7 @@ def admin_content() -> rx.Component:
             class_name="mt-3 font-['Cormorant_Garamond'] text-4xl leading-tight text-[#073238] sm:text-5xl",
         ),
         rx.el.p(
-            "Organize produtos editoriais e ofertas de lojas externas, com revisão, evidências e auditoria. Os pedidos históricos, relatórios e cupons existentes são preservados nesta etapa.",
+            "Organize produtos editoriais e ofertas de lojas externas, com revisão, evidências e auditoria. Pedidos anteriores são um arquivo demonstrativo somente leitura; cupons locais legados não são aplicados em compras. A Viktrine não possui checkout.",
             class_name="mt-4 max-w-3xl text-sm leading-6 text-[#687268]",
         ),
         rx.el.div(

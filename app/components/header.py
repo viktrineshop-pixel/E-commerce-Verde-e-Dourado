@@ -48,20 +48,20 @@ def utility_bar() -> rx.Component:
                     ),
                     rx.el.span(
                         rx.el.strong(
-                            "Compra Segura",
+                            "Descoberta de ofertas",
                             class_name="font-medium text-[#f5f1e8]",
                         ),
-                        " · demonstração, sem pagamentos",
+                        " · compras nas lojas externas",
                     ),
                     class_name="flex items-center gap-[5.2px] text-[#d6cda9]",
                 ),
                 rx.el.span(
                     rx.icon(
-                        "truck",
+                        "external-link",
                         aria_hidden=True,
                         class_name="h-[9.1px] w-[9.1px] shrink-0 text-[#d4af37]",
                     ),
-                    "Entrega · não realizada nesta demonstração",
+                    "Preços observados · sem integração ao vivo",
                     class_name="flex items-center gap-[5.2px] text-[#d6cda9]",
                 ),
                 rx.el.span(
@@ -97,7 +97,7 @@ def stores_menu() -> rx.Component:
         ),
         rx.el.div(
             rx.el.p(
-                "NOSSAS LOJAS",
+                "PÁGINAS EDITORIAIS INDEPENDENTES",
                 class_name="px-4 pt-2 pb-1 text-[9px] tracking-[0.18em] text-[#d4af37]",
             ),
             rx.foreach(
@@ -131,15 +131,11 @@ def header() -> rx.Component:
             rx.el.div(
                 rx.el.a(
                     rx.el.span(
-                        "VIKTRINE",
+                        "Viktrine",
                         class_name="block text-center leading-[0.82]",
                     ),
-                    rx.el.span(
-                        "SHOP",
-                        class_name="block text-center text-[0.72em] leading-[0.9] tracking-[0.24em]",
-                    ),
                     href="/",
-                    aria_label="VIKTRINE SHOP — página inicial",
+                    aria_label="Viktrine — página inicial",
                     class_name="shrink-0 font-['Cormorant_Garamond'] text-xl font-medium tracking-[0.1em] text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:text-2xl md:text-3xl",
                 ),
                 rx.el.a(
@@ -186,11 +182,11 @@ def header() -> rx.Component:
                     ),
                 ),
                 rx.el.a(
-                    rx.icon("gift", class_name="h-5 w-5 text-[#d4af37]"),
-                    rx.el.span("Sorteio", class_name="hidden lg:inline"),
+                    rx.icon("search", class_name="h-5 w-5 text-[#d4af37]"),
+                    rx.el.span("Descobrir", class_name="hidden lg:inline"),
                     href="/#vk-home-carousel",
                     on_click=HeroState.select_slide(2),
-                    aria_label="Ir para o sorteio no terceiro banner",
+                    aria_label="Como comparar ofertas no terceiro banner",
                     class_name="flex min-h-9 items-center gap-2 text-sm text-[#f5f1e8] hover:text-[#d4af37] focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
                 rx.el.button(
@@ -216,13 +212,7 @@ def header() -> rx.Component:
                 ),
                 rx.el.div(
                     rx.foreach(
-                        [
-                            "Feminino",
-                            "Masculino",
-                            "Acessórios",
-                            "Novidades",
-                            "Promoções",
-                        ],
+                        StorefrontState.categories,
                         category_link,
                     ),
                     class_name="absolute left-0 top-full z-30 w-52 border border-[#d4af37]/25 bg-[var(--brand-petroleum)] p-2",
@@ -230,13 +220,7 @@ def header() -> rx.Component:
                 class_name="relative",
             ),
             rx.foreach(
-                [
-                    "Feminino",
-                    "Masculino",
-                    "Acessórios",
-                    "Novidades",
-                    "Promoções",
-                ],
+                StorefrontState.categories,
                 category_link,
             ),
             class_name="hidden justify-center gap-0 border-t border-white/10 bg-[var(--brand-petroleum)] md:flex lg:gap-6",
@@ -247,13 +231,7 @@ def header() -> rx.Component:
             rx.el.nav(
                 stores_menu(),
                 rx.foreach(
-                    [
-                        "Feminino",
-                        "Masculino",
-                        "Acessórios",
-                        "Novidades",
-                        "Promoções",
-                    ],
+                    StorefrontState.categories,
                     category_link,
                 ),
                 class_name="flex flex-col border-t border-white/10 bg-[var(--brand-petroleum)] px-3 pb-3 md:hidden",

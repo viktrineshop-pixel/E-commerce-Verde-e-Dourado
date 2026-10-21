@@ -109,9 +109,7 @@ def catalog() -> rx.Component:
         rx.el.div(
             rx.el.div(
                 rx.foreach(
-                    [
-                        "Todos",
-                    ],
+                    StorefrontState.categories,
                     category_pill,
                 ),
                 class_name="flex flex-1 gap-2 overflow-x-auto py-2",
