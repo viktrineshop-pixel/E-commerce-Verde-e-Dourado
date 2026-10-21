@@ -5,6 +5,7 @@ from app.components.admin_orders import admin_orders
 from app.components.admin_clicks import admin_clicks
 from app.components.admin_coupons import admin_coupons
 from app.components.discovery import discovery_workspace
+from app.components.operations import operations
 
 
 _CATEGORY_SUGGESTIONS = [
@@ -260,11 +261,11 @@ def admin_product_row(product: AdminProduct) -> rx.Component:
                 ),
                 rx.el.button(
                     rx.icon("trash-2", class_name="h-3.5 w-3.5"),
-                    "Excluir",
+                    "Arquivar",
                     type="button",
                     on_click=AdminState.request_delete(product["id"]),
                     disabled=AdminState.busy,
-                    aria_label=f"Excluir {product['title']}",
+                    aria_label=f"Arquivar {product['title']}",
                     class_name="flex min-h-10 items-center gap-2 rounded-sm border border-red-200 bg-white px-3 text-xs text-red-600 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-red-500 disabled:opacity-50",
                 ),
                 class_name="mt-3 flex flex-wrap gap-2",
@@ -373,11 +374,11 @@ def admin_workspace() -> rx.Component:
             AdminState.delete_title != "",
             rx.el.div(
                 rx.el.h2(
-                    "Confirmar exclusão",
+                    "Confirmar arquivamento",
                     class_name="text-base font-semibold text-red-700",
                 ),
                 rx.el.p(
-                    f"Excluir definitivamente “{AdminState.delete_title}”? Esta ação não pode ser desfeita.",
+                    f"Arquivar “{AdminState.delete_title}” sem exclusão física?",
                     class_name="mt-2 break-words text-sm text-[#0d231d]",
                 ),
                 rx.el.p(
@@ -393,7 +394,7 @@ def admin_workspace() -> rx.Component:
                         class_name="min-h-11 rounded-sm border border-[#d8d7cc] bg-white px-4 text-sm text-[#073238] focus-visible:outline-2 focus-visible:outline-[#d4af37] disabled:opacity-50",
                     ),
                     rx.el.button(
-                        "Sim, excluir definitivamente",
+                        "Sim, arquivar",
                         type="button",
                         on_click=AdminState.confirm_delete,
                         disabled=AdminState.busy,
@@ -406,6 +407,7 @@ def admin_workspace() -> rx.Component:
             ),
         ),
         discovery_workspace(),
+        operations(),
         admin_orders(),
         admin_clicks(),
         admin_coupons(),

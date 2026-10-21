@@ -83,12 +83,12 @@ def admin_clicks() -> rx.Component:
         rx.el.div(
             rx.el.div(
                 rx.el.h2(
-                    "Cliques para as lojas",
+                    "Arquivo de cliques legados",
                     id="click-report-title",
                     class_name="font-['Cormorant_Garamond'] text-3xl text-[#073238]",
                 ),
                 rx.el.p(
-                    "Histórico completo de acessos por “Ir para a loja”. Cliques não representam compras nem visitantes únicos.",
+                    "Somente cliques históricos sem offer_id, separados das ofertas atuais. Cliques não representam compras nem visitantes únicos.",
                     class_name="mt-2 text-xs leading-5 text-[#596559]",
                 ),
             ),
@@ -129,7 +129,7 @@ def admin_clicks() -> rx.Component:
                             class_name="mt-3 text-sm text-[#073238]",
                         ),
                         rx.el.p(
-                            "O relatório será preenchido quando alguém acessar uma loja pelos produtos da vitrine.",
+                            "Cliques das ofertas atuais aparecem no painel Operações, não neste arquivo legado.",
                             class_name="mt-2 text-xs text-[#596559]",
                         ),
                         class_name="mt-5 rounded-sm border border-dashed border-[#d8d7cc] bg-[#faf9f4] p-8 text-center",

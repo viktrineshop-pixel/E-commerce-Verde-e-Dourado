@@ -72,6 +72,7 @@ WITH RECURSIVE active_categories AS (
       AND length(trim(l.validated_by_sub)) > 0
       AND l.validation_metadata ->> 'same_offer_confirmed' = 'true'
       AND l.validation_metadata ->> 'review_kind' = 'manual'
+      AND COALESCE(l.validation_metadata ->> 'network_health', '') <> 'failed'
       AND (l.expires_at IS NULL OR l.expires_at > CURRENT_TIMESTAMP)
       AND l.destination_url ~ '^https://[a-z0-9.-]+(:[4][4][3])?(/|\?|$)'
       AND l.affiliate_url ~ '^https://[a-z0-9.-]+(:[4][4][3])?(/|\?|$)'

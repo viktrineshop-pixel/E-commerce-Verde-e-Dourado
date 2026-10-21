@@ -17,7 +17,7 @@ O espaço de curadoria fica em `/admin`, com o acesso administrativo e o primeir
 
 ## Evidência e responsabilidade
 
-A curadoria é manual. Não foram implementadas consulta automática de marketplace, verificação HTTP/redirecionamento, atribuição de venda ou comissão. O registro de uma URL ou de um programa não comprova integração externa. Observações mostram apenas preços efetivamente fornecidos pelo administrador e não prometem disponibilidade atual.
+A curadoria é manual. Não foram implementadas consulta automática de marketplace, seguimento de redirecionamentos, atribuição de venda ou comissão. O painel Operações permite checagem HTTP sob demanda dos dois URLs persistidos, independente da revisão manual. O registro de uma URL ou de um programa não comprova integração externa. Observações mostram apenas preços efetivamente fornecidos pelo administrador e não prometem disponibilidade atual.
 
 Cada salvamento exige um motivo e ocorre na mesma transação que a auditoria. O histórico somente leitura apresenta sujeito responsável, entidade, ID, motivo e campos antes/depois. Alterações inválidas ou conflitos não são confirmados. Edições concorrentes exigem reabrir o registro. Vínculos principais de ofertas, variantes, programas, links e associações são imutáveis.
 

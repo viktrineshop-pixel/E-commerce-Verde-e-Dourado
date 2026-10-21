@@ -11,6 +11,33 @@ class ProductDetailState(rx.State):
     error: str = rxe.field("", auth=False)
     _generation: int = 0
 
+    @rxe.var(auth=False)
+    def seo_title(self) -> str:
+        return (
+            f"{self.groups[0]['title']} | Ofertas na Viktrine"
+            if self.groups
+            else "Produto e ofertas | Viktrine"
+        )
+
+    @rxe.var(auth=False)
+    def seo_description(self) -> str:
+        return (
+            f"{self.groups[0]['description'][:200]} · Compare fontes e datas; compras nas lojas externas."
+            if self.groups
+            else "Consulte produtos e ofertas com evidências. A Viktrine não processa compras."
+        )
+
+    @rxe.var(auth=False)
+    def canonical_path(self) -> str:
+        raw = self.router.page.params.get("product_id", "")
+        return (
+            f"/produto/{int(raw)}"
+            if isinstance(raw, str)
+            and re.fullmatch(r"[0-9]{1,10}", raw)
+            and 0 < int(raw) <= 2147483647
+            else "/"
+        )
+
     @rxe.event(auth=False, background=True)
     async def load_detail(self):
         async with self:

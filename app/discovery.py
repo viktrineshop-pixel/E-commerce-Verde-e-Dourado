@@ -479,6 +479,10 @@ async def validate_link(
             "O link exige revisão manual válida por administrador."
         )
     metadata = link.validation_metadata or {}
+    if metadata.get("network_health") == "failed":
+        raise ValueError(
+            "Checagem HTTP falhou; execute nova checagem antes de publicar."
+        )
     if (
         metadata.get("same_offer_confirmed") is not True
         or metadata.get("review_kind") != "manual"
@@ -766,6 +770,7 @@ async def validate_record(
     reviewed: bool,
     actor: str,
     reason: str,
+    preview: bool = False,
 ):
     now = datetime.now(timezone.utc)
     if kind == "product":
@@ -788,7 +793,8 @@ async def validate_record(
             )
         row.reviewed_at = now if reviewed else None
         row.reviewed_by_sub = actor if reviewed else None
-        await detect_duplicates(session, row, actor, reason)
+        if not preview:
+            await detect_duplicates(session, row, actor, reason)
         if row.status == "published":
             await validate_product(session, row)
     elif kind == "category":
@@ -845,7 +851,8 @@ async def validate_record(
                     "Variante publicada exige título, atributos e produto real não arquivado."
                 )
             await active_category(session, product.category_id)
-        await detect_duplicates(session, product, actor, reason)
+        if not preview:
+            await detect_duplicates(session, product, actor, reason)
     elif kind == "offer":
         product = await get_row(session, Product, row.product_id)
         merchant = await get_row(session, Merchant, row.merchant_id)
@@ -881,7 +888,13 @@ async def validate_record(
             now if reviewed and row.validation_status == "valid" else None
         )
         row.validated_by_sub = actor if row.validated_at else None
+        previous = row.validation_metadata or {}
         row.validation_metadata = {
+            **(
+                {"network_health": "failed"}
+                if previous.get("network_health") == "failed"
+                else {}
+            ),
             "review_kind": "manual",
             "same_offer_confirmed": bool(row.validated_at),
             "notes": reason,

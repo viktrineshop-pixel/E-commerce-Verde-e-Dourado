@@ -189,6 +189,9 @@ class AdminState(rx.State):
 
             yield DiscoveryState.load
             yield DiscoveryAuditState.load
+            from app.states.operations_state import OperationsState
+
+            yield OperationsState.load
 
     @rxe.event(auth=is_admin)
     async def load_products(self):
@@ -387,7 +390,7 @@ class AdminState(rx.State):
         except Exception as e:
             logging.exception(f"Error: {e}")
             self.error = (
-                "Não foi possível preparar a exclusão. Tente novamente."
+                "Não foi possível preparar o arquivamento. Tente novamente."
             )
 
     @rxe.event(auth=is_admin)
@@ -412,7 +415,7 @@ class AdminState(rx.State):
                     )
                     if p is None:
                         raise ValueError(
-                            "O produto já foi excluído. Atualize a lista."
+                            "Registro não encontrado. Atualize a lista."
                         )
                     from app.discovery import (
                         snapshot,
@@ -455,7 +458,7 @@ class AdminState(rx.State):
             self.error = str(e)
         except Exception as e:
             logging.exception(f"Error: {e}")
-            self.error = "Não foi possível excluir. Nenhuma exclusão foi confirmada; tente novamente."
+            self.error = "Não foi possível arquivar. Nenhuma alteração foi confirmada; tente novamente."
         finally:
             self.busy = False
 

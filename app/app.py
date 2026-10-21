@@ -15,6 +15,7 @@ from app.states.admin_state import AdminState
 from app.click_tracking import click_api
 from app.pages.product import product_page
 from app.states.product_detail_state import ProductDetailState
+from app.seo import PRIVATE_META, sitemap_href
 
 
 @rxe.page(
@@ -46,6 +47,7 @@ def index() -> rx.Component:
     route="/carrinho",
     auth=False,
     title="Descoberta de ofertas | Viktrine",
+    meta=PRIVATE_META,
     description="A Viktrine não possui sacola ou checkout. Compras nas lojas externas.",
 )
 def legacy_cart_redirect_page() -> rx.Component:
@@ -69,6 +71,7 @@ def legacy_cart_redirect_page() -> rx.Component:
     route="/minha-conta",
     auth=True,
     title="Minha conta | Viktrine",
+    meta=PRIVATE_META,
     description="Favoritos, listas privadas e arquivo demonstrativo de pedidos anteriores, somente leitura.",
 )
 def account_page() -> rx.Component:
@@ -90,7 +93,8 @@ def account_page() -> rx.Component:
 @rxe.page(
     route="/admin",
     auth=True,
-    title="Curadoria editorial | Viktrine",
+    title="Curadoria e operações | Viktrine",
+    meta=PRIVATE_META,
     description="Produtos editoriais, ofertas e evidências da Viktrine.",
 )
 def admin_page() -> rx.Component:
@@ -109,11 +113,14 @@ def admin_page() -> rx.Component:
 @rxe.page(
     route="/produto/[product_id]",
     auth=False,
-    title="Produto e ofertas | Viktrine",
-    description="Compare ofertas da mesma variante e moeda e consulte suas fontes e observações reais.",
+    title=ProductDetailState.seo_title,
+    description=ProductDetailState.seo_description,
 )
 def product_detail_page() -> rx.Component:
-    return product_page()
+    return rx.el.div(
+        product_page(),
+        on_mount=ProductDetailState.load_detail,
+    )
 
 
 @rxe.page(

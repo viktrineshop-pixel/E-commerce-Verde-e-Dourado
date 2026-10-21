@@ -122,7 +122,6 @@ class DiscoveryState(rx.State):
             if self.loading or self.saving:
                 return
             self.loading = True
-            kind, page
             kind, page, query, status, product_id = (
                 self.kind,
                 self.page,

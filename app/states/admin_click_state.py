@@ -22,7 +22,7 @@ class ProductClicks(TypedDict):
 REPORT_SQL = text("""
     WITH product_counts AS (
         SELECT sku, title, marketplace, COUNT(*) AS clicks
-        FROM product_link_clicks
+        FROM product_link_clicks WHERE offer_id IS NULL
         GROUP BY sku, title, marketplace
     ), ranked AS (
         SELECT sku, title, marketplace, clicks,
@@ -33,10 +33,10 @@ REPORT_SQL = text("""
     )
     SELECT 'total' AS kind, '' AS sku, '' AS title, '' AS marketplace,
         COUNT(*) AS clicks, 0 AS rank
-    FROM product_link_clicks
+    FROM product_link_clicks WHERE offer_id IS NULL
     UNION ALL
     SELECT 'marketplace', '', '', marketplace, COUNT(*), 0
-    FROM product_link_clicks
+    FROM product_link_clicks WHERE offer_id IS NULL
     GROUP BY marketplace
     UNION ALL
     SELECT 'product', sku, title, marketplace, clicks, rank

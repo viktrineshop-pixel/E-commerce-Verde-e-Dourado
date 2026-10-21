@@ -415,7 +415,7 @@ def discovery_workspace() -> rx.Component:
                 class_name="mt-4 max-w-4xl text-sm leading-7 text-[#faf9f4]",
             ),
             rx.el.p(
-                "Observação manual registra apenas o que o administrador viu na fonte e horário informados. Não há conexão automática com marketplaces, teste de redirecionamento, comprovação de venda ou comissão. Alterações que invalidam evidências retiram a publicação dependente, com auditoria. Não há exclusão física de registros editoriais.",
+                "Observação manual registra apenas o que o administrador viu na fonte e horário informados. Não há conexão automática com marketplaces, comprovação de venda ou comissão. Checagem HTTP sob demanda está disponível em Operações, sem seguir redirecionamentos nem substituir a revisão manual. Alterações que invalidam evidências retiram a publicação dependente, com auditoria. Não há exclusão física de registros editoriais.",
                 class_name="mt-4 max-w-4xl text-xs leading-6 text-[#faf9f4]",
             ),
             class_name="mb-7 rounded-sm bg-[#073238] p-6 md:p-9",
