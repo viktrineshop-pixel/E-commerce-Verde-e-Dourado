@@ -1,6 +1,6 @@
 import reflex as rx
 from app.states.storefront_state import StorefrontState, ProductView
-from app.components.offer_comparison import offer_row
+from app.components.offer_comparison import compact_offer_row, offer_row
 from app.components.catalog_filters import discovery_filters
 from app.components.saved_lists import list_add_control
 from app.components.favorites import favorite_control, favorite_feedback
@@ -33,57 +33,68 @@ def sort_option(label: str) -> rx.Component:
 
 def product_card(product: ProductView) -> rx.Component:
     return rx.el.article(
-        rx.el.div(
-            rx.el.a(
-                rx.el.img(
-                    src=product["image_url"],
-                    alt=product["title"],
-                    loading="lazy",
-                    class_name="aspect-[4/3] w-full bg-[#efede4] object-contain",
-                ),
-                href=f"/produto/{product['id']}",
-                class_name="block focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+        rx.el.a(
+            rx.el.img(
+                src=product["image_url"],
+                alt=product["title"],
+                loading="lazy",
+                class_name="aspect-square w-full bg-[#efede4] object-contain md:aspect-[4/3]",
             ),
-            rx.el.div(
-                favorite_control(product["id"], product["title"]),
-                class_name="absolute right-3 top-3",
-            ),
-            class_name="relative",
+            href=f"/produto/{product['id']}",
+            class_name="block focus-visible:outline-2 focus-visible:outline-[#d4af37]",
         ),
         rx.el.div(
-            rx.el.p(product["category"], class_name="text-xs text-gray-600"),
+            rx.el.div(
+                rx.el.p(
+                    product["category"],
+                    class_name="min-w-0 truncate text-[10px] leading-4 text-gray-600 md:text-xs",
+                ),
+                rx.el.div(
+                    favorite_control(product["id"], product["title"]),
+                    class_name="shrink-0",
+                ),
+                class_name="flex min-w-0 items-center justify-between gap-1",
+            ),
             rx.el.h3(
                 rx.el.a(
                     product["title"],
                     href=f"/produto/{product['id']}",
-                    class_name="hover:underline focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                    class_name="line-clamp-2 hover:underline focus-visible:outline-2 focus-visible:outline-[#d4af37]",
                 ),
-                class_name="mt-3 font-['Cormorant_Garamond'] text-3xl text-[#073238]",
+                class_name="mt-1 min-h-10 font-['Cormorant_Garamond'] text-lg leading-5 text-[#073238] md:mt-3 md:min-h-0 md:text-3xl md:leading-tight",
             ),
             rx.el.p(
-                product["brand_model"], class_name="mt-2 text-xs text-gray-600"
+                product["brand_model"],
+                class_name="mt-1 truncate text-[10px] leading-4 text-gray-600 md:mt-2 md:text-xs",
             ),
             rx.el.p(
                 f"{product['variant']} · {product['currency']}",
-                class_name="mt-3 text-xs font-medium text-[#073238]",
+                class_name="mt-1 line-clamp-1 text-[10px] leading-4 font-medium text-[#073238] md:mt-3 md:text-xs",
             ),
             rx.el.p(
                 product["description"],
-                class_name="mt-3 whitespace-pre-wrap text-sm leading-6 text-gray-600",
+                class_name="mt-3 hidden whitespace-pre-wrap text-sm leading-6 text-gray-600 md:block",
             ),
             rx.el.div(
-                rx.foreach(product["offers"], offer_row), class_name="mt-4"
+                compact_offer_row(product["offers"][0]),
+                class_name="mt-2 md:hidden",
+            ),
+            rx.el.div(
+                rx.foreach(product["offers"], offer_row),
+                class_name="mt-4 hidden md:block",
             ),
             rx.el.a(
                 "Detalhes, fontes e histórico",
                 href=f"/produto/{product['id']}",
-                class_name="block min-h-11 py-3 text-xs text-[#073238] underline focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                class_name="mt-1 flex min-h-11 items-center py-2 text-[10px] text-[#073238] underline focus-visible:outline-2 focus-visible:outline-[#d4af37] md:mt-0 md:py-3 md:text-xs",
             ),
-            list_add_control(product["id"]),
-            class_name="p-5",
+            rx.el.div(
+                list_add_control(product["id"]), class_name="hidden md:block"
+            ),
+            class_name="min-w-0 p-2 md:p-5",
         ),
         key=product["key"],
-        class_name="min-w-0 border border-[#dedfd5] bg-white text-[#073238]",
+        class_name="min-w-0 w-full border border-[#dedfd5] bg-white text-[#073238]",
     )
 
 
@@ -168,7 +179,7 @@ def catalog() -> rx.Component:
                 ),
                 role="status",
                 aria_label="Carregando produtos",
-                class_name="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3",
+                class_name="grid min-w-0 grid-cols-2 gap-2 sm:gap-6 md:grid-cols-2 xl:grid-cols-3",
             ),
             rx.cond(
                 StorefrontState.error != "",
@@ -198,18 +209,18 @@ def catalog() -> rx.Component:
                         ),
                         rx.el.h3(
                             "Nenhuma oferta elegível encontrada",
-                            class_name="font-['Cormorant_Garamond'] text-3xl text-[#0d231d]",
+                            class_name="font-['Cormorant_Garamond'] text-2xl leading-tight text-[#0d231d] md:text-3xl",
                         ),
                         rx.el.p(
                             "Ajuste a busca ou os filtros. Produtos demonstrativos, ofertas sem evidência e links não revisados não aparecem aqui.",
-                            class_name="mt-3 text-sm text-[#687268]",
+                            class_name="mt-3 text-xs leading-5 text-[#687268] md:text-sm",
                         ),
                         rx.el.button(
                             "Ver todos os produtos",
                             on_click=StorefrontState.clear_filters,
                             class_name="mt-6 border-b border-[#0d231d] pb-1 text-xs text-[#0d231d]",
                         ),
-                        class_name="border border-[#deded3] py-20 text-center",
+                        class_name="border border-[#deded3] px-4 py-10 text-center md:py-20",
                     ),
                     rx.el.div(
                         rx.foreach(StorefrontState.products, product_card),
@@ -246,5 +257,5 @@ def catalog() -> rx.Component:
             ),
         ),
         id="catalogo",
-        class_name="mx-auto w-full max-w-[1440px] scroll-mt-6 px-6 py-16 lg:px-12 lg:py-20",
+        class_name="mx-auto w-full max-w-[1440px] scroll-mt-6 px-3 py-10 sm:px-6 sm:py-16 lg:px-12 lg:py-20",
     )

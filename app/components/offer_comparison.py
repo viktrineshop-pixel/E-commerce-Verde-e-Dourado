@@ -41,6 +41,47 @@ def offer_row(offer: OfferView) -> rx.Component:
     )
 
 
+def compact_offer_row(offer: OfferView) -> rx.Component:
+    return rx.el.div(
+        rx.el.div(
+            rx.el.p(
+                offer["merchant"],
+                class_name="min-w-0 truncate text-[10px] font-medium text-[#073238]",
+            ),
+            rx.el.p(
+                offer["price"],
+                class_name="text-xs font-semibold text-[#073238]",
+            ),
+            class_name="flex min-w-0 flex-wrap items-baseline justify-between gap-x-1",
+        ),
+        rx.el.a(
+            "Ir à loja externa · afiliado",
+            rx.icon("arrow-up-right", class_name="h-3 w-3 shrink-0"),
+            href=offer_tracking_url(offer["id"]),
+            rel="nofollow sponsored",
+            aria_label=f"Ir para {offer['merchant']} por link de afiliado externo",
+            class_name="mt-1 flex min-h-11 w-full items-center justify-center gap-1 border border-[#d4af37] bg-[#d4af37] px-1 text-[9px] font-semibold leading-3 text-[#073238] hover:bg-[#e1c25c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#073238]",
+        ),
+        rx.el.details(
+            rx.el.summary(
+                "Fonte e condições",
+                class_name="min-h-11 cursor-pointer py-2 text-[10px] leading-4 text-[#073238] underline focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+            ),
+            rx.el.p(
+                f"Fonte: {offer['source']} · Observado em {offer['observed']}",
+                class_name="break-words text-[10px] leading-4 text-gray-600",
+            ),
+            rx.el.p(
+                offer["disclosure"],
+                class_name="mt-1 text-[10px] leading-4 text-gray-600",
+            ),
+            class_name="mt-1",
+        ),
+        key=offer["id"],
+        class_name="min-w-0 border-t border-[#dedfd5] pt-2 text-[#073238]",
+    )
+
+
 def offer_evidence(offer: OfferView) -> rx.Component:
     return rx.el.article(
         offer_row(offer),

@@ -113,19 +113,22 @@ def landing_catalog() -> rx.Component:
                         LandingCatalogState.products,
                         lambda product: rx.el.li(
                             rx.el.a(
-                                product["nome"],
+                                rx.el.span(
+                                    product["nome"],
+                                    class_name="line-clamp-2 min-w-0 text-xs leading-5 sm:text-sm",
+                                ),
                                 rx.icon(
                                     "arrow-right", class_name="h-4 w-4 shrink-0"
                                 ),
                                 href=f"/produto/{product['slug']}",
-                                class_name="flex min-h-14 items-center justify-between gap-4 border-b border-[#dedfd5] py-4 text-sm text-[#073238] hover:underline focus-visible:outline-2 focus-visible:outline-[#d4af37]",
+                                class_name="flex min-h-14 min-w-0 items-center justify-between gap-2 border-b border-[#dedfd5] bg-white px-3 py-3 text-[#073238] hover:underline focus-visible:outline-2 focus-visible:outline-[#d4af37] sm:gap-4 sm:py-4",
                             ),
                             key=product["id"],
                         ),
                     ),
-                    class_name="mt-5 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3",
+                    class_name="mt-5 grid min-w-0 grid-cols-2 gap-2 sm:gap-x-8 sm:gap-y-0 lg:grid-cols-3",
                 ),
-                class_name="mx-auto w-full max-w-[1440px] border-t border-[#dedfd5] px-6 py-12 lg:px-12",
+                class_name="mx-auto w-full max-w-[1440px] border-t border-[#dedfd5] px-3 py-8 sm:px-6 sm:py-12 lg:px-12",
             ),
         ),
         rx.cond(

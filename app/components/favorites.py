@@ -49,10 +49,10 @@ def favorite_control(
         ),
         rx.el.a(
             rx.icon("heart", aria_hidden=True, class_name="h-4 w-4"),
-            "Entrar para salvar",
+            rx.el.span("Entrar para salvar", class_name="sr-only"),
             href="/login?redirect_to=/",
             aria_label=f"Entrar para salvar nos favoritos: {title}",
-            class_name="flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-[#d4af37]/50 bg-[#faf9f4]/95 px-2.5 text-[10px] font-medium text-[#073238] hover:bg-[#f0e8ce] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#073238]",
+            class_name="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#d4af37]/50 bg-[#faf9f4]/95 text-[#073238] hover:bg-[#f0e8ce] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#073238]",
         ),
     )
 

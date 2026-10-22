@@ -1,4 +1,9 @@
+import os
+from collections.abc import Sequence
+
 import reflex as rx
+import reflex_enterprise as rxe
+from reflex_enterprise.auth import AuthUserState
 
 
 _PROVIDER_NAME = os.environ.get("OIDC_PROVIDER_NAME", "")
@@ -8,7 +13,7 @@ _LOGIN_LABEL = (
 
 
 class LoginRedirectState(rx.State):
-    @rx.event
+    @rxe.event(auth=False)
     def continue_to_app(self):
         raw = self.router.page.params.get("redirect_to", "/")
         target = (
@@ -33,7 +38,7 @@ def provider_button(provider) -> rx.Component:
     )
 
 
-def login_page() -> rx.Component:
+def login_page(*, providers: Sequence, **context) -> rx.Component:
     return rx.fragment(
         rx.el.main(
             rx.el.div(
@@ -61,10 +66,7 @@ def login_page() -> rx.Component:
                         class_name="mt-4 text-sm leading-7 text-[#52615b]",
                     ),
                     rx.el.div(
-                        rx.el.p(
-                            "A Viktrine não oferece login nesta versão.",
-                            class_name="text-sm text-[#52615b]",
-                        ),
+                        *[provider_button(provider) for provider in providers],
                         class_name="mt-8 flex flex-col gap-3",
                     ),
                     rx.el.a(
@@ -77,5 +79,9 @@ def login_page() -> rx.Component:
                 class_name="w-full max-w-md text-center",
             ),
             class_name="flex min-h-dvh w-full items-center justify-center bg-[#073238] px-6 py-12 font-['Inter'] text-[#faf9f4]",
+        ),
+        rx.cond(
+            AuthUserState.provider_name != "",
+            rx.el.div(on_mount=LoginRedirectState.continue_to_app),
         ),
     )

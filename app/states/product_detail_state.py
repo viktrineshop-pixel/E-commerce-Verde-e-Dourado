@@ -12,13 +12,13 @@ from app.landing_products import (
 
 
 class ProductDetailState(rx.State):
-    groups: list[ProductView] = []
-    landing: LandingView = empty_landing()
-    loading: bool = True
-    error: str = ""
+    groups: list[ProductView] = rxe.field([], auth=False)
+    landing: LandingView = rxe.field(empty_landing(), auth=False)
+    loading: bool = rxe.field(True, auth=False)
+    error: str = rxe.field("", auth=False)
     _generation: int = 0
 
-    @rx.var
+    @rxe.var(auth=False, initial_value="Produto e ofertas | Viktrine")
     def seo_title(self) -> str:
         if self.landing["id"]:
             return f"{self.landing['nome']} | Viktrine"
@@ -28,7 +28,10 @@ class ProductDetailState(rx.State):
             else "Produto e ofertas | Viktrine"
         )
 
-    @rxe.var(auth=False)
+    @rxe.var(
+        auth=False,
+        initial_value="Consulte produtos e ofertas com evidências. A Viktrine não processa compras.",
+    )
     def seo_description(self) -> str:
         if self.landing["id"]:
             return f"{self.landing['descricao'][:180]} · Compras na loja externa por link de afiliado."
@@ -51,7 +54,7 @@ class ProductDetailState(rx.State):
             else "/"
         )
 
-    @rx.event(background=True)
+    @rxe.event(auth=False, background=True)
     async def load_detail(self):
         async with self:
             raw = self.router.page.params.get("product_id", "")

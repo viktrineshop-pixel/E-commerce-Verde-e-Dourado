@@ -21,8 +21,9 @@ from app.components.landing_products import landing_catalog
 from app.states.landing_admin_state import LandingAdminState
 
 
-@rx.page(
+@rxe.page(
     route="/",
+    auth=False,
     title="Viktrine | Descubra e compare ofertas",
     description="Descubra produtos editoriais e compare ofertas com fontes registradas. Compras nas lojas externas.",
 )
@@ -46,8 +47,9 @@ def index() -> rx.Component:
     )
 
 
-@rx.page(
+@rxe.page(
     route="/carrinho",
+    auth=False,
     title="Descoberta de ofertas | Viktrine",
     meta=PRIVATE_META,
     description="A Viktrine não possui sacola ou checkout. Compras nas lojas externas.",

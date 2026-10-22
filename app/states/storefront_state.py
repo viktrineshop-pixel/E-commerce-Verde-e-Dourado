@@ -23,15 +23,15 @@ class StorefrontState(rx.State):
     page_number: int = rxe.field(1, auth=False)
     mobile_menu: bool = rxe.field(False, auth=False)
 
-    @rx.var
+    @rxe.var(auth=False, initial_value=1)
     def page_count(self) -> int:
         return max(1, (self.total + 11) // 12)
 
-    @rx.event
+    @rxe.event(auth=False)
     def load_catalog(self):
         return StorefrontState.initialize_catalog
 
-    @rx.event(background=True)
+    @rxe.event(auth=False, background=True)
     async def initialize_catalog(self):
         try:
             categories, merchants = await filter_options()
