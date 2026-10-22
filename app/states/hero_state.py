@@ -88,8 +88,8 @@ CAROUSEL_LISTENERS = """
 
 
 class HeroState(rx.State):
-    active_slide: int = rxe.field(0, auth=False)
-    autoplay_started: bool = rxe.field(False, auth=False)
+    active_slide: int = 0
+    autoplay_started: bool = False
 
     @rxe.event(auth=False)
     def initialize_carousel(self):

@@ -7,9 +7,8 @@ from typing import Any, TypedDict
 from urllib.parse import urlsplit, unquote
 from sqlalchemy import select, func, text
 from app.models import Product, StoreMember
-from reflex_enterprise.auth import User
-from app.states.authorization import is_admin
 from app.affiliate import PARTNER_ROUTES, safe_affiliate_url
+from app.states.authorization import is_admin
 
 
 def parse_brl(value: str) -> int:
@@ -101,7 +100,7 @@ class AdminState(rx.State):
     _editing_id: int = 0
     _delete_id: int = 0
 
-    @rxe.var(auth=True, initial_value="/placeholder.svg")
+    @rx.var
     def preview_url(self) -> str:
         url = self.draft["image_url"].strip()
         return url if safe_image_url(url) else "/placeholder.svg"
@@ -111,8 +110,8 @@ class AdminState(rx.State):
         self.role_error = ""
         self.role_loading = True
         try:
-            user = await User.current() or {}
-            subject = user.get("sub", "")
+            user = {}
+            subject = ""
             if (
                 not isinstance(subject, str)
                 or not subject.strip()
@@ -169,11 +168,11 @@ class AdminState(rx.State):
         finally:
             self.role_loading = False
 
-    @rxe.event(auth=False)
+    @rx.event
     async def load_role(self):
         await self._bootstrap()
 
-    @rxe.event(auth=True)
+    @rx.event
     async def load_dashboard(self):
         await self._bootstrap()
         if self.can_manage:
@@ -193,7 +192,7 @@ class AdminState(rx.State):
 
             yield OperationsState.load
 
-    @rxe.event(auth=is_admin)
+    @rx.event
     async def load_products(self):
         self.loading = True
         try:
@@ -423,7 +422,7 @@ class AdminState(rx.State):
                         reconcile_publication,
                     )
 
-                    actor = str((await User.current() or {}).get("sub", ""))
+                    actor = ""
                     before = snapshot(p)
                     p.status = (
                         "draft" if p.sku.startswith("DEMO-") else "archived"

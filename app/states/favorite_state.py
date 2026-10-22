@@ -2,7 +2,6 @@ import reflex as rx
 import reflex_enterprise as rxe
 import logging
 from typing import TypedDict
-from reflex_enterprise.auth import User
 from sqlalchemy import bindparam, text
 from app.public_catalog import PUBLIC_CTE, eligible_product
 
@@ -16,22 +15,21 @@ class FavoriteProduct(TypedDict):
 
 
 class FavoriteState(rx.State):
-    signed_in: bool = rxe.field(False, auth=False)
-    ready: bool = rxe.field(False, auth=False)
-    saved_ids: list[int] = rxe.field([], auth=True)
-    favorites: list[FavoriteProduct] = rxe.field([], auth=True)
-    loading: bool = rxe.field(True, auth=True)
-    pending_id: int = rxe.field(0, auth=True)
-    error: str = rxe.field("", auth=True)
-    notice: str = rxe.field("", auth=True)
-    page_number: int = rxe.field(1, auth=True)
-    has_next: bool = rxe.field(False, auth=True)
+    signed_in: bool = False
+    ready: bool = False
+    saved_ids: list[int] = []
+    favorites: list[FavoriteProduct] = []
+    loading: bool = True
+    pending_id: int = 0
+    error: str = ""
+    notice: str = ""
+    page_number: int = 1
+    has_next: bool = False
     _subject: str = ""
     _generation: int = 0
 
     async def _current_subject(self) -> str:
-        user = await User.current() or {}
-        subject = user.get("sub", "")
+        subject = ""
         if (
             not isinstance(subject, str)
             or not subject.strip()
@@ -54,7 +52,7 @@ class FavoriteState(rx.State):
         self.page_number = 1
         self.has_next = False
 
-    @rxe.event(auth=False)
+    @rx.event
     def clear_presentation(self):
         self._clear()
         from app.states.saved_list_state import SavedListState
@@ -91,7 +89,7 @@ class FavoriteState(rx.State):
                 "Não foi possível verificar sua conta. Tente atualizar a página."
             )
 
-    @rxe.event(auth=True, background=True)
+    @rx.event(background=True)
     async def load_favorites(self):
         from app.states.storefront_state import StorefrontState
 
@@ -229,7 +227,7 @@ class FavoriteState(rx.State):
                     self.ready = False
                     self.error = "Não foi possível carregar seus favoritos. Tente novamente."
 
-    @rxe.event(auth=True)
+    @rx.event
     def change_page(self, direction: int):
         if self.loading or self.pending_id or direction not in (-1, 1):
             return

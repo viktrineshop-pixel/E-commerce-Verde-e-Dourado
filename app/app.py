@@ -21,9 +21,8 @@ from app.components.landing_products import landing_catalog
 from app.states.landing_admin_state import LandingAdminState
 
 
-@rxe.page(
+@rx.page(
     route="/",
-    auth=False,
     title="Viktrine | Descubra e compare ofertas",
     description="Descubra produtos editoriais e compare ofertas com fontes registradas. Compras nas lojas externas.",
 )
@@ -47,9 +46,8 @@ def index() -> rx.Component:
     )
 
 
-@rxe.page(
+@rx.page(
     route="/carrinho",
-    auth=False,
     title="Descoberta de ofertas | Viktrine",
     meta=PRIVATE_META,
     description="A Viktrine não possui sacola ou checkout. Compras nas lojas externas.",
@@ -73,7 +71,6 @@ def legacy_cart_redirect_page() -> rx.Component:
 
 @rxe.page(
     route="/minha-conta",
-    auth=True,
     title="Minha conta | Viktrine",
     meta=PRIVATE_META,
     description="Favoritos, listas privadas e arquivo demonstrativo de pedidos anteriores, somente leitura.",
@@ -86,17 +83,13 @@ def account_page() -> rx.Component:
             class_name="min-w-0 w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] text-[#0d231d]",
         ),
         footer(),
-        on_mount=[
-            AccountState.load_orders,
-            FavoriteState.sync_auth,
-        ],
+        on_mount=[AccountState.load_orders, FavoriteState.sync_auth],
         class_name="min-h-dvh w-full max-w-[100vw] overflow-x-hidden bg-[#faf9f4] font-['Inter'] text-[#0d231d]",
     )
 
 
 @rxe.page(
     route="/admin",
-    auth=True,
     title="Curadoria e operações | Viktrine",
     meta=PRIVATE_META,
     description="Produtos editoriais, ofertas e evidências da Viktrine.",

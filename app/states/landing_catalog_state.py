@@ -1,15 +1,14 @@
 import reflex as rx
-import reflex_enterprise as rxe
 import logging
 from sqlalchemy import text
 from app.landing_products import LandingView, landing_is_public
 
 
 class LandingCatalogState(rx.State):
-    products: list[LandingView] = rxe.field([], auth=False)
-    error: str = rxe.field("", auth=False)
+    products: list[LandingView] = []
+    error: str = ""
 
-    @rxe.event(auth=False, background=True)
+    @rx.event(background=True)
     async def load_products(self):
         async with self:
             self.products = []

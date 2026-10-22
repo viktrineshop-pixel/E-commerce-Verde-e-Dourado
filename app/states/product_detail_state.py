@@ -12,13 +12,13 @@ from app.landing_products import (
 
 
 class ProductDetailState(rx.State):
-    groups: list[ProductView] = rxe.field([], auth=False)
-    landing: LandingView = rxe.field(empty_landing(), auth=False)
-    loading: bool = rxe.field(True, auth=False)
-    error: str = rxe.field("", auth=False)
+    groups: list[ProductView] = []
+    landing: LandingView = empty_landing()
+    loading: bool = True
+    error: str = ""
     _generation: int = 0
 
-    @rxe.var(auth=False)
+    @rx.var
     def seo_title(self) -> str:
         if self.landing["id"]:
             return f"{self.landing['nome']} | Viktrine"
@@ -51,7 +51,7 @@ class ProductDetailState(rx.State):
             else "/"
         )
 
-    @rxe.event(auth=False, background=True)
+    @rx.event(background=True)
     async def load_detail(self):
         async with self:
             raw = self.router.page.params.get("product_id", "")

@@ -3,19 +3,19 @@ import reflex_enterprise as rxe
 
 import logging
 from typing import Any
-from app.states.authorization import is_admin
 from app.discovery import read_page
+from app.states.authorization import is_admin
 
 
 class DiscoveryAuditState(rx.State):
-    rows: list[dict[str, str]] = rxe.field([], auth=is_admin)
-    page: int = rxe.field(1, auth=is_admin)
-    total: int = rxe.field(0, auth=is_admin)
-    audit_product_id: int = rxe.field(0, auth=is_admin)
-    loading: bool = rxe.field(False, auth=is_admin)
-    error: str = rxe.field("", auth=is_admin)
+    rows: list[dict[str, str]] = []
+    page: int = 1
+    total: int = 0
+    audit_product_id: int = 0
+    loading: bool = False
+    error: str = ""
 
-    @rxe.event(auth=is_admin)
+    @rx.event
     def change_page(self, delta: int):
         if self.loading or delta not in (-1, 1):
             return
@@ -39,7 +39,7 @@ class DiscoveryAuditState(rx.State):
             logging.exception(f"Error: {e}")
             self.error = str(e)
 
-    @rxe.event(auth=is_admin, background=True)
+    @rx.event(background=True)
     async def load(self):
         async with self:
             if self.loading:

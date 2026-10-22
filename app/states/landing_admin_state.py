@@ -20,22 +20,20 @@ from app.landing_products import (
 
 
 class LandingAdminState(rx.State):
-    products: list[LandingView] = rxe.field([], auth=is_admin)
-    draft: dict[str, str] = rxe.field(
-        {"nome": "", "descricao": "", "url": "", "slug": ""}, auth=is_admin
-    )
-    editing_id: int = rxe.field(0, auth=is_admin)
-    busy: bool = rxe.field(False, auth=is_admin)
-    error: str = rxe.field("", auth=is_admin)
-    notice: str = rxe.field("", auth=is_admin)
-    page: int = rxe.field(1, auth=is_admin)
-    total: int = rxe.field(0, auth=is_admin)
-    revision: int = rxe.field(0, auth=is_admin)
+    products: list[LandingView] = []
+    draft: dict[str, str] = {"nome": "", "descricao": "", "url": "", "slug": ""}
+    editing_id: int = 0
+    busy: bool = False
+    error: str = ""
+    notice: str = ""
+    page: int = 1
+    total: int = 0
+    revision: int = 0
     _pending: list[tuple[str, str, bytes]] = []
     _upload_product_id: int = 0
     _save_fields: dict[str, str] = {}
 
-    @rxe.event(auth=is_admin, background=True)
+    @rx.event(background=True)
     async def load_products(self):
         async with self:
             page = self.page
@@ -102,7 +100,7 @@ class LandingAdminState(rx.State):
                     "Não foi possível carregar os produtos. Tente atualizar."
                 )
 
-    @rxe.event(auth=is_admin)
+    @rx.event
     def change_page(self, delta: int):
         self.page = min(
             max(1, (self.total + 19) // 20), max(1, self.page + delta)

@@ -1,9 +1,7 @@
 import reflex as rx
-import reflex_enterprise as rxe
 import logging
 from typing import TypedDict
 from sqlalchemy import text
-from app.states.authorization import is_admin
 
 
 class MarketplaceClicks(TypedDict):
@@ -46,13 +44,23 @@ REPORT_SQL = text("""
 
 
 class AdminClickState(rx.State):
-    marketplaces: list[MarketplaceClicks] = rxe.field([], auth=is_admin)
-    products: list[ProductClicks] = rxe.field([], auth=is_admin)
-    total: int = rxe.field(0, auth=is_admin)
-    loading: bool = rxe.field(False, auth=is_admin)
-    error: str = rxe.field("", auth=is_admin)
+    marketplaces: list[MarketplaceClicks] = rx.field(
+        [],
+    )
+    products: list[ProductClicks] = rx.field(
+        [],
+    )
+    total: int = rx.field(
+        0,
+    )
+    loading: bool = rx.field(
+        False,
+    )
+    error: str = rx.field(
+        "",
+    )
 
-    @rxe.event(auth=is_admin, background=True)
+    @rx.event(background=True)
     async def load_report(self):
         async with self:
             if self.loading:

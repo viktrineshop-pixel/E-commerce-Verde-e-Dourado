@@ -7,13 +7,13 @@ from typing import Any, TypedDict
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from app.models import Coupon
+from app.states.authorization import is_admin
 from app.coupons import (
     normalize_code,
     parse_coupon_value,
     coupon_expiration,
     expiration_day,
 )
-from app.states.authorization import is_admin
 
 
 class CouponRow(TypedDict):
@@ -26,24 +26,23 @@ class CouponRow(TypedDict):
 
 
 class AdminCouponState(rx.State):
-    rows: list[CouponRow] = rxe.field([], auth=is_admin)
-    draft: dict[str, str] = rxe.field(
+    rows: list[CouponRow] = []
+    draft: dict[str, str] = rx.field(
         {"code": "", "kind": "percent", "value": "", "expires": ""},
-        auth=is_admin,
     )
-    errors: dict[str, str] = rxe.field({}, auth=is_admin)
-    error: str = rxe.field("", auth=is_admin)
-    notice: str = rxe.field("", auth=is_admin)
-    loading: bool = rxe.field(False, auth=is_admin)
-    busy: bool = rxe.field(False, auth=is_admin)
-    editing: bool = rxe.field(False, auth=is_admin)
-    active: bool = rxe.field(True, auth=is_admin)
-    revision: int = rxe.field(0, auth=is_admin)
-    page: int = rxe.field(1, auth=is_admin)
-    has_next: bool = rxe.field(False, auth=is_admin)
+    errors: dict[str, str] = {}
+    error: str = ""
+    notice: str = ""
+    loading: bool = False
+    busy: bool = False
+    editing: bool = False
+    active: bool = True
+    revision: int = 0
+    page: int = 1
+    has_next: bool = False
     _editing_id: int = 0
 
-    @rxe.event(auth=is_admin, background=True)
+    @rx.event(background=True)
     async def load_coupons(self, delta: int = 0):
         async with self:
             if (
@@ -101,7 +100,7 @@ class AdminCouponState(rx.State):
             async with self:
                 self.loading = False
 
-    @rxe.event(auth=is_admin)
+    @rx.event
     def new_coupon(self):
         if self.busy or self.loading:
             return

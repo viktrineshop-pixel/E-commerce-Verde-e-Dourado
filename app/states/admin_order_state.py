@@ -131,20 +131,20 @@ class AdminOrder(TypedDict):
 
 
 class AdminOrderState(rx.State):
-    orders: list[AdminOrder] = rxe.field([], auth=is_admin)
-    loading: bool = rxe.field(False, auth=is_admin)
-    saving: bool = rxe.field(False, auth=is_admin)
-    saving_id: int = rxe.field(0, auth=is_admin)
-    page: int = rxe.field(1, auth=is_admin)
-    has_next: bool = rxe.field(False, auth=is_admin)
-    error: str = rxe.field("", auth=is_admin)
-    notice: str = rxe.field("", auth=is_admin)
-    query_text: str = rxe.field("", auth=is_admin)
-    search_kind: str = rxe.field("", auth=is_admin)
-    search_value: str = rxe.field("", auth=is_admin)
-    search_label: str = rxe.field("", auth=is_admin)
-    search_error: str = rxe.field("", auth=is_admin)
-    form_version: int = rxe.field(0, auth=is_admin)
+    orders: list[AdminOrder] = []
+    loading: bool = False
+    saving: bool = False
+    saving_id: int = 0
+    page: int = 1
+    has_next: bool = False
+    error: str = ""
+    notice: str = ""
+    query_text: str = ""
+    search_kind: str = ""
+    search_value: str = ""
+    search_label: str = ""
+    search_error: str = ""
+    form_version: int = 0
 
     async def _read_page(
         self, page: int, kind: str = "", value: str = ""
@@ -219,7 +219,7 @@ class AdminOrderState(rx.State):
         finally:
             self.loading = False
 
-    @rxe.event(auth=is_admin)
+    @rx.event
     async def load_orders(self, delta: int = 0):
         if self.loading or self.saving:
             return
@@ -227,7 +227,7 @@ class AdminOrderState(rx.State):
             return
         await self._load_page(max(1, self.page + delta))
 
-    @rxe.event(auth=is_admin)
+    @rx.event
     async def search_orders(self, form_data: dict[str, Any]):
         if self.loading or self.saving:
             return

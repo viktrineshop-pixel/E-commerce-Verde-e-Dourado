@@ -3,9 +3,8 @@ import reflex_enterprise as rxe
 from app.components.marketplace import marketplace_content
 
 
-@rxe.page(
+@rx.page(
     route="/lojas/amazon",
-    auth=False,
     title="Amazon · Curadoria independente | Viktrine",
     description="Orientações editoriais independentes da Viktrine. Sem endosso, catálogo oficial ou integração com a Amazon.",
 )
